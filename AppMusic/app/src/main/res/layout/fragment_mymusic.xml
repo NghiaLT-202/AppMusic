@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fragment_myMusic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            tools:context=".FragmentMymusic">
+
+            <ImageView
+                android:id="@+id/im_menu"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="16dp"
+                android:clickable="true"
+                android:foreground="@drawable/custom_ripple"
+                android:src="@drawable/icon_menu"
+                app:layout_constraintBottom_toBottomOf="@id/tv_search"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_search" />
+
+            <TextView
+                android:id="@+id/tv_search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/custom_bg_search"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_baseline_search_24"
+                android:foreground="@drawable/custom_ripple_image"
+                android:gravity="center"
+                android:hint=""
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="6dp"
+                android:textSize="13sp"
+                app:layout_constraintLeft_toRightOf="@id/im_menu"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/im_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/ic_baseline_mic_24"
+                app:layout_constraintBottom_toBottomOf="@id/tv_search"
+                app:layout_constraintRight_toRightOf="@id/tv_search"
+                app:layout_constraintTop_toTopOf="@id/tv_search" />
+
+
+            <View
+                android:id="@+id/view_favourite"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="@dimen/dimen_20dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/background_view_favourite"
+                android:foreground="@drawable/custom_ripple_image"
+                app:layout_constraintDimensionRatio="5:4"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/view_list_play"
+                app:layout_constraintTop_toBottomOf="@+id/im_menu" />
+
+            <!--        <TextView-->
+            <!--            android:id="@+id/tv_favorite"-->
+            <!--            android:layout_width="0dp"-->
+            <!--            android:layout_height="0dp"-->
+            <!--            android:text="@string/favourite"-->
+            <!--            android:textSize="24sp"-->
+            <!--            app:layout_constraintBottom_toBottomOf="@id/view_favourite" />-->
+
+            <View
+                android:id="@+id/view_list_play"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/dimen_20dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/background_view_list_play"
+
+                android:foreground="@drawable/custom_ripple_image"
+                app:layout_constraintDimensionRatio="5:4"
+                app:layout_constraintLeft_toRightOf="@id/view_favourite"
+                app:layout_constraintRight_toLeftOf="@id/view_recent"
+                app:layout_constraintTop_toBottomOf="@+id/im_menu" />
+
+            <View
+                android:id="@+id/view_recent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="@dimen/dimen_20dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/background_view_recent"
+                android:foreground="@drawable/custom_ripple_image"
+
+                app:layout_constraintDimensionRatio="5:4"
+                app:layout_constraintLeft_toRightOf="@id/view_list_play"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/im_menu" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:src="@drawable/ic_baseline_favorite_24_white"
+                app:layout_constraintBottom_toTopOf="@+id/tv_favorite"
+                app:layout_constraintLeft_toLeftOf="@id/tv_favorite" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:src="@drawable/ic_baseline_access_time_filled_24"
+                app:layout_constraintBottom_toTopOf="@+id/tv_recently"
+                app:layout_constraintLeft_toLeftOf="@id/tv_recently" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:src="@drawable/ic_baseline_album_24_infavourite"
+                app:layout_constraintBottom_toTopOf="@+id/tv_playlists"
+                app:layout_constraintLeft_toLeftOf="@id/tv_playlists" />
+
+
+            <TextView
+                android:id="@+id/tv_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingBottom="12dp"
+                android:text="@string/favourite"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/view_favourite"
+                app:layout_constraintLeft_toLeftOf="@id/view_favourite" />
+
+            <TextView
+                android:id="@+id/tv_playlists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingBottom="12dp"
+                android:text="@string/play_list"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/view_list_play"
+                app:layout_constraintLeft_toLeftOf="@id/view_list_play"
+
+                />
+
+            <TextView
+                android:id="@+id/tv_recently"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingBottom="12dp"
+                android:text="@string/recent"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/view_recent"
+                app:layout_constraintLeft_toLeftOf="@id/view_recent" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_favorite"
+                app:tabIndicatorFullWidth="false"
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="@color/black" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/fragment_draw"
+            app:menu="@menu/drawer_view" />
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+</layout>

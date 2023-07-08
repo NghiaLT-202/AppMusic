@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/custom_ripple_item_music"
+        android:padding="@dimen/dimen_5dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_folder"
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/im_folder"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/bg_music"
+
+                />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/tv_namefolder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Vân rung"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintLeft_toRightOf="@+id/cv_folder"
+            app:layout_constraintRight_toLeftOf="@+id/im_openAlbum"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_total_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:drawableRight="@drawable/vertical_line_20"
+            android:gravity="center"
+
+            android:text="Madihu "
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            app:layout_constraintLeft_toRightOf="@+id/cv_folder"
+            app:layout_constraintTop_toBottomOf="@+id/tv_namefolder"
+
+            />
+
+        <TextView
+            android:id="@+id/tv_path_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:gravity="center"
+            android:text="Madihu "
+            android:textColor="@color/black"
+
+            android:textSize="10sp"
+            app:layout_constraintLeft_toRightOf="@+id/tv_total_song"
+            app:layout_constraintTop_toBottomOf="@+id/tv_namefolder"
+
+            />
+
+        <ImageView
+            android:id="@+id/im_openAlbum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_more_vert_24"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

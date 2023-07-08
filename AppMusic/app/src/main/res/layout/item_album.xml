@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_marginBottom="10dp"
+        android:padding="@dimen/dimen_5dp"
+        android:background="@drawable/custom_ripple_item_music"
+        android:layout_height="wrap_content">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_musicSong"
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/imMusicSong"
+                android:scaleType="centerCrop"
+                android:src="@drawable/bg_music"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+
+                />
+
+        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/tv_name_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Vân rung"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            app:layout_constraintLeft_toRightOf="@+id/card_musicSong"
+            android:layout_marginLeft="10dp"
+            android:textSize="15sp"
+            />
+        <TextView
+            android:id="@+id/tv_nameSinger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Madihu "
+            android:textColor="@color/black"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:gravity="center"
+            android:textSize="10sp"
+            app:layout_constraintLeft_toRightOf="@+id/card_musicSong"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_name_album"
+
+            />
+        <ImageView
+            android:id="@+id/im_openAlbum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/ic_baseline_navigate_next_24"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

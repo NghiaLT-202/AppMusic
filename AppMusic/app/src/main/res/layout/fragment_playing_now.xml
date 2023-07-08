@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/youTubePlayerView"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:background="@drawable/custtom_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="15dp"
+
+
+            />
+        <TextView
+            android:id="@+id/tv_musicTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/tv_singerName"
+            tool:text="Vân rung"
+            android:textColor="@color/black"
+            app:layout_constraintLeft_toRightOf="@+id/youTubePlayerView"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+
+            android:textSize="16sp"
+            />
+        <TextView
+            android:id="@+id/tv_singerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Madihu "
+            android:textSize="10sp"
+            app:layout_constraintLeft_toRightOf="@+id/youTubePlayerView"
+            android:layout_marginLeft="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            android:layout_marginBottom="25dp"
+
+
+            />
+        <ImageView
+            android:id="@+id/im_musicplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toLeftOf="@+id/im_musicNext"
+            android:src="@drawable/ic_baseline_play_circle_outline_34"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="30dp"
+
+
+            />
+        <ImageView
+            android:id="@+id/im_musicNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            android:src="@drawable/ic_baseline_skip_next_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="32dp"
+            android:layout_marginRight="35dp"
+
+
+
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

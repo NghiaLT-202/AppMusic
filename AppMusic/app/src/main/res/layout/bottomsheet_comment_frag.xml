@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="@dimen/dimen_10dp"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/comment_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dimen_15dp"
+                android:text="@string/comment"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textsize_17sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/im_close"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/im_close" />
+
+            <ImageView
+                android:id="@+id/im_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_20dp"
+                android:src="@drawable/ic_baseline_close_24"
+
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/im_close"
+
+                >
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    >
+
+                    <TextView
+                        android:id="@+id/tv_most_prominent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_20dp"
+                        android:background="@drawable/custom_bg_most_prominent"
+                        android:paddingHorizontal="@dimen/dimen_15dp"
+                        android:paddingVertical="@dimen/dimen_8dp"
+                        android:text="@string/most_prominent"
+                        android:textColor="@color/white"
+                        app:layout_constraintLeft_toLeftOf="@+id/rc_listComment"
+                        app:layout_constraintTop_toTopOf="parent"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_latest"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_10dp"
+                        android:background="@drawable/custom_bg_latest"
+                        android:paddingHorizontal="@dimen/dimen_15dp"
+                        android:paddingVertical="@dimen/dimen_8dp"
+                        android:text="@string/latest"
+                        android:textColor="@color/black"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_most_prominent"
+                        app:layout_constraintLeft_toRightOf="@+id/tv_most_prominent"
+                        app:layout_constraintTop_toTopOf="@+id/tv_most_prominent" />
+
+                    <TextView
+                        android:id="@+id/line_gray_top"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/dimen_15dp"
+                        android:background="#CAC9C9"
+                        app:layout_constraintBottom_toTopOf="@+id/tv_community_Principles"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_most_prominent" />
+
+                    <TextView
+                        android:id="@+id/tv_community_Principles"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/dimen_5dp"
+                        android:text="Hãy nhớ tôn trọng người dùng khác khi đăng bình luận và tuân thủ Nguyên tắc cộng đồng của chúng tôi"
+                        android:textColor="@color/black"
+                        app:layout_constraintBottom_toTopOf="@+id/line_gray_bottom"
+                        app:layout_constraintLeft_toLeftOf="@+id/tv_most_prominent"
+                        app:layout_constraintTop_toBottomOf="@+id/line_gray_top" />
+
+                    <TextView
+                        android:id="@+id/line_gray_bottom"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="@dimen/dimen_10dp"
+                        android:background="#EAE6E6"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_community_Principles" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv_imAccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimen_10dp"
+                        app:cardCornerRadius="@dimen/dimen_180dp"
+                        app:layout_constraintLeft_toLeftOf="@+id/rc_listComment"
+                        app:layout_constraintTop_toBottomOf="@+id/line_gray_bottom"
+
+                        >
+
+                        <ImageView
+                            android:layout_width="@dimen/dimen_50dp"
+                            android:layout_height="@dimen/dimen_50dp"
+                            android:scaleType="centerCrop"
+
+                            android:src="@drawable/ngoi_sao_co_don" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <EditText
+                        android:id="@+id/edt_inputComment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/dimen_20dp"
+                        android:hint="@string/write_a_comment"
+                        android:textSize="@dimen/textsize_14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/cv_imAccount"
+                        app:layout_constraintLeft_toRightOf="@+id/cv_imAccount"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/cv_imAccount" />
+
+                    <TextView
+                        android:id="@+id/line_gray_bottom_imAccount"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="@dimen/dimen_10dp"
+                        android:background="#CAC9C9"
+                        app:layout_constraintTop_toBottomOf="@+id/cv_imAccount" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rc_listComment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="@dimen/dimen_15dp"
+                        android:layout_marginTop="@dimen/dimen_15dp"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/line_gray_bottom_imAccount"
+                        tools:itemCount="6"
+                        tools:listitem="@layout/item_comment" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
