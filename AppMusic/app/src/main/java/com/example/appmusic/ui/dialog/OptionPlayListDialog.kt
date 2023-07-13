@@ -1,12 +1,16 @@
 package com.example.appmusic.ui.dialog
 
+import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentManager
-import com.example.tfmmusic.R
+import com.example.appmusic.R
+import com.example.appmusic.databinding.CustomDialogOptionPlaylistBinding
+import com.example.appmusic.ui.base.BaseBindingDialogFragment
+import com.example.appmusic.ui.main.MainViewModel
 import java.util.Objects
 
 class OptionPlayListDialog :
-    BaseBindingDialogFragment<CustomDialogOptionPlaylistBinding?, MainViewModel?>() {
+    BaseBindingDialogFragment<CustomDialogOptionPlaylistBinding?, MainViewModel>() {
     private var posX = 0f
     private var posY = 0f
     private var iOptionCollectionDialog: IOptionCollectionDialog? = null
@@ -14,11 +18,10 @@ class OptionPlayListDialog :
         this.iOptionCollectionDialog = iOptionCollectionDialog
     }
 
-    fun getLayoutId(): Int {
-        return R.layout.custom_dialog_option_playlist
-    }
+    override val layoutId: Int
+        get() = R.layout.custom_dialog_option_playlist
 
-    protected fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+    override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initLayoutParam()
         initListener()
     }
@@ -31,22 +34,20 @@ class OptionPlayListDialog :
     }
 
     private fun initListener() {
-        binding.tvEdit.setOnClickListener(View.OnClickListener { v ->
+        binding!!.tvEdit.setOnClickListener { v ->
             preventTwoClick(v, 500)
             iOptionCollectionDialog!!.edit()
             dismiss()
-        })
-        binding.tvDelete.setOnClickListener(View.OnClickListener { v ->
+        }
+        binding!!.tvDelete.setOnClickListener { v ->
             preventTwoClick(v, 500)
             iOptionCollectionDialog!!.delete()
             dismiss()
-        })
-        binding.view.setOnClickListener(View.OnClickListener {
-            Objects.requireNonNull(getDialog()).dismiss()
-        })
+        }
+        binding!!.view.setOnClickListener { Objects.requireNonNull(dialog).dismiss() }
     }
 
-    protected fun getViewModel(): Class<MainViewModel> {
+    override fun getViewModel(): Class<MainViewModel>? {
         return MainViewModel::class.java
     }
 
@@ -57,20 +58,20 @@ class OptionPlayListDialog :
     ) {
         this.posX = posX
         this.posY = posY
-        show(fragmentManager, null)
+        show(fragmentManager!!, null)
     }
 
     private fun initLayoutParam() {
-        Objects.requireNonNull(getDialog()).setCancelable(true)
-        getDialog().getWindow().getDecorView().post(Runnable {
-            if (isAdded()) {
-                binding.rootContainer.setX(posX - binding.rootContainer.getWidth())
-                if (binding.rootContainer.getX() < 0) {
-                    binding.rootContainer.setX(0f)
+        Objects.requireNonNull(dialog).setCancelable(true)
+        dialog!!.window!!.decorView.post {
+            if (isAdded) {
+                binding!!.rootContainer.x = posX - binding!!.rootContainer.width
+                if (binding!!.rootContainer.x < 0) {
+                    binding!!.rootContainer.x = 0f
                 }
-                binding.rootContainer.setY(posY)
+                binding!!.rootContainer.y = posY
             }
-        })
+        }
     }
 
     interface IOptionCollectionDialog {

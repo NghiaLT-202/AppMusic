@@ -1,8 +1,9 @@
 pluginManagement {
     repositories {
-        google()
-        mavenCentral()
         gradlePluginPortal()
+        google()
+        jcenter()
+        mavenCentral()
     }
 }
 dependencyResolutionManagement {
@@ -10,6 +11,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 rootProject.name = "AppMusic"

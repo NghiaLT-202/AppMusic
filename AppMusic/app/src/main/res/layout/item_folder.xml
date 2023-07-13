@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:drawableRight="@drawable/vertical_line_20"
+            android:drawableRight="@drawable/ic_baseline_more_vert_18"
             android:gravity="center"
 
             android:text="Madihu "

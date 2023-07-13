@@ -1,40 +1,50 @@
 package com.example.appmusic.ui.main.home.mymusic.searchfragment
 
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
-import com.example.tfmmusic.App
+import com.example.appmusic.App
+import com.example.appmusic.R
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.databinding.FragmentResearchBinding
+import com.example.appmusic.ui.adapter.ResearchAdapter
+import com.example.appmusic.ui.base.BaseBindingFragment
+import com.example.appmusic.ui.main.MainActivity
 import java.util.Locale
 
-class SearchFragment : BaseBindingFragment<FragmentResearchBinding?, SearchViewModel?>() {
-    private val musicList: MutableList<Music> = ArrayList<Music>()
+class SearchFragment : BaseBindingFragment<FragmentResearchBinding?, SearchViewModel>() {
+    private val musicList: MutableList<Music?> = ArrayList()
     var researchAdapter: ResearchAdapter? = null
-    val layoutId: Int
+    override val layoutId: Int
         get() = R.layout.fragment_research
-    protected val viewModel: Class<SearchViewModel>
-        protected get() = SearchViewModel::class.java
 
-    protected fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+    override fun getViewModel(): Class<SearchViewModel>? {
+        return SearchViewModel::class.java
+    }
+
+    override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initData()
         initListener()
         initAdapter()
     }
 
     private fun initListener() {
-        binding.imBack.setOnClickListener { v -> (requireActivity() as MainActivity).navController.popBackStack() }
-        binding.edtSearch.addTextChangedListener(object : TextWatcher {
+        binding!!.imBack.setOnClickListener { v: View? -> (requireActivity() as MainActivity).navController!!.popBackStack() }
+        binding!!.edtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                val research: String = binding.edtSearch.getText().toString()
-                val listSearch: ArrayList<Music> = ArrayList<Music>()
+                val research = binding!!.edtSearch.text.toString()
+                val listSearch = ArrayList<Music?>()
                 for (i in musicList.indices) {
-                    if (musicList[i].getMusicName().toLowerCase().trim()
-                            .contains(research.lowercase(
-                                Locale.getDefault()
-                            ).trim { it <= ' ' })
+                    if (musicList[i].getMusicName().lowercase(Locale.getDefault())
+                            .trim { it <= ' ' }
+                            .contains(research.lowercase(Locale.getDefault()).trim { it <= ' ' })
                     ) {
                         listSearch.add(musicList[i])
                     }
                 }
-                researchAdapter.setArrayList(listSearch)
+                researchAdapter!!.setArrayList(listSearch)
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -43,19 +53,19 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding?, SearchViewM
 
     private fun initAdapter() {
         researchAdapter = ResearchAdapter()
-        binding.rcListResearch.setAdapter(researchAdapter)
-        researchAdapter.setiBaseClickAdapter { position ->
-            App.getInstance().setMusicCurrent(musicList[position])
-            (requireActivity() as MainActivity).navController.navigate(R.id.fragment_detail_music)
+        binding!!.rcListResearch.adapter = researchAdapter
+        researchAdapter!!.setiBaseClickAdapter { position: Int ->
+            App.Companion.getInstance().setMusicCurrent(musicList[position])
+            (requireActivity() as MainActivity).navController!!.navigate(R.id.fragment_detail_music)
         }
     }
 
     private fun initData() {
-        viewModel.getAllMusicSearch(getContext())
-        viewModel.listMusic.observe(getViewLifecycleOwner()) { music ->
+        viewModel!!.getAllMusicSearch(context)
+        viewModel!!.listMusic.observe(viewLifecycleOwner) { music: List<Music?>? ->
             musicList.clear()
-            musicList.addAll(music)
-            researchAdapter.setArrayList(musicList)
+            musicList.addAll(music!!)
+            researchAdapter!!.setArrayList(musicList)
         }
     }
 }

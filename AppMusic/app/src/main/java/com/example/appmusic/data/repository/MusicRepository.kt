@@ -3,26 +3,24 @@ package com.example.appmusic.data.repository
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.provider.MediaStore
 import com.example.appmusic.data.database.Database
 import com.example.appmusic.data.model.ItemRecent
 import com.example.appmusic.data.model.Music
 import com.example.appmusic.data.model.PlayList
-import com.example.tfmmusic.data.database.Database
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import timber.log.Timber
 import java.util.Collections
+import javax.inject.Inject
 
-class MusicRepository @Inject constructor(database: Database) {
-    var database: Database
-
-    init {
-        this.database = database
-    }
-
-    fun getMusicDevices(context: Context): List<Music?> {
-        val musicList: MutableList<Music?> = ArrayList<Music?>()
-        val uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val projection = arrayOf<String>(
+class MusicRepository @Inject constructor(var database: Database) {
+    fun getMusicDevices(context: Context?): List<Music?> {
+        val musicList: MutableList<Music?> = ArrayList()
+        val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val projection = arrayOf(
             MediaStore.Audio.AudioColumns.DATA,
             MediaStore.Audio.AudioColumns.ALBUM,
             MediaStore.Audio.AudioColumns.ARTIST,
@@ -30,11 +28,11 @@ class MusicRepository @Inject constructor(database: Database) {
             MediaStore.Audio.AudioColumns.TITLE,
             MediaStore.Audio.AudioColumns.DATE_ADDED
         )
-        val cursor = context.contentResolver.query(
+        val cursor = context!!.contentResolver.query(
             uri,
             projection,
             MediaStore.Audio.AudioColumns.DATA + " like ? ",
-            arrayOf<String>("%mp3"),
+            arrayOf("%mp3"),
             null
         )
         if (cursor != null) {
@@ -53,18 +51,12 @@ class MusicRepository @Inject constructor(database: Database) {
                     try {
                         MediaMetadataRetriever().use { mmr ->
                             mmr.setDataSource(path)
-                            val data: ByteArray = mmr.getEmbeddedPicture()
+                            val data = mmr.embeddedPicture
                             val name =
                                 cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.TITLE))
                             val music = Music(path, name, artist, album, false, null, date)
                             if (data != null) {
-                                music.setImageSong(
-                                    BitmapFactory.decodeByteArray(
-                                        data,
-                                        0,
-                                        data.size
-                                    )
-                                )
+                                music.imageSong = BitmapFactory.decodeByteArray(data, 0, data.size)
                             }
                             musicList.add(music)
                         }
@@ -79,13 +71,13 @@ class MusicRepository @Inject constructor(database: Database) {
         return musicList
     }
 
-    fun getAllMusicFavourite(checkFavorite: Boolean): Single<List<Music>> {
+    fun getAllMusicFavourite(checkFavorite: Boolean): Single<List<Music?>?> {
         return Single.fromCallable { database.musicDao().getAllFavouriteMusic(checkFavorite) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun getMusicDevice(context: Context): Single<List<Music>> {
+    fun getMusicDevice(context: Context?): Single<List<Music?>> {
         return Single.fromCallable { getMusicDevices(context) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -106,23 +98,23 @@ class MusicRepository @Inject constructor(database: Database) {
             .subscribeOn(Schedulers.io()).subscribe()
     }
 
-    val allPlayList: Single<List<PlayList>>
-        get() = Single.fromCallable { database.musicDao().getAllPlayListMusic() }
+    val allPlayList: Single<List<PlayList?>?>
+        get() = Single.fromCallable { database.musicDao().allPlayListMusic }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
-    fun getAllMusicPlayList(namePlayList: String?): Single<List<Music>> {
+    fun getAllMusicPlayList(namePlayList: String?): Single<List<Music?>?> {
         return Single.fromCallable { database.musicDao().getAllMusicPlayList(namePlayList) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    val allMusicSortDB: Single<List<Music>>
-        get() = Single.fromCallable { database.musicDao().getAllMusicSortDB() }
+    val allMusicSortDB: Single<List<Music?>?>
+        get() = Single.fromCallable { database.musicDao().allMusicSortDB }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
-    fun getAllDetailPlayListName(name: String?): Single<List<Music>> {
+    fun getAllDetailPlayListName(name: String?): Single<List<Music?>?> {
         return Single.fromCallable { database.musicDao().getDetailPlaylist(name) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -153,10 +145,10 @@ class MusicRepository @Inject constructor(database: Database) {
             .subscribeOn(Schedulers.io()).subscribe()
     }
 
-    val allRecentMusic: Single<List<ItemRecent>>
-        get() = Single.fromCallable { database.musicDao().getAllReccentMusic() }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    fun allRecentMusic(): MutableList<ItemRecent> {
+        return database.musicDao().allReccentMusic as MutableList<ItemRecent>
+    }
+
 
     fun deleteRecentMusic() {
         Completable.fromAction { database.musicDao().deleteReccentMusic() }

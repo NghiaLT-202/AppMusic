@@ -1,10 +1,14 @@
 package com.example.appmusic
 
 import android.app.Application
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.utils.MyDebugTree
+import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 
 @HiltAndroidApp
 class App : Application() {
-    var listMusic: List<Music> = ArrayList<Music>()
+    var listMusic: MutableList<Music?> = ArrayList()
     var musicCurrent: Music? = null
 
     init {
@@ -24,7 +28,6 @@ class App : Application() {
 
     companion object {
         var isLoop = false
-        var instance: App
-            private set
+        lateinit var instance: App
     }
 }

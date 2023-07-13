@@ -1,25 +1,27 @@
 package com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment
 
-import com.example.tfmmusic.data.model.Music
+import androidx.lifecycle.MutableLiveData
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.repository.MusicRepository
+import com.example.appmusic.ui.base.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.core.SingleObserver
+import io.reactivex.rxjava3.disposables.Disposable
+import javax.inject.Inject
 
 @HiltViewModel
-class MusicViewModel @Inject constructor(musicRepository: MusicRepository) : BaseViewModel() {
-    private val musicRepository: MusicRepository
-    var listMusicDB: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
-
-    init {
-        this.musicRepository = musicRepository
-    }
-
+class MusicViewModel @Inject constructor(private val musicRepository: MusicRepository) :
+    BaseViewModel() {
+    var listMusicDB = MutableLiveData<List<Music>>()
     val musicSortDB: Unit
         get() {
-            musicRepository.getAllMusicSortDB().subscribe(object : SingleObserver<List<Music?>?>() {
-                fun onSubscribe(@NonNull d: Disposable?) {}
-                fun onSuccess(@NonNull music: List<Music?>?) {
+            musicRepository.allMusicSortDB.subscribe(object : SingleObserver<List<Music>> {
+                override fun onSubscribe(d: Disposable) {}
+                override fun onSuccess(music: List<Music>) {
                     listMusicDB.postValue(music)
                 }
 
-                fun onError(@NonNull e: Throwable?) {}
+                override fun onError(e: Throwable) {}
             })
         }
 }

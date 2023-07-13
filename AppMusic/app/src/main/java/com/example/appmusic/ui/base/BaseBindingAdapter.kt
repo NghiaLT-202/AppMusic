@@ -1,21 +1,21 @@
 package com.example.appmusic.ui.base
 
-import android.view.View
-import androidx.databinding.DataBindingUtil
+import android.view.LayoutInflaterimport
 
-abstract class BaseBindingAdapter<B : ViewDataBinding?> : RecyclerView.Adapter<BaseHolder<B>?>() {
+android.view.Viewimport android.view.ViewGroupimport androidx.databinding.DataBindingUtilimport androidx.databinding.ViewDataBindingimport androidx.recyclerview.widget.RecyclerViewimport com.example.appmusic.ui.base.BaseBindingAdapter.BaseHolder
+abstract class BaseBindingAdapter<B : ViewDataBinding?> : RecyclerView.Adapter<BaseHolder<B>>() {
     protected var iBaseClickAdapter: IBaseClickAdapter? = null
     fun setiBaseClickAdapter(iBaseClickAdapter: IBaseClickAdapter?) {
         this.iBaseClickAdapter = iBaseClickAdapter
     }
 
     protected abstract fun onBindViewHolderBase(holder: BaseHolder<B>, position: Int)
-    protected abstract fun getLayoutIdItem(): Int
-    protected abstract fun getSizeItem(): Int
+    protected abstract val layoutIdItem: Int
+    protected abstract val sizeItem: Int
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder<B> {
-        val binding: B = DataBindingUtil.inflate(
-            LayoutInflater.from(parent.getContext()),
-            getLayoutIdItem(),
+        val binding = DataBindingUtil.inflate<B>(
+            LayoutInflater.from(parent.context),
+            layoutIdItem,
             parent,
             false
         )
@@ -23,20 +23,16 @@ abstract class BaseBindingAdapter<B : ViewDataBinding?> : RecyclerView.Adapter<B
     }
 
     override fun onBindViewHolder(holder: BaseHolder<B>, position: Int) {
-        holder.itemView.setOnClickListener(View.OnClickListener { view: View? ->
-            iBaseClickAdapter!!.clickItem(
-                holder.getAdapterPosition()
-            )
-        })
-        onBindViewHolderBase(holder, holder.getAdapterPosition())
+        holder.itemView.setOnClickListener { view: View? -> iBaseClickAdapter!!.clickItem(holder.adapterPosition) }
+        onBindViewHolderBase(holder, holder.adapterPosition)
     }
 
     override fun getItemCount(): Int {
-        return getSizeItem()
+        return sizeItem
     }
 
     class BaseHolder<B : ViewDataBinding?>(var binding: B) : RecyclerView.ViewHolder(
-        binding.getRoot()
+        binding!!.root
     )
 
     interface IBaseClickAdapter {

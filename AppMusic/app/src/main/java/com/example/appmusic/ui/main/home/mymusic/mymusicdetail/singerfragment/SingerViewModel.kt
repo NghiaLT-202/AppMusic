@@ -1,10 +1,10 @@
 package com.example.appmusic.ui.main.home.mymusic.mymusicdetail.singerfragment
 
-@HiltViewModel
-class SingerViewModel @Inject constructor(musicRepository: MusicRepository) : BaseViewModel() {
-    private val musicRepository: MusicRepository
+import com.example.appmusic.data.repository.MusicRepository
+import com.example.appmusic.ui.base.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-    init {
-        this.musicRepository = musicRepository
-    }
-}
+@HiltViewModel
+class SingerViewModel @Inject constructor(private val musicRepository: MusicRepository) :
+    BaseViewModel()

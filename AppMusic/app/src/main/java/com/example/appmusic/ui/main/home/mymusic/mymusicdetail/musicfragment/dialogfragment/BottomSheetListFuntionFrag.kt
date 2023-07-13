@@ -1,39 +1,36 @@
 package com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment.dialogfragment
 
+import android.os.Bundle
 import android.view.View
-import com.example.tfmmusic.R
+import com.example.appmusic.R
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.databinding.BottomSheetListFuntionBinding
+import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
+import com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment.dialogfragment.dialog.BottomSheetAddPlayListFrag
 
 class BottomSheetListFuntionFrag :
-    BaseBottomSheetDialogFragment<BottomSheetListFuntionBinding?, BottomSheetListFuntionVM?>() {
-    private var music: Music? = null
+    BaseBottomSheetDialogFragment<BottomSheetListFuntionBinding?, BottomSheetListFuntionVM>() {
+    var music: Music? = null
     var namePlayList: String? = null
-    fun getMusic(): Music? {
-        return music
+    override fun getViewModel(): Class<BottomSheetListFuntionVM>? {
+        return BottomSheetListFuntionVM::class.java
     }
 
-    fun setMusic(music: Music?) {
-        this.music = music
-    }
-
-    protected val viewModel: Class<BottomSheetListFuntionVM>
-        protected get() = BottomSheetListFuntionVM::class.java
-    val layoutId: Int
+    override val layoutId: Int
         get() = R.layout.bottom_sheet_list_funtion
 
-    protected fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+    override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initData()
         initListener()
     }
 
     private fun initListener() {
-        binding.framelayout.setOnClickListener { v -> dismiss() }
-        binding.addToPlayList.setOnClickListener { v ->
+        binding!!.framelayout.setOnClickListener { v: View? -> dismiss() }
+        binding!!.addToPlayList.setOnClickListener { v: View? ->
             val bottomSheetAddPlayListFrag = BottomSheetAddPlayListFrag()
             bottomSheetAddPlayListFrag.setMusicCurent(music)
-            bottomSheetAddPlayListFrag.show(getChildFragmentManager(), null)
+            bottomSheetAddPlayListFrag.show(childFragmentManager, null)
         }
-        binding.delete.setOnClickListener(View.OnClickListener { Timber.e("nghialt: delete") })
-        binding.share.setOnClickListener(View.OnClickListener { Timber.e("nghialt: share") })
     }
 
     private fun initData() {}

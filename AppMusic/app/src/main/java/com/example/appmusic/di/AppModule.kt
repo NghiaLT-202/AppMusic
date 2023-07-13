@@ -1,8 +1,8 @@
 package com.example.appmusic.di
 
-import android.app.Application
-import androidx.room.Room
+import android.app.Applicationimport
 
+android.content.SharedPreferencesimport android.preference.PreferenceManagerimport androidx.room.Roomimport com.example.appmusic.data .database.Databaseimport com.example.appmusic.data .database.MusicDaoimport dagger.Moduleimport dagger.Providesimport dagger.hilt.InstallInimport dagger.hilt.components.SingletonComponentimport javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
@@ -15,18 +15,18 @@ class AppModule {
     @Provides
     @Singleton
     fun provideRoomDb(context: Application): Database {
-        return Room.databaseBuilder(
+        return Room.databaseBuilder<Database>(
             context.applicationContext,
             Database::class.java,
-            Database.DATABASE_NAME
+            Database.Companion.DATABASE_NAME
         )
-            .addMigrations(Database.MIGRATION_1)
+            .addMigrations(Database.Companion.MIGRATION_1)
             .build()
     }
 
     @Provides
     @Singleton
-    fun provideThreadDao(db: Database): MusicDao {
+    fun provideThreadDao(db: Database): MusicDao? {
         return db.musicDao()
     }
 }

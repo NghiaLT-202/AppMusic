@@ -1,6 +1,12 @@
 package com.example.appmusic.data.database
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.example.appmusic.data.model.ItemRecent
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.PlayList
 
 @Dao
 interface MusicDao {
@@ -9,10 +15,10 @@ interface MusicDao {
     fun getAllFavouriteMusic(check: Boolean): List<Music?>?
 
     @get:Query("SELECT * FROM music ")
-    val allMusicDB: List<Any?>?
+    val allMusicDB: List<Music?>?
 
     @get:Query("SELECT * FROM music ORDER BY namePlayList DESC ")
-    val allMusicSortDB: List<Any?>?
+    val allMusicSortDB: List<Music?>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMusic(music: Music?)
@@ -29,7 +35,7 @@ interface MusicDao {
 
     //PLAYLIST
     @get:Query("SELECT * FROM playlist")
-    val allPlayListMusic: List<Any?>?
+    val allPlayListMusic: List<PlayList?>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPlayListMusic(playList: PlayList?)
@@ -51,7 +57,7 @@ interface MusicDao {
     fun insertReccentMusic(itemRecent: ItemRecent?)
 
     @get:Query("SELECT * FROM ItemRecent ")
-    val allReccentMusic: List<Any?>?
+    val allReccentMusic: List<ItemRecent?>?
 
     @Query("SELECT * FROM music where namePlayList=:name")
     fun getDetailPlaylist(name: String?): List<Music?>?

@@ -1,7 +1,9 @@
 package com.example.appmusic.ui.main.home
 
-import com.example.tfmmusic.data.model.Music
+import androidx.lifecycle.MutableLiveData
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.ui.base.BaseViewModel
 
 class HomeViewModel : BaseViewModel() {
-    var liveData: MutableLiveData<ArrayList<Music>> = MutableLiveData<ArrayList<Music>>()
+    var liveData = MutableLiveData<ArrayList<Music>>()
 }

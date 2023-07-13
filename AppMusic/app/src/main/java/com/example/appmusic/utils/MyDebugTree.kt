@@ -1,9 +1,9 @@
 package com.example.appmusic.utils
 
-import timber.log.Timber
+import timber.log.Timber.DebugTree
 
-class MyDebugTree : Timber.DebugTree() {
-    protected fun createStackElementTag(element: StackTraceElement): String {
+class MyDebugTree : DebugTree() {
+    override fun createStackElementTag(element: StackTraceElement): String? {
         return String.format(
             "(%s:%s)#%s",
             element.fileName,

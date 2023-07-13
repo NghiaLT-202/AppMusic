@@ -1,44 +1,59 @@
 package com.example.appmusic.ui.main.home.mymusic
 
 import android.graphics.Color
+import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
-import com.example.tfmmusic.R
+import androidx.core.view.GravityCompat
+import com.example.appmusic.R
+import com.example.appmusic.databinding.FragmentMymusicBinding
+import com.example.appmusic.ui.adapter.FragmentTabLayoutAdapter
+import com.example.appmusic.ui.base.BaseBindingFragment
+import com.example.appmusic.ui.main.MainActivity
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
-class MyMusicFragment : BaseBindingFragment<FragmentMymusicBinding?, MyMusicViewmodel?>() {
-    val layoutId: Int
+class MyMusicFragment : BaseBindingFragment<FragmentMymusicBinding?, MyMusicViewmodel>() {
+    override val layoutId: Int
         get() = R.layout.fragment_mymusic
-    protected val viewModel: Class<MyMusicViewmodel>
-        protected get() = MyMusicViewmodel::class.java
 
-    protected fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+    override fun getViewModel(): Class<MyMusicViewmodel>? {
+        return MyMusicViewmodel::class.java
+    }
+
+    override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initAdapter()
         initListener()
     }
 
     private fun initListener() {
-        binding.tvSearch.setOnClickListener { v ->
-            (requireActivity() as MainActivity).navController.navigate(
+        binding!!.tvSearch.setOnClickListener { v: View? ->
+            (requireActivity() as MainActivity).navController!!.navigate(
                 R.id.fragment_research
             )
         }
-        binding.imMenu.setOnClickListener { v -> binding.drawerLayout.openDrawer(GravityCompat.START) }
-        binding.navView.setNavigationItemSelectedListener { item ->
-            item.setChecked(true)
-            binding.drawerLayout.closeDrawers()
+        binding!!.imMenu.setOnClickListener { v: View? ->
+            binding!!.drawerLayout.openDrawer(
+                GravityCompat.START
+            )
+        }
+        binding!!.navView.setNavigationItemSelectedListener { item: MenuItem ->
+            item.isChecked = true
+            binding!!.drawerLayout.closeDrawers()
             true
         }
-        binding.viewFavourite.setOnClickListener { v ->
-            (requireActivity() as MainActivity).navController.navigate(
+        binding!!.viewFavourite.setOnClickListener { v: View? ->
+            (requireActivity() as MainActivity).navController!!.navigate(
                 R.id.fragment_favorite
             )
         }
-        binding.viewListPlay.setOnClickListener { v ->
-            (requireActivity() as MainActivity).navController.navigate(
+        binding!!.viewListPlay.setOnClickListener { v: View? ->
+            (requireActivity() as MainActivity).navController!!.navigate(
                 R.id.fragment_list_music
             )
         }
-        binding.viewRecent.setOnClickListener { v ->
-            (requireActivity() as MainActivity).navController.navigate(
+        binding!!.viewRecent.setOnClickListener { v: View? ->
+            (requireActivity() as MainActivity).navController!!.navigate(
                 R.id.fragment_recently
             )
         }
@@ -50,19 +65,15 @@ class MyMusicFragment : BaseBindingFragment<FragmentMymusicBinding?, MyMusicView
         list.add(getString(R.string.singer))
         list.add(getString(R.string.album))
         list.add(getString(R.string.folder))
-        val adapter = FragmentTabLayoutAdapter(getChildFragmentManager(), getLifecycle())
-        binding.tabLayout.setTabTextColors(
+        val adapter = FragmentTabLayoutAdapter(childFragmentManager, lifecycle)
+        binding!!.tabLayout.setTabTextColors(
             Color.parseColor("#80000000"),
             Color.parseColor("#000000")
         )
-        binding.viewpager2.setAdapter(adapter)
+        binding!!.viewpager2.adapter = adapter
         TabLayoutMediator(
-            binding.tabLayout,
-            binding.viewpager2,
-            TabConfigurationStrategy { tab: TabLayout.Tab, position: Int ->
-                tab.setText(
-                    list[position]
-                )
-            }).attach()
+            binding!!.tabLayout,
+            binding!!.viewpager2
+        ) { tab: TabLayout.Tab, position: Int -> tab.text = list[position] }.attach()
     }
 }

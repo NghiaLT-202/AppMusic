@@ -1,96 +1,132 @@
 package com.example.appmusic.ui.main.home.mymusic.mymusicdetail
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.PorterDuff
+import android.media.MediaMetadataRetriever
+import android.os.Build
+import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
-import com.example.tfmmusic.common.Constant.SEEK_TO_MEDIA_SERVICE
+import android.view.WindowManager
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.lifecycle.ViewModelProvider.get
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.example.appmusic.App
+import com.example.appmusic.R
+import com.example.appmusic.common.Constant
+import com.example.appmusic.common.MessageEvent
+import com.example.appmusic.data.model.ItemRecent
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.databinding.FragmentDetailSongBinding
+import com.example.appmusic.service.MusicService
+import com.example.appmusic.ui.base.BaseBindingFragment
+import com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment.dialogfragment.dialog.BottomSheetAddPlayListFrag
+import com.example.appmusic.utils.TimeUtils
+import jp.wasabeef.blurry.Blurry
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import timber.log.Timber
 
 class MusicDetailFragment :
-    BaseBindingFragment<FragmentDetailSongBinding?, MusicDetailViewModel?>() {
-    private val listFavourite: MutableList<Music> = ArrayList<Music>()
-    private val listRecent: MutableList<ItemRecent> = ArrayList<ItemRecent>()
+    BaseBindingFragment<FragmentDetailSongBinding?, MusicDetailViewModel>() {
+    private val listFavourite: MutableList<Music?> = ArrayList()
+    private val listRecent: MutableList<ItemRecent?> = ArrayList()
     private val runnable = Runnable {
-        if (isAdded()) {
-            binding.sbTimeSong.setProgress(binding.sbTimeSong.getProgress() + 1000)
+        if (isAdded) {
+            binding!!.sbTimeSong.progress = binding!!.sbTimeSong.progress + 1000
         }
     }
     var isKillApp = false
-    var handler: Handler = Handler(Looper.getMainLooper())
+    var handler = Handler(Looper.getMainLooper())
     private var checked = false
-    val layoutId: Int
+    override val layoutId: Int
         get() = R.layout.fragment_detail_song
-    protected val viewModel: Class<MusicDetailViewModel>
-        protected get() = MusicDetailViewModel::class.java
 
-    fun onSaveInstanceState(outState: Bundle) {
+    override fun getViewModel(): Class<MusicDetailViewModel>? {
+        return MusicDetailViewModel::class.java
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Timber.e("nghialt: onSaveInstanceState")
         outState.putBoolean(getString(R.string.KillAPP), true)
-        outState.putInt(getString(R.string.maxProgress), binding.sbTimeSong.getMax())
-        outState.putInt(getString(R.string.progress), binding.sbTimeSong.getProgress())
-        outState.putString(
-            getString(R.string.textViewEndTime),
-            binding.tvEndTime.getText().toString()
-        )
+        outState.putInt(getString(R.string.maxProgress), binding!!.sbTimeSong.max)
+        outState.putInt(getString(R.string.progress), binding!!.sbTimeSong.progress)
+        outState.putString(getString(R.string.textViewEndTime), binding!!.tvEndTime.text.toString())
         outState.putString(
             getString(R.string.textViewStartTime),
-            binding.tvStartTime.getText().toString()
+            binding!!.tvStartTime.text.toString()
         )
-        //        outState.putInt("image_play_song",binding.imPlaySong.getImageAlpha());
     }
 
-    fun onDestroyView() {
+    override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().getWindow()
-            .clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+        Timber.e("nghialt: onDestroyView")
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
     }
 
-    protected fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        initSeekBarChangeListener()
-        if (savedInstanceState != null) {
-            binding.sbTimeSong.getProgressDrawable()
-                .setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP)
-            isKillApp = savedInstanceState.getBoolean(getString(R.string.KillAPP), false)
-            binding.sbTimeSong.setMax(savedInstanceState.getInt(getString(R.string.maxProgress)))
-            binding.sbTimeSong.setProgress(savedInstanceState.getInt(getString(R.string.progress)))
-            binding.tvStartTime.setText(savedInstanceState.getString(getString(R.string.textViewStartTime)))
-            binding.tvEndTime.setText(savedInstanceState.getString(getString(R.string.textViewEndTime)))
-            binding.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_filled_60)
-        } else {
-            if (getArguments() != null) {
-                val isRunNew: Boolean = getArguments().getBoolean(Constant.RUN_NEW_MUSIC, false)
-                if (isRunNew) {
-                    if (!isKillApp) {
-                        startService(Constant.START_MEDIA_SERVICE)
-                        mainViewModel.isStartMedia.postValue(true)
-                    }
+    override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+        if (arguments != null) {
+            val isRunNew = arguments!!.getBoolean(Constant.RUN_NEW_MUSIC, false)
+            if (isRunNew) {
+                if (!isKillApp) {
+                    startService(Constant.START_MEDIA_SERVICE)
+                    mainViewModel!!.isStartMedia.postValue(true)
                 }
             }
         }
-        requireActivity().getWindow().setFlags(
+        Timber.e("nghialt: onCreatedView")
+        requireActivity().window.setFlags(
             WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
             WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
         )
-        if (App.getInstance().getMusicCurrent().getMusicName() != null) {
-            binding.tvNameSong.setText(App.getInstance().getMusicCurrent().getMusicName())
-            binding.tvNameSinger.setText(App.getInstance().getMusicCurrent().getNameSinger())
-            setImageSong(App.getInstance().getMusicCurrent().getMusicFile())
+        binding!!.sbTimeSong.progressDrawable.setColorFilter(
+            resources.getColor(R.color.white),
+            PorterDuff.Mode.SRC_ATOP
+        )
+        initSeekBarChangeListener()
+        if (App.Companion.getInstance().getMusicCurrent().getMusicName() != null) {
+            binding!!.tvNameSong.setText(
+                App.Companion.getInstance().getMusicCurrent().getMusicName()
+            )
+            binding!!.tvNameSinger.setText(
+                App.Companion.getInstance().getMusicCurrent().getNameSinger()
+            )
+            setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+        }
+        if (savedInstanceState != null) {
+            isKillApp = savedInstanceState.getBoolean(getString(R.string.KillAPP), false)
+            binding!!.sbTimeSong.max = savedInstanceState.getInt(getString(R.string.maxProgress))
+            binding!!.sbTimeSong.progress = savedInstanceState.getInt(getString(R.string.progress))
+            binding!!.tvStartTime.text =
+                savedInstanceState.getString(getString(R.string.textViewStartTime))
+            binding!!.tvEndTime.text =
+                savedInstanceState.getString(getString(R.string.textViewEndTime))
+            binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_filled_60)
         }
         initListener()
         initData()
     }
 
-    fun insertReccently(music: Music, itemRecent: ItemRecent) {
+    fun insertReccently(music: Music?, itemRecent: ItemRecent?) {
         var checkExistedRecent = false
         for (reccent in listRecent) {
-            if (reccent.getMusicFile().equals(music.getMusicFile())) {
+            if (reccent.getMusicFile() == music.getMusicFile()) {
                 checkExistedRecent = true
                 break
             }
         }
         if (!checkExistedRecent) {
-            mainViewModel.insertReccentMusic(itemRecent)
+            mainViewModel!!.insertReccentMusic(itemRecent)
             listRecent.add(itemRecent)
         }
     }
@@ -101,43 +137,43 @@ class MusicDetailFragment :
     }
 
     private fun observerData() {
-        mainViewModel.listRecentLiveData.observe(getViewLifecycleOwner()) { reccentlies ->
+        mainViewModel!!.listRecentLiveData.observe(viewLifecycleOwner) { reccentlies: List<ItemRecent?>? ->
             if (reccentlies != null) {
                 listRecent.clear()
                 listRecent.addAll(reccentlies)
-                val musicCurrent: Music = App.getInstance().getMusicCurrent()
+                val musicCurrent: Music = App.Companion.getInstance().getMusicCurrent()
                 val itemRecent = ItemRecent(
-                    musicCurrent.getMusicFile(),
-                    musicCurrent.getMusicName(),
-                    musicCurrent.getNameSinger(),
-                    musicCurrent.getNameAlbum(),
-                    musicCurrent.getNamePlayList()
+                    musicCurrent.musicFile,
+                    musicCurrent.musicName,
+                    musicCurrent.nameSinger,
+                    musicCurrent.nameAlbum,
+                    musicCurrent.namePlayList
                 )
-                itemRecent.setImageSong(musicCurrent.getImageSong())
+                itemRecent.imageSong = musicCurrent.imageSong
                 insertReccently(musicCurrent, itemRecent)
-                mainViewModel.listRecentLiveData.postValue(null)
+                mainViewModel!!.listRecentLiveData.postValue(null)
             }
         }
-        viewModel.getAllFavourite(true)
-        viewModel.listFavourite.observe(getViewLifecycleOwner()) { list ->
+        viewModel!!.getAllFavourite(true)
+        viewModel!!.listFavourite.observe(viewLifecycleOwner) { list: List<Music?>? ->
             if (list != null) {
                 listFavourite.clear()
                 listFavourite.addAll(list)
             }
             checkFavourite()
         }
-        mainViewModel.listAllMusicDevice.observe(getViewLifecycleOwner()) { songs ->
+        mainViewModel!!.listAllMusicDevice.observe(viewLifecycleOwner) { songs: List<Music?>? ->
             if (songs != null) {
-                App.getInstance().getListMusic().clear()
-                App.getInstance().getListMusic().addAll(songs)
+                App.Companion.getInstance().getListMusic().clear()
+                App.Companion.getInstance().getListMusic().addAll(songs)
             }
         }
     }
 
-    private fun getPosCurrentMusic(music: Music): Int {
-        for (i in 0 until App.getInstance().getListMusic().size()) {
-            if (App.getInstance().getListMusic().get(i).getMusicFile()
-                    .equals(music.getMusicFile())
+    private fun getPosCurrentMusic(music: Music?): Int {
+        for (i in App.Companion.getInstance().getListMusic().indices) {
+            if (App.Companion.getInstance().getListMusic().get(i)
+                    .getMusicFile() == music.getMusicFile()
             ) {
                 return i
             }
@@ -146,114 +182,117 @@ class MusicDetailFragment :
     }
 
     private fun initListener() {
-        binding.imFavorite.setOnClickListener { v ->
-            binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_24_red)
+        binding!!.imFavorite.setOnClickListener { v: View? ->
+            binding!!.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_24_red)
             if (!checked) {
                 checked = true
                 var checkFavourite = false
                 for (i in listFavourite.indices) {
-                    if (listFavourite[i].getMusicFile()
-                            .equals(App.getInstance().getMusicCurrent().getMusicFile())
+                    if (listFavourite[i].getMusicFile() == App.Companion.getInstance()
+                            .getMusicCurrent().getMusicFile()
                     ) {
                         checkFavourite = true
                         break
                     }
                 }
                 if (!checkFavourite) {
-                    App.getInstance().getMusicCurrent().setCheckFavorite(true)
-                    viewModel.insertFavorite(App.getInstance().getMusicCurrent())
+                    App.Companion.getInstance().getMusicCurrent().setCheckFavorite(true)
+                    viewModel!!.insertFavorite(App.Companion.getInstance().getMusicCurrent())
                 }
             } else {
                 checked = false
-                binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
-                App.getInstance().getMusicCurrent().setCheckFavorite(checked)
-                viewModel.deleteFavourite(App.getInstance().getMusicCurrent().getMusicFile())
+                binding!!.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+                App.Companion.getInstance().getMusicCurrent().setCheckFavorite(checked)
+                viewModel!!.deleteFavourite(
+                    App.Companion.getInstance().getMusicCurrent().getMusicFile()
+                )
             }
             startService(Constant.FAVOURITE)
         }
-        binding.imPlaySong.setOnClickListener { view -> startService(Constant.STOP_MEDIA_SERVICE) }
-        binding.imListPlay.setOnClickListener(View.OnClickListener {
+        binding!!.imPlaySong.setOnClickListener { view: View? -> startService(Constant.STOP_MEDIA_SERVICE) }
+        binding!!.imListPlay.setOnClickListener {
             val bottomSheetAddPlayListFrag = BottomSheetAddPlayListFrag()
-            bottomSheetAddPlayListFrag.setMusicCurent(App.getInstance().getMusicCurrent())
-            bottomSheetAddPlayListFrag.show(getChildFragmentManager(), null)
-        })
-        binding.imFastForward.setOnClickListener { view ->
-            binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-            var currentPos = getPosCurrentMusic(App.getInstance().getMusicCurrent())
+            bottomSheetAddPlayListFrag.setMusicCurent(App.Companion.getInstance().getMusicCurrent())
+            bottomSheetAddPlayListFrag.show(childFragmentManager, null)
+        }
+        binding!!.imFastForward.setOnClickListener { view: View? ->
+            binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
+            var currentPos = getPosCurrentMusic(App.Companion.getInstance().getMusicCurrent())
             currentPos++
-            if (currentPos > App.getInstance().getListMusic().size() - 1) {
+            if (currentPos > App.Companion.getInstance().getListMusic().size - 1) {
                 currentPos = 0
             }
-            App.getInstance().setMusicCurrent(App.getInstance().getListMusic().get(currentPos))
-            Timber.e("nghialt: sbTimeSong")
-            binding.sbTimeSong.setProgress(0)
-            setImageSong(App.getInstance().getMusicCurrent().getMusicFile())
-            startService(Constant.START_MEDIA_SERVICE)
+            App.Companion.getInstance()
+                .setMusicCurrent(App.Companion.getInstance().getListMusic().get(currentPos))
+            binding!!.sbTimeSong.progress = 0
+            setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+            startService(Constant.CHANGE_MUSIC_SERVICE)
         }
-        binding.imRewind.setOnClickListener { view ->
-            var currentPos = getPosCurrentMusic(App.getInstance().getMusicCurrent())
+        binding!!.imRewind.setOnClickListener { view: View? ->
+            var currentPos = getPosCurrentMusic(App.Companion.getInstance().getMusicCurrent())
             currentPos--
             if (currentPos < 0) {
-                currentPos = App.getInstance().getListMusic().size() - 1
+                currentPos = App.Companion.getInstance().getListMusic().size - 1
             }
-            App.getInstance().setMusicCurrent(App.getInstance().getListMusic().get(currentPos))
-            binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-            setImageSong(App.getInstance().getMusicCurrent().getMusicFile())
+            startService(Constant.STOP_MEDIA_SERVICE)
+            App.Companion.getInstance()
+                .setMusicCurrent(App.Companion.getInstance().getListMusic().get(currentPos))
+            binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
+            setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
             startService(Constant.START_MEDIA_SERVICE)
         }
-        binding.imPlayAgain.setOnClickListener { v ->
-            if (!App.isLoop) {
-                App.isLoop = true
-                binding.imPlayAgain.setColorFilter(R.color.black)
+        binding!!.imPlayAgain.setOnClickListener { v: View? ->
+            if (!App.Companion.isLoop) {
+                App.Companion.isLoop = true
+                binding!!.imPlayAgain.setColorFilter(R.color.black)
             } else {
-                binding.imPlayAgain.setColorFilter(null)
-                App.isLoop = false
+                binding!!.imPlayAgain.colorFilter = null
+                App.Companion.isLoop = false
             }
         }
-        binding.imDown.setOnClickListener { view ->
-            requireActivity().getSupportFragmentManager().popBackStack()
-        }
+        binding!!.imDown.setOnClickListener { view: View? -> requireActivity().supportFragmentManager.popBackStack() }
     }
 
-    private fun setImageSong(path: String) {
-        if (App.getInstance().getMusicCurrent().getImageSong() != null) {
+    private fun setImageSong(path: String?) {
+        if (App.Companion.getInstance().getMusicCurrent().getImageSong() != null) {
             try {
                 MediaMetadataRetriever().use { mmr ->
                     mmr.setDataSource(path)
-                    val data: ByteArray = mmr.getEmbeddedPicture()
-                    val bitmap: Bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
-                    binding.imSong.setImageBitmap(bitmap)
-                    Blurry.with(requireContext()).radius(16).from(bitmap).into(binding.imSong)
-                    binding.imSongTop.setImageBitmap(bitmap)
+                    val data = mmr.embeddedPicture
+                    val bitmap = BitmapFactory.decodeByteArray(data, 0, data!!.size)
+                    binding!!.imSong.setImageBitmap(bitmap)
+                    Blurry.with(requireContext()).radius(16).from(bitmap).into(binding!!.imSong)
+                    binding!!.imSongTop.setImageBitmap(bitmap)
                 }
             } catch (e: Exception) {
                 throw RuntimeException(e)
             }
         } else {
             Glide.with(requireContext()).asBitmap().load(R.drawable.bg_music)
-                .listener(object : RequestListener<Bitmap?>() {
-                    fun onLoadFailed(
+                .listener(object : RequestListener<Bitmap?> {
+                    override fun onLoadFailed(
                         e: GlideException?,
-                        model: Any?,
-                        target: Target<Bitmap?>?,
+                        model: Any,
+                        target: Target<Bitmap?>,
                         isFirstResource: Boolean
                     ): Boolean {
                         return false
                     }
 
-                    fun onResourceReady(
+                    override fun onResourceReady(
                         resource: Bitmap?,
-                        model: Any?,
-                        target: Target<Bitmap?>?,
-                        dataSource: DataSource?,
+                        model: Any,
+                        target: Target<Bitmap?>,
+                        dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
-                        binding.imSong.setImageBitmap(resource)
-                        Blurry.with(requireContext()).radius(16).from(resource).into(binding.imSong)
+                        binding!!.imSong.setImageBitmap(resource)
+                        Blurry.with(requireContext()).radius(16).from(resource)
+                            .into(binding!!.imSong)
                         return true
                     }
                 }).submit()
-            binding.imSongTop.setImageResource(R.drawable.bg_music)
+            binding!!.imSongTop.setImageResource(R.drawable.bg_music)
         }
     }
 
@@ -261,8 +300,8 @@ class MusicDetailFragment :
         var isExit = false
         if (listFavourite.size > 0) {
             for (i in listFavourite.indices) {
-                if (listFavourite[i].getMusicFile()
-                        .equals(App.getInstance().getMusicCurrent().getMusicFile())
+                if (listFavourite[i].getMusicFile() == App.Companion.getInstance().getMusicCurrent()
+                        .getMusicFile()
                 ) {
                     isExit = true
                     break
@@ -270,27 +309,26 @@ class MusicDetailFragment :
             }
         }
         if (isExit) {
-            binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_24_red)
+            binding!!.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_24_red)
         } else {
-            binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+            binding!!.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
         }
     }
 
     private fun initSeekBarChangeListener() {
-        binding.sbTimeSong.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+        binding!!.sbTimeSong.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                binding.tvStartTime.setText(TimeUtils.getTimeDurationMusic(i))
+                binding!!.tvStartTime.text = TimeUtils.getTimeDurationMusic(i)
                 handler.removeCallbacks(runnable)
                 handler.postDelayed(runnable, 1000)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                val intent = Intent(requireActivity(), YoutubeService::class.java)
-                intent.setAction(SEEK_TO_MEDIA_SERVICE)
-                Timber.e("nghialt: sbTimeSong")
-                binding.sbTimeSong.setProgress(binding.sbTimeSong.getProgress())
-                intent.putExtra("SEEK_TO", binding.sbTimeSong.getProgress())
+                val intent = Intent(requireActivity(), MusicService::class.java)
+                intent.action = Constant.SEEK_TO_MEDIA_SERVICE
+                binding!!.sbTimeSong.progress = binding!!.sbTimeSong.progress
+                intent.putExtra("SEEK_TO", binding!!.sbTimeSong.progress)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     requireActivity().startForegroundService(intent)
                 } else {
@@ -300,73 +338,78 @@ class MusicDetailFragment :
         })
     }
 
-    fun onAttach(context: Context) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         EventBus.getDefault().register(this)
     }
 
-    fun onDetach() {
+    override fun onDetach() {
         super.onDetach()
+        Timber.e("nghialt: onDetach")
         EventBus.getDefault().unregister(this)
-    }
-
-    fun onDestroy() {
-        super.onDestroy()
-        Timber.e("nghialt: onDestroy")
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(messageEvent: MessageEvent) {
-        when (messageEvent.getTypeEvent()) {
+        when (messageEvent.typeEvent) {
             Constant.CHANGE_MUSIC_CURRENT -> {
-                binding.tvNameSong.setText(App.getInstance().getMusicCurrent().getMusicName())
-                binding.tvNameSinger.setText(App.getInstance().getMusicCurrent().getNameSinger())
-                setImageSong(App.getInstance().getMusicCurrent().getMusicFile())
-                binding.tvEndTime.setText(TimeUtils.getTimeDurationMusic(messageEvent.getIntValue1()))
-                binding.sbTimeSong.setMax(messageEvent.getIntValue1())
-                binding.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_24)
-                binding.tvStartTime.setText(TimeUtils.getTimeDurationMusic(messageEvent.getIntValue2()))
-                binding.sbTimeSong.setProgress(0)
+                Timber.e("nghialt: CHANGE_MUSIC_CURRENT")
+                binding!!.tvNameSong.setText(
+                    App.Companion.getInstance().getMusicCurrent().getMusicName()
+                )
+                binding!!.tvNameSinger.setText(
+                    App.Companion.getInstance().getMusicCurrent().getNameSinger()
+                )
+                setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+                binding!!.tvEndTime.text =
+                    TimeUtils.getTimeDurationMusic(messageEvent.intValue1)
+                binding!!.sbTimeSong.max = messageEvent.intValue1
+                binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_24)
+                binding!!.tvStartTime.text =
+                    TimeUtils.getTimeDurationMusic(messageEvent.intValue2)
+                binding!!.sbTimeSong.progress = 0
             }
 
             Constant.COMPLETE_PLAY_MUSIC -> {
                 Timber.e("nghialt: COMPLETE_PLAY_MUSIC")
-                binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+                binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_play_arrow_24)
                 var currentPos: Int
-                currentPos = getPosCurrentMusic(App.getInstance().getMusicCurrent())
-                if (!App.isLoop) {
+                currentPos = getPosCurrentMusic(App.Companion.getInstance().getMusicCurrent())
+                if (!App.Companion.isLoop) {
                     currentPos++
-                    if (currentPos > App.getInstance().getListMusic().size() - 1) {
+                    if (currentPos > App.Companion.getInstance().getListMusic().size - 1) {
                         currentPos = 0
                     }
                 }
-                App.getInstance().setMusicCurrent(App.getInstance().getListMusic().get(currentPos))
+                App.Companion.getInstance()
+                    .setMusicCurrent(App.Companion.getInstance().getListMusic().get(currentPos))
                 startService(Constant.CHANGE_MUSIC_SERVICE)
             }
 
             Constant.START_MEDIA -> {
-                binding.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_24)
-                binding.sbTimeSong.setProgress(binding.sbTimeSong.getProgress() + 1)
-                mainViewModel.isStartMedia.postValue(true)
+                Timber.e("nghialt: START_MEDIA")
+                binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_24)
+                binding!!.sbTimeSong.progress = binding!!.sbTimeSong.progress + 1
+                mainViewModel!!.isStartMedia.postValue(true)
             }
 
             Constant.FAVORITE_MEDIA -> {}
             Constant.STOP_MEDIA -> {
-                if (messageEvent.isBooleanValue()) {
-                    setImageSong(App.getInstance().getMusicCurrent().getMusicFile())
-                    binding.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_filled_60)
+                if (messageEvent.isBooleanValue) {
+                    setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+                    binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_filled_60)
                 } else {
-                    binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
+                    binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
                 }
                 handler.removeCallbacks(runnable)
-                mainViewModel.isStartMedia.postValue(false)
+                mainViewModel!!.isStartMedia.postValue(false)
             }
         }
     }
 
-    private fun startService(action: String) {
-        val intent = Intent(requireActivity(), YoutubeService::class.java)
-        intent.setAction(action)
+    private fun startService(action: String?) {
+        val intent = Intent(requireActivity(), MusicService::class.java)
+        intent.action = action
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireActivity().startForegroundService(intent)
         } else {

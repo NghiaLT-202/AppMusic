@@ -1,26 +1,27 @@
 package com.example.appmusic.ui.main.home.mymusic
 
 import android.content.Context
-import com.example.tfmmusic.data.model.Music
+import androidx.lifecycle.MutableLiveData
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.repository.MusicRepository
+import com.example.appmusic.ui.base.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.core.SingleObserver
+import io.reactivex.rxjava3.disposables.Disposable
+import javax.inject.Inject
 
 @HiltViewModel
-class MyMusicViewmodel @Inject constructor(singerRepository: MusicRepository) : BaseViewModel() {
-    private val singerRepository: MusicRepository
-    var listArtist: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
-
-    init {
-        this.singerRepository = singerRepository
-    }
-
+class MyMusicViewmodel @Inject constructor(private val singerRepository: MusicRepository) :
+    BaseViewModel() {
+    var listArtist = MutableLiveData<List<Music>>()
     fun getAllAudioFromDevice(context: Context?) {
-        singerRepository.getMusicDevice(context)
-            .subscribe(object : SingleObserver<List<Music?>?>() {
-                fun onSubscribe(@NonNull d: Disposable?) {}
-                fun onSuccess(@NonNull artists: List<Music?>?) {
-                    listArtist.postValue(artists)
-                }
+        singerRepository.getMusicDevice(context).subscribe(object : SingleObserver<List<Music>> {
+            override fun onSubscribe(d: Disposable) {}
+            override fun onSuccess(artists: List<Music>) {
+                listArtist.postValue(artists)
+            }
 
-                fun onError(@NonNull e: Throwable?) {}
-            })
+            override fun onError(e: Throwable) {}
+        })
     }
 }

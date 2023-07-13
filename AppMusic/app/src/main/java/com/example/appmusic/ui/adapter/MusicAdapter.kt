@@ -1,36 +1,40 @@
 package com.example.appmusic.ui.adapter
 
-import com.example.tfmmusic.R
+import android.view.View
+import com.example.appmusic.R
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.databinding.ItemMusicBinding
+import com.example.appmusic.ui.base.BaseBindingAdapter
 
-class MusicAdapter : BaseBindingAdapter<ItemMusicBinding?>() {
-    var arrayList: MutableList<Music> = ArrayList<Music>()
+class MusicAdapter : BaseBindingAdapter<ItemMusicBinding>() {
+    var arrayList: MutableList<Music?> = ArrayList()
     private var iclickMusic: IclickMusic? = null
     fun setIclickMusic(iclickMusic: IclickMusic?) {
         this.iclickMusic = iclickMusic
     }
 
-    fun setArrayList(arrayList: List<Music>?) {
+    fun setArrayList(arrayList: List<Music?>?) {
         this.arrayList.clear()
         this.arrayList.addAll(arrayList!!)
         notifyDataSetChanged()
     }
 
-    protected fun onBindViewHolderBase(holder: BaseHolder<ItemMusicBinding?>, position: Int) {
-        if (arrayList[holder.getAdapterPosition()].getImageSong() != null) {
-            holder.binding.imMusicSong.setImageBitmap(arrayList[holder.getAdapterPosition()].getImageSong())
+    override fun onBindViewHolderBase(holder: BaseHolder<ItemMusicBinding>, position: Int) {
+        if (arrayList[holder.adapterPosition].getImageSong() != null) {
+            holder.binding.imMusicSong.setImageBitmap(arrayList[holder.adapterPosition].getImageSong())
         } else {
             holder.binding.imMusicSong.setImageResource(R.drawable.ic_apple_music)
         }
-        holder.binding.tvNameSong.setText(arrayList[position].getMusicName())
-        holder.binding.tvNameSinger.setText(arrayList[position].getNameSinger())
-        holder.binding.tvNameAlbum.setText(arrayList[position].getNameAlbum())
-        holder.itemView.setOnClickListener { v -> iclickMusic!!.clickItem(position) }
-        holder.binding.imMore.setOnClickListener { v -> iclickMusic!!.clickMenu(holder.getAdapterPosition()) }
+        holder.binding.tvNameSong.text = arrayList[position].getMusicName()
+        holder.binding.tvNameSinger.text = arrayList[position].getNameSinger()
+        holder.binding.tvNameAlbum.text = arrayList[position].getNameAlbum()
+        holder.itemView.setOnClickListener { v: View? -> iclickMusic!!.clickItem(position) }
+        holder.binding.imMore.setOnClickListener { v: View? -> iclickMusic!!.clickMenu(holder.adapterPosition) }
     }
 
-    protected val layoutIdItem: Int
+    protected override val layoutIdItem: Int
         protected get() = R.layout.item_music
-    protected val sizeItem: Int
+    protected override val sizeItem: Int
         protected get() = arrayList.size
 
     interface IclickMusic {

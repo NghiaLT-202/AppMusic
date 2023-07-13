@@ -1,20 +1,20 @@
 package com.example.appmusic.ui.base
 
-import android.view.View
-import androidx.databinding.DataBindingUtil
+import android.annotation.SuppressLintimport
 
+android.os.Bundleimport android.view.LayoutInflaterimport android.view.Viewimport android.view.ViewGroupimport android.widget.Toastimport androidx.databinding.DataBindingUtilimport androidx.databinding.ViewDataBindingimport androidx.lifecycle.ViewModelProviderimport com.example.appmusic.ui.main.MainViewModel
 abstract class BaseBindingFragment<B : ViewDataBinding?, T : BaseViewModel?> : BaseFragment() {
     var binding: B? = null
     var viewModel: T? = null
     var mainViewModel: MainViewModel? = null
     protected abstract fun getViewModel(): Class<T>?
-    protected abstract fun getLayoutId(): Int
+    protected abstract val layoutId: Int
     protected abstract fun onCreatedView(view: View?, savedInstanceState: Bundle?)
     var toast: Toast? = null
     @SuppressLint("Showtoast")
     fun toast(text: String?) {
         if (toast != null) {
-            toast.cancel()
+            toast!!.cancel()
         }
         toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
         toast.show()
@@ -31,8 +31,8 @@ abstract class BaseBindingFragment<B : ViewDataBinding?, T : BaseViewModel?> : B
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
-        return binding.getRoot()
+        binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

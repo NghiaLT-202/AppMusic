@@ -1,27 +1,29 @@
 package com.example.appmusic.ui.adapter
 
-import com.example.tfmmusic.R
+import android.annotation.SuppressLint
+import android.view.View
+import com.example.appmusic.R
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.databinding.ItemSingerBinding
+import com.example.appmusic.ui.base.BaseBindingAdapter
 
-class SingerAdapter : BaseBindingAdapter<ItemSingerBinding?>() {
-    private val lisSing: ArrayList<Music> = ArrayList<Music>()
+class SingerAdapter : BaseBindingAdapter<ItemSingerBinding>() {
+    private val lisSing = ArrayList<Music?>()
     @SuppressLint("NotifyDataSetChanged")
-    fun setLisSing(lisSing: List<Music>?) {
+    fun setLisSing(lisSing: List<Music?>?) {
         this.lisSing.clear()
         this.lisSing.addAll(lisSing!!)
         notifyDataSetChanged()
     }
 
-    protected fun onBindViewHolderBase(holder: BaseHolder<ItemSingerBinding?>, position: Int) {
-        holder.binding.tvNameSinger.setText(lisSing[position].getNameSinger())
+    override fun onBindViewHolderBase(holder: BaseHolder<ItemSingerBinding>, position: Int) {
+        holder.binding.tvNameSinger.text = lisSing[position].getNameSinger()
         holder.binding.tvTotalSong.setText(lisSing.size + R.string.music)
-        holder.itemView.setOnClickListener { view -> iBaseClickAdapter.clickItem(holder.getAdapterPosition()) }
+        holder.itemView.setOnClickListener { view: View? -> iBaseClickAdapter!!.clickItem(holder.adapterPosition) }
     }
 
-    protected fun getLayoutIdItem(): Int {
-        return R.layout.item_singer
-    }
-
-    protected fun getSizeItem(): Int {
-        return lisSing.size
-    }
+    protected override val layoutIdItem: Int
+        protected get() = R.layout.item_singer
+    protected override val sizeItem: Int
+        protected get() = lisSing.size
 }

@@ -1,18 +1,13 @@
 package com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment.dialogfragment.dialog
 
-import com.example.tfmmusic.data.model.Music
+import androidx.lifecycle.MutableLiveDataimport
 
+com.example.appmusic.data .model.Musicimport com.example.appmusic.data .model.PlayListimport com.example.appmusic.data .repository.MusicRepositoryimport com.example.appmusic.ui.base.BaseViewModelimport dagger.hilt.android.lifecycle.HiltViewModelimport io.reactivex.rxjava3.core.SingleObserverimport io.reactivex.rxjava3.disposables.Disposableimport javax.inject.Inject
 @HiltViewModel
-class BottomSheetAddPlayListVM @Inject constructor(musicRepository: MusicRepository) :
+class BottomSheetAddPlayListVM @Inject constructor(private val musicRepository: MusicRepository) :
     BaseViewModel() {
-    private val musicRepository: MusicRepository
-    var listPlaylist: MutableLiveData<List<PlayList>> = MutableLiveData<List<PlayList>>()
-    var listMusicPlaylist: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
-
-    init {
-        this.musicRepository = musicRepository
-    }
-
+    var listPlaylist = MutableLiveData<List<PlayList>>()
+    var listMusicPlaylist = MutableLiveData<List<Music>>()
     fun UpdateNamePlayList(name: String?, id: Int) {
         musicRepository.UpdateNameMusic(name, id)
     }
@@ -27,31 +22,31 @@ class BottomSheetAddPlayListVM @Inject constructor(musicRepository: MusicReposit
 
     val allPlayList: Unit
         get() {
-            musicRepository.getAllPlayList().subscribe(object : SingleObserver<List<PlayList?>?>() {
-                fun onSubscribe(@NonNull d: Disposable?) {
+            musicRepository.allPlayList.subscribe(object : SingleObserver<List<PlayList>> {
+                override fun onSubscribe(d: Disposable) {
                     compositeDisposable.add(d)
                 }
 
-                fun onSuccess(@NonNull playLists: List<PlayList?>?) {
+                override fun onSuccess(playLists: List<PlayList>) {
                     listPlaylist.postValue(playLists)
                 }
 
-                fun onError(@NonNull e: Throwable?) {}
+                override fun onError(e: Throwable) {}
             })
         }
 
     fun getAllMusicPlayList(namePlayList: String?) {
         musicRepository.getAllMusicPlayList(namePlayList)
-            .subscribe(object : SingleObserver<List<Music?>?>() {
-                fun onSubscribe(@NonNull d: Disposable?) {
+            .subscribe(object : SingleObserver<List<Music>> {
+                override fun onSubscribe(d: Disposable) {
                     compositeDisposable.add(d)
                 }
 
-                fun onSuccess(@NonNull playLists: List<Music?>?) {
+                override fun onSuccess(playLists: List<Music>) {
                     listMusicPlaylist.postValue(playLists)
                 }
 
-                fun onError(@NonNull e: Throwable?) {}
+                override fun onError(e: Throwable) {}
             })
     }
 }

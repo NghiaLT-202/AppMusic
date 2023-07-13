@@ -5,16 +5,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class PlayList {
+class PlayList(
+    @field:ColumnInfo var namePlayList: String,
+    @field:ColumnInfo var pathPlayList: String?,
+    @field:ColumnInfo var totalSong: Int
+) {
     @PrimaryKey(autoGenerate = true)
-    private val idPlayList = 0
+    var idPlayList = 0
 
-    @ColumnInfo
-    private val namePlayList: String? = null
-
-    @ColumnInfo
-    private val pathPlayList: String? = null
-
-    @ColumnInfo
-    private val totalSong = 0
 }

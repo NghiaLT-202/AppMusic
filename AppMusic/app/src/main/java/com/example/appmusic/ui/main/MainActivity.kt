@@ -1,18 +1,26 @@
 package com.example.appmusic.ui.main
 
+import android.content.Intent
+import android.os.Build
+import android.os.Bundle
 import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import com.example.appmusic.R
+import com.example.appmusic.databinding.ActivityMainBinding
+import com.example.appmusic.service.MusicService
+import com.example.appmusic.ui.base.BaseBindingActivity
 
-class MainActivity : BaseBindingActivity<ActivityMainBinding?, MainViewModel?>() {
+class MainActivity : BaseBindingActivity<ActivityMainBinding?, MainViewModel>() {
     var navHostFragment: NavHostFragment? = null
     var navController: NavController? = null
-    val layoutId: Int
+    override val layoutId: Int
         get() = R.layout.activity_main
 
-    fun setupView(savedInstanceState: Bundle?) {
+    override fun setupView(savedInstanceState: Bundle?) {
         navHostFragment =
-            getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.getNavController()
-        val intent = Intent(this, YoutubeService::class.java)
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
+        navController = navHostFragment!!.navController
+        val intent = Intent(this, MusicService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent)
         } else {
@@ -20,15 +28,16 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding?, MainViewModel?>()
         }
     }
 
-    fun setupData() {}
-    protected fun onCreate(savedInstanceState: Bundle?) {
+    override fun setupData() {}
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
-    protected fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
     }
 
-    protected val viewModel: Class<MainViewModel>
-        protected get() = MainViewModel::class.java
+    override fun getViewModel(): Class<MainViewModel>? {
+        return MainViewModel::class.java
+    }
 }

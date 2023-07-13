@@ -9,6 +9,4 @@
         android:icon="@drawable/youtube_82"
         android:title="@string/see" />
 
-
-
 </menu>

@@ -1,22 +1,18 @@
 package com.example.appmusic.common
 
-import com.example.tfmmusic.data.model.ItemRecent
+import com.example.appmusic.data.model.ItemRecent
+import com.example.appmusic.data.model.Music
 
 class CommonEvent {
     val typeEvent: Int
-    private var music: Music? = null
-    private var itemRecent: ItemRecent? = null
+    var music: Music? = null
+        private set
+    var reccently: ItemRecent? = null
+        private set
 
     constructor(typeEvent: Int, itemRecent: ItemRecent?) {
         this.typeEvent = typeEvent
-        this.itemRecent = itemRecent
-    }
-
-    val reccently: ItemRecent?
-        get() = itemRecent
-
-    fun getMusic(): Music? {
-        return music
+        reccently = itemRecent
     }
 
     constructor(typeEvent: Int, music: Music?) {

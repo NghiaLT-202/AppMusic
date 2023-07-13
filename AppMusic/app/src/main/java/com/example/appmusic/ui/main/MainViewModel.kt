@@ -1,145 +1,40 @@
 package com.example.appmusic.ui.main
 
 import android.content.Context
-import com.example.tfmmusic.common.CommonEvent
+import androidx.lifecycle.MutableLiveData
+import com.example.appmusic.common.CommonEvent
+import com.example.appmusic.common.LiveEvent
+import com.example.appmusic.common.MessageEvent
+import com.example.appmusic.data.model.ItemRecent
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.repository.MusicRepository
+import com.example.appmusic.ui.base.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.core.SingleObserver
+import io.reactivex.rxjava3.disposables.Disposable
+import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    musicRepository: MusicRepository,
-    youtubeRepository: YoutubeRepository
-) : BaseViewModel() {
-    var itemPlayVideoMutableLiveData: MutableLiveData<VideoRecent> = MutableLiveData<VideoRecent>()
-    var isStartMedia: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    var listAllMusicDevice: MutableLiveData<List<Music>> = MutableLiveData<List<Music>>()
-    var youtubeRepository: YoutubeRepository
-    var videoTrendingLiveDataVN: MutableLiveData<VideoYoutube> = MutableLiveData<VideoYoutube>()
-    var videoTrendingLiveDataVNLoadMore: MutableLiveData<VideoYoutube> =
-        MutableLiveData<VideoYoutube>()
-    var commentMutableLiveData: MutableLiveData<Comment> = MutableLiveData<Comment>()
-    var event: LiveEvent<CommonEvent> = LiveEvent()
-    var liveEvent: LiveEvent<MessageEvent> = LiveEvent()
-    var listRecentLiveData: MutableLiveData<List<ItemRecent>> = MutableLiveData<List<ItemRecent>>()
-    var musicRepository: MusicRepository
-
-    init {
-        this.musicRepository = musicRepository
-        this.youtubeRepository = youtubeRepository
-    }
-
-    fun getAllMusicDetail(context: Context?) {
-        if (listAllMusicDevice.getValue() != null) {
-            if (listAllMusicDevice.getValue().size > 0) return
+class MainViewModel : BaseViewModel() {
+    var musicRepository: MusicRepository?=null
+    var isStartMedia = MutableLiveData<Boolean?>()
+    var listAllMusicDevice = MutableLiveData<List<Music>?>()
+    var event = LiveEvent<CommonEvent>()
+    var liveEvent = LiveEvent<MessageEvent>()
+    var listRecentLiveData = MutableLiveData<List<ItemRecent>>()
+    fun getAllMusicDetail(context: Context) {
+        if (listAllMusicDevice.value != null) {
+            if (listAllMusicDevice.value!!.isNotEmpty()) return
         }
-        musicRepository.getMusicDevice(context).subscribe(object : SingleObserver<List<Music?>?>() {
-            fun onSubscribe(@NonNull d: Disposable?) {
-                compositeDisposable.add(d)
-            }
-
-            fun onSuccess(@NonNull list: List<Music?>?) {
-                listAllMusicDevice.postValue(list)
-            }
-
-            fun onError(@NonNull e: Throwable) {
-                e.printStackTrace()
-            }
-        })
+        musicRepository?.getMusicDevice(context)
     }
 
     fun insertReccentMusic(itemRecent: ItemRecent?) {
-        musicRepository.insertRecentMusic(itemRecent)
+        musicRepository?.insertRecentMusic(itemRecent)
     }
 
-    //    public void insertReccentVideo(VideoYoutube videoYoutube) {
-    //        musicRepository.inserReccentVideo(videoYoutube);
-    //
-    //    }
-    fun getVideoHome(query: String?) {
-        youtubeRepository.getVideoSearch(Constant.getAPIKey(), query, 5)
-            .subscribe(object : SingleObserver<VideoYoutube?>() {
-                fun onSubscribe(@NonNull d: Disposable?) {
-                    compositeDisposable.add(d)
-                }
+    fun allReccentMusic() {
+            listRecentLiveData.postValue( musicRepository?.allRecentMusic())
 
-                fun onSuccess(@NonNull videoYoutube: VideoYoutube?) {
-                    getVideo(videoYoutube, false)
-                }
-
-                fun onError(@NonNull e: Throwable) {
-                    e.printStackTrace()
-                }
-            })
-    }
-
-    val allReccentMusic: Unit
-        get() {
-            musicRepository.getAllRecentMusic()
-                .subscribe(object : SingleObserver<List<ItemRecent?>?>() {
-                    fun onSubscribe(@NonNull d: Disposable?) {
-                        compositeDisposable.add(d)
-                    }
-
-                    fun onSuccess(@NonNull reccentlies: List<ItemRecent?>?) {
-                        listRecentLiveData.postValue(reccentlies)
-                    }
-
-                    fun onError(@NonNull e: Throwable) {
-                        e.printStackTrace()
-                    }
-                })
         }
-
-    fun getVideoHomeLoadMore(query: String?, maxResult: Int) {
-        youtubeRepository.getVideoSearch(Constant.getAPIKey(), query, maxResult)
-            .subscribe(object : SingleObserver<VideoYoutube?>() {
-                fun onSubscribe(@NonNull d: Disposable?) {
-                    compositeDisposable.add(d)
-                }
-
-                fun onSuccess(@NonNull videoYoutube: VideoYoutube?) {
-                    Timber.e("nghialt: getVideoHomeLoadMore")
-                    getVideo(videoYoutube, true)
-                }
-
-                fun onError(@NonNull e: Throwable) {
-                    getVideoHomeLoadMore(query, maxResult)
-                    e.printStackTrace()
-                }
-            })
-    }
-
-    fun getVideo(videoYoutube: VideoYoutube?, isLoadMore: Boolean) {
-        youtubeRepository.getVideos(Constant.getAPIKey(), videoYoutube, isLoadMore)
-            .subscribe(object : SingleObserver<VideoYoutube?>() {
-                fun onSubscribe(@NonNull d: Disposable?) {
-                    compositeDisposable.add(d)
-                }
-
-                fun onSuccess(@NonNull videoYoutube: VideoYoutube?) {
-                    videoTrendingLiveDataVNLoadMore.postValue(videoYoutube)
-                }
-
-                fun onError(@NonNull e: Throwable) {
-                    getVideo(videoYoutube, isLoadMore)
-                    e.printStackTrace()
-                }
-            })
-    }
-
-    fun getComment(videoId: String?) {
-        youtubeRepository.getComment(20, videoId, Constant.getAPIKey())
-            .subscribe(object : SingleObserver<Comment?>() {
-                fun onSubscribe(@NonNull d: Disposable?) {
-                    compositeDisposable.add(d)
-                }
-
-                fun onSuccess(@NonNull comment: Comment?) {
-                    commentMutableLiveData.postValue(comment)
-                }
-
-                fun onError(@NonNull e: Throwable) {
-                    getComment(videoId)
-                    e.printStackTrace()
-                }
-            })
-    }
 }

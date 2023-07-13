@@ -2,33 +2,54 @@ package com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment
 
 import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Bundle
 import android.view.View
-import com.example.tfmmusic.App
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.example.appmusic.App
+import com.example.appmusic.R
+import com.example.appmusic.common.Constant
+import com.example.appmusic.common.MessageEvent
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.databinding.FragmentSongBinding
+import com.example.appmusic.ui.adapter.MusicAdapter
+import com.example.appmusic.ui.base.BaseBindingFragment
+import com.example.appmusic.ui.main.MainActivity
+import com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment.bottomsheetsort.BottomSheetSortFragment
+import com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment.dialogfragment.BottomSheetListFuntionFrag
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.Collections
 import java.util.Random
 
-class MusicFragment : BaseBindingFragment<FragmentSongBinding?, MusicViewModel?>() {
-    private val musicList: MutableList<Music> = ArrayList<Music>()
+class MusicFragment : BaseBindingFragment<FragmentSongBinding?, MusicViewModel>() {
+    private val musicList: MutableList<Music?> = ArrayList()
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
-        registerForActivityResult(RequestPermission()) { isGranted ->
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                mainViewModel.getAllMusicDetail(getContext())
+                mainViewModel.getAllMusicDetail(requireContext())
             }
         }
     var musicAdapter: MusicAdapter? = null
-    val layoutId: Int
+    override val layoutId: Int
         get() = R.layout.fragment_song
-    protected val viewModel: Class<MusicViewModel>
-        protected get() = MusicViewModel::class.java
 
-    protected fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+    override fun getViewModel(): Class<MusicViewModel>? {
+        return MusicViewModel::class.java
+    }
+
+    override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             if (musicList.size == 0) {
-                mainViewModel.getAllMusicDetail(getContext())
+                mainViewModel!!.getAllMusicDetail(context)
             }
         } else {
             requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -39,24 +60,24 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding?, MusicViewModel?>
     }
 
     private fun initListener() {
-        binding.imSortSong.setOnClickListener { v ->
+        binding!!.imSortSong.setOnClickListener { v: View? ->
             val bottomSheetSortFragment = BottomSheetSortFragment()
-            bottomSheetSortFragment.setMusicList(musicList)
-            bottomSheetSortFragment.show(getChildFragmentManager(), null)
-            musicAdapter.setArrayList(bottomSheetSortFragment.getMusicList())
+            bottomSheetSortFragment.musicList = musicList
+            bottomSheetSortFragment.show(childFragmentManager, null)
+            musicAdapter!!.setArrayList(bottomSheetSortFragment.musicList)
         }
-        binding.imPlay.setOnClickListener(View.OnClickListener {
+        binding!!.imPlay.setOnClickListener {
             randomListMusic(musicList)
-            App.getInstance().setListMusic(musicList)
-            App.getInstance().setMusicCurrent(musicList[1])
-            (requireActivity() as MainActivity).navController.navigate(
+            App.Companion.getInstance().setListMusic(musicList)
+            App.Companion.getInstance().setMusicCurrent(musicList[1])
+            (requireActivity() as MainActivity).navController!!.navigate(
                 R.id.fragment_detail_music,
                 null
             )
-        })
+        }
     }
 
-    fun randomListMusic(musicList: MutableList<Music>): List<Music> {
+    fun randomListMusic(musicList: MutableList<Music?>): List<Music?> {
         val rand = Random()
         for (i in musicList.indices) {
             val randomNum = rand.nextInt(musicList.size - 1)
@@ -67,60 +88,60 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding?, MusicViewModel?>
 
     private fun initAdapter() {
         musicAdapter = MusicAdapter()
-        binding.rcMusic.setAdapter(musicAdapter)
-        musicAdapter.setIclickMusic(object : IclickMusic() {
-            fun clickItem(position: Int) {
-                App.getInstance().setMusicCurrent(musicList[position])
+        binding!!.rcMusic.adapter = musicAdapter
+        musicAdapter!!.setIclickMusic(object : MusicAdapter.IclickMusic {
+            override fun clickItem(position: Int) {
+                App.Companion.getInstance().setMusicCurrent(musicList[position])
                 val bundle = Bundle()
                 bundle.putBoolean(Constant.RUN_NEW_MUSIC, true)
-                (requireActivity() as MainActivity).navController.navigate(
+                (requireActivity() as MainActivity).navController!!.navigate(
                     R.id.fragment_detail_music,
                     bundle
                 )
             }
 
-            fun clickMenu(position: Int) {
+            override fun clickMenu(position: Int) {
                 val bottomSheetFragment = BottomSheetListFuntionFrag()
-                bottomSheetFragment.setMusic(musicList[position])
-                bottomSheetFragment.show(getChildFragmentManager(), null)
+                bottomSheetFragment.music = musicList[position]
+                bottomSheetFragment.show(childFragmentManager, null)
             }
         })
     }
 
     private fun initData() {
-        mainViewModel.listAllMusicDevice.observe(getViewLifecycleOwner()) { music ->
+        mainViewModel!!.listAllMusicDevice.observe(viewLifecycleOwner) { music: List<Music?>? ->
             if (music != null) {
                 musicList.clear()
                 musicList.addAll(music)
-                musicAdapter.setArrayList(music)
-                binding.loading.setVisibility(View.GONE)
+                musicAdapter!!.setArrayList(music)
+                binding!!.loading.visibility = View.GONE
             }
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(messageEvent: MessageEvent) {
-        if (messageEvent.getStringValue() === Constant.SORT_NAME) {
-            Collections.sort(musicList, java.util.Comparator<T> { o1: T, o2: T ->
+        if (messageEvent.stringValue === Constant.SORT_NAME) {
+            Collections.sort(musicList) { o1: Music?, o2: Music? ->
                 o1.getMusicName()
                     .compareTo(o2.getMusicName())
-            })
+            }
         }
-        if (messageEvent.getStringValue() === Constant.SORT_TIME) {
-            Collections.sort(musicList, java.util.Comparator<T> { o1: T, o2: T ->
+        if (messageEvent.stringValue === Constant.SORT_TIME) {
+            Collections.sort(musicList) { o1: Music?, o2: Music? ->
                 o1.getDate()
                     .compareTo(o2.getDate())
-            })
+            }
         }
-        musicAdapter.setArrayList(musicList)
+        musicAdapter!!.setArrayList(musicList)
     }
 
-    fun onDetach() {
+    override fun onDetach() {
         super.onDetach()
         EventBus.getDefault().unregister(this)
     }
 
-    fun onAttach(context: Context) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         EventBus.getDefault().register(this)
     }
