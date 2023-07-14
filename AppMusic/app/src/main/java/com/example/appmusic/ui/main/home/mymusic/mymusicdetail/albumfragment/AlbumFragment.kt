@@ -1,16 +1,26 @@
 package com.example.appmusic.ui.main.home.mymusic.mymusicdetail.albumfragment
 
-import android.os.Bundleimport
+import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import com.example.appmusic.R
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.databinding.FragmentAlbumBinding
+import com.example.appmusic.ui.adapter.AlbumAdapter
+import com.example.appmusic.ui.base.BaseBindingFragment
 
-android.view.Viewimport android.widget.Toastimport com.example.appmusic.Rimport com.example.appmusic.data .model.Musicimport com.example.appmusic.databinding.FragmentAlbumBindingimport com.example.appmusic.ui.adapter.AlbumAdapterimport com.example.appmusic.ui.base.BaseBindingFragment
+
 class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding?, AlbumViewModel>() {
-    private val listAlbum: MutableList<Music?> = ArrayList()
+    private val listAlbum: MutableList<Music> = mutableListOf()
     private var albumAdapter: AlbumAdapter? = null
-    override val layoutId: Int
-        get() = R.layout.fragment_album
 
-    override fun getViewModel(): Class<AlbumViewModel>? {
+
+    override fun getViewModel(): Class<AlbumViewModel> {
         return AlbumViewModel::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_album
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
@@ -19,8 +29,10 @@ class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding?, AlbumViewModel>
     }
 
     private fun initAdapter() {
-        albumAdapter = AlbumAdapter()
-        binding!!.rcAlbum.adapter = albumAdapter
+        albumAdapter = AlbumAdapter().apply {
+            binding?.rcAlbum?.adapter = this
+
+        }
         albumAdapter!!.setiBaseClickAdapter {
             Toast.makeText(
                 requireContext(),
@@ -31,12 +43,14 @@ class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding?, AlbumViewModel>
     }
 
     private fun initData() {
-        mainViewModel!!.listAllMusicDevice.observe(viewLifecycleOwner) { songs: List<Music?>? ->
+        mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) {songs->
             if (songs != null) {
                 listAlbum.clear()
                 listAlbum.addAll(songs)
-                albumAdapter!!.setList(songs)
+                albumAdapter?.list=songs
             }
         }
     }
 }
+
+

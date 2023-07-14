@@ -16,16 +16,19 @@ class DetailPlayListFragment :
     private val listMusic: MutableList<Music?> = ArrayList()
     var musicAdapter: MusicAdapter? = null
     private var nameCurrentPlayList: String? = null
-    override fun getViewModel(): Class<DetailPlayListViewModel>? {
+    override fun getViewModel(): Class<DetailPlayListViewModel> {
         return DetailPlayListViewModel::class.java
     }
 
-    protected override val layoutId: Int
-        protected get() = R.layout.fragment_detail_play_list
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_detail_play_list
+    }
+
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         if (arguments != null) {
-            nameCurrentPlayList = arguments!!.getString(Constant.NAME_PLAYLIST, nameCurrentPlayList)
+            nameCurrentPlayList =
+                requireArguments().getString(Constant.NAME_PLAYLIST, nameCurrentPlayList)
         }
         initListener()
         initAdapter()
@@ -42,7 +45,7 @@ class DetailPlayListFragment :
         binding!!.rcListPlayList.adapter = musicAdapter
         musicAdapter!!.setIclickMusic(object : MusicAdapter.IclickMusic {
             override fun clickItem(position: Int) {
-                App.Companion.getInstance().setMusicCurrent(listMusic[position])
+                App.Companion.instance.musicCurrent = (listMusic[position])
                 (requireActivity() as MainActivity).navController!!.navigate(R.id.fragment_detail_music)
             }
 
@@ -51,11 +54,11 @@ class DetailPlayListFragment :
     }
 
     private fun initData() {
-        viewModel!!.getAllMusicPlayList(nameCurrentPlayList)
-        viewModel!!.listSong.observe(viewLifecycleOwner) { list: List<Music?>? ->
+        viewModel.getAllMusicPlayList(nameCurrentPlayList)
+        viewModel.listSong.observe(viewLifecycleOwner) { list ->
             listMusic.clear()
-            listMusic.addAll(list!!)
-            musicAdapter!!.setArrayList(listMusic)
+            listMusic.addAll(list)
+            musicAdapter?.arrayList=(listMusic)
         }
     }
 }

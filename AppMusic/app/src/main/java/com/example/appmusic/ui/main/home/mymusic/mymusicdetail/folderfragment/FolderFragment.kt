@@ -10,13 +10,16 @@ import com.example.appmusic.ui.adapter.FolderAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 
 class FolderFragment : BaseBindingFragment<FragmentFolderBinding?, FolderViewModel>() {
-    private val listFolfer: MutableList<Music?> = ArrayList()
+    private val listFolfer: MutableList<Music?> = mutableListOf()
     private var folderAdapter: FolderAdapter? = null
-    override val layoutId: Int
-        get() = R.layout.fragment_folder
+
 
     override fun getViewModel(): Class<FolderViewModel>? {
         return FolderViewModel::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_folder
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
@@ -40,7 +43,7 @@ class FolderFragment : BaseBindingFragment<FragmentFolderBinding?, FolderViewMod
         mainViewModel!!.listAllMusicDevice.observe(viewLifecycleOwner) { list: List<Music?>? ->
             listFolfer.clear()
             listFolfer.addAll(list!!)
-            folderAdapter!!.setListFolder(listFolfer)
+            folderAdapter?.listFolder=(listFolfer)
         }
     }
 }

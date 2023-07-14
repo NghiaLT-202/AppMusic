@@ -14,11 +14,14 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MyMusicFragment : BaseBindingFragment<FragmentMymusicBinding?, MyMusicViewmodel>() {
-    override val layoutId: Int
-        get() = R.layout.fragment_mymusic
+
 
     override fun getViewModel(): Class<MyMusicViewmodel>? {
         return MyMusicViewmodel::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return  R.layout.fragment_mymusic
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {

@@ -1,14 +1,24 @@
 package com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment.dialogfragment.dialog
 
-import android.os.Bundleimport
+import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import com.example.appmusic.R
+import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.databinding.BottomSheetAddPlaylistBinding
+import com.example.appmusic.ui.adapter.ListPlayListAdapter
+import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
+import com.example.appmusic.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
-android.view.Viewimport android.widget.Toastimport com.example.appmusic.Rimport com.example.appmusic.data .model.Musicimport com.example.appmusic.data .model.PlayListimport com.example.appmusic.databinding.BottomSheetAddPlaylistBindingimport com.example.appmusic.ui.adapter.ListPlayListAdapterimport com.example.appmusic.ui.base.BaseBottomSheetDialogFragmentimport com.example.appmusic.ui.main.MainActivityimport dagger.hilt.android.AndroidEntryPoint
+
 @AndroidEntryPoint
 class BottomSheetAddPlayListFrag :
     BaseBottomSheetDialogFragment<BottomSheetAddPlaylistBinding?, BottomSheetAddPlayListVM>() {
     private var listPlayListAdapter: ListPlayListAdapter? = null
-    private val listPlayList: MutableList<PlayList?> = ArrayList()
-    private val listMusicPlayList: MutableList<Music?> = ArrayList()
+    private val listPlayList: MutableList<PlayList?> = mutableListOf()
+    private val listMusicPlayList: MutableList<Music?> = mutableListOf()
     private var positionPlayList = 0
     private var musicCurent: Music? = null
     fun setMusicCurent(musicCurent: Music?) {
@@ -19,8 +29,10 @@ class BottomSheetAddPlayListFrag :
         return BottomSheetAddPlayListVM::class.java
     }
 
-    override val layoutId: Int
-        get() = R.layout.bottom_sheet_add_playlist
+    override fun getLayoutId(): Int {
+        return R.layout.bottom_sheet_add_playlist
+    }
+
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initAdapter()
@@ -33,7 +45,7 @@ class BottomSheetAddPlayListFrag :
         binding!!.rcListCollection.adapter = listPlayListAdapter
         listPlayListAdapter!!.setiBaseClickAdapter { position: Int ->
             positionPlayList = position
-            viewModel!!.getAllMusicPlayList(listPlayList[position].getNamePlayList())
+            listPlayList[position]?.namePlayList?.let { viewModel!!.getAllMusicPlayList(it) }
         }
     }
 
@@ -51,20 +63,20 @@ class BottomSheetAddPlayListFrag :
         viewModel!!.listPlaylist.observe(viewLifecycleOwner) { playLists: List<PlayList?>? ->
             listPlayList.clear()
             listPlayList.addAll(playLists!!)
-            listPlayListAdapter!!.setListPlay(listPlayList)
+            listPlayListAdapter?.listPlay = (listPlayList)
         }
         viewModel!!.listMusicPlaylist.observe(viewLifecycleOwner) { music: List<Music?>? ->
             listMusicPlayList.clear()
             listMusicPlayList.addAll(music!!)
             var check = false
             for (i in listMusicPlayList.indices) {
-                if (musicCurent.getMusicName() == listMusicPlayList[i].getMusicName()) {
+                if (musicCurent?.musicName == listMusicPlayList[i]?.musicName) {
                     check = true
                     break
                 }
             }
             if (!check) {
-                musicCurent.setNamePlayList(listPlayList[positionPlayList].getNamePlayList())
+                musicCurent?.namePlayList = listPlayList[positionPlayList]?.namePlayList
                 viewModel!!.inSertMusicofPlayList(musicCurent)
                 Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
             } else {

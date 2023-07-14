@@ -10,18 +10,14 @@ import io.reactivex.rxjava3.disposables.Disposable
 import javax.inject.Inject
 
 @HiltViewModel
-class MusicViewModel @Inject constructor(private val musicRepository: MusicRepository) :
+class MusicViewModel  :
     BaseViewModel() {
+    private val musicRepository: MusicRepository = MusicRepository()
     var listMusicDB = MutableLiveData<List<Music>>()
-    val musicSortDB: Unit
-        get() {
-            musicRepository.allMusicSortDB.subscribe(object : SingleObserver<List<Music>> {
-                override fun onSubscribe(d: Disposable) {}
-                override fun onSuccess(music: List<Music>) {
-                    listMusicDB.postValue(music)
-                }
 
-                override fun onError(e: Throwable) {}
-            })
-        }
+    fun getMusicSortDB() {
+        listMusicDB.postValue(   musicRepository.getAllMusicSortDB())
+
+    }
+
 }

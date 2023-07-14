@@ -14,11 +14,16 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 import java.util.Collections
-import javax.inject.Inject
+import java.util.concurrent.Callable
 
-class MusicRepository @Inject constructor(var database: Database) {
-    fun getMusicDevices(context: Context?): List<Music?> {
-        val musicList: MutableList<Music?> = ArrayList()
+class MusicRepository  {
+    lateinit var database: Database
+    constructor(){
+        this.database=database
+    }
+
+    fun getMusicDevices(context: Context?): MutableList<Music> {
+        val musicList: MutableList<Music> = ArrayList()
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val projection = arrayOf(
             MediaStore.Audio.AudioColumns.DATA,
@@ -71,16 +76,12 @@ class MusicRepository @Inject constructor(var database: Database) {
         return musicList
     }
 
-    fun getAllMusicFavourite(checkFavorite: Boolean): Single<List<Music?>?> {
-        return Single.fromCallable { database.musicDao().getAllFavouriteMusic(checkFavorite) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    fun getAllMusicFavourite(checkFavorite: Boolean): MutableList<Music> {
+        return database.musicDao().getAllFavouriteMusic(checkFavorite)
     }
 
-    fun getMusicDevice(context: Context?): Single<List<Music?>> {
-        return Single.fromCallable { getMusicDevices(context) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    fun getMusicDevice(context: Context?): MutableList<Music> {
+        return getMusicDevices(context)
     }
 
     fun insert(music: Music?) {
@@ -98,51 +99,43 @@ class MusicRepository @Inject constructor(var database: Database) {
             .subscribeOn(Schedulers.io()).subscribe()
     }
 
-    val allPlayList: Single<List<PlayList?>?>
-        get() = Single.fromCallable { database.musicDao().allPlayListMusic }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    fun getAllPlayList(): MutableList<PlayList> {
+        return database.musicDao().getAllPlayListMusic()
 
-    fun getAllMusicPlayList(namePlayList: String?): Single<List<Music?>?> {
-        return Single.fromCallable { database.musicDao().getAllMusicPlayList(namePlayList) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+
     }
 
-    val allMusicSortDB: Single<List<Music?>?>
-        get() = Single.fromCallable { database.musicDao().allMusicSortDB }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    fun getAllMusicPlayList(namePlayList: String): MutableList<Music> {
+        return database.musicDao().getAllMusicPlayList(namePlayList)
+    }
 
-    fun getAllDetailPlayListName(name: String?): Single<List<Music?>?> {
-        return Single.fromCallable { database.musicDao().getDetailPlaylist(name) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+    fun getAllMusicSortDB(): MutableList<Music> {
+        return database.musicDao().allMusicSortDB
+
+    }
+
+    fun getAllDetailPlayListName(name: String): MutableList<Music> {
+        return database.musicDao().getDetailPlaylist(name)
     }
 
     fun insertPlayList(playList: PlayList?) {
-        Completable.fromAction { database.musicDao().insertPlayListMusic(playList) }
-            .subscribeOn(Schedulers.io()).subscribe()
+        database.musicDao().insertPlayListMusic(playList)
     }
 
     fun insertMusicOfPlayList(music: Music?) {
-        Completable.fromAction { database.musicDao().insertMusicofPlayList(music) }
-            .subscribeOn(Schedulers.io()).subscribe()
+       database.musicDao().insertMusicofPlayList(music)
     }
 
-    fun deletePlayList(name: String?) {
-        Completable.fromAction { database.musicDao().deletePlayListMusic(name) }
-            .subscribeOn(Schedulers.io()).subscribe()
+    fun deletePlayList(name: String) {
+      database.musicDao().deletePlayListMusic(name)
     }
 
-    fun updateNamePlayList(name: String?, id: Int) {
-        Completable.fromAction { database.musicDao().UpdateNamePlayList(name, id) }
-            .subscribeOn(Schedulers.io()).subscribe()
+    fun updateNamePlayList(name: String, id: Int) {
+       database.musicDao().UpdateNamePlayList(name, id)
     }
 
     fun insertRecentMusic(itemRecent: ItemRecent?) {
-        Completable.fromAction { database.musicDao().insertReccentMusic(itemRecent) }
-            .subscribeOn(Schedulers.io()).subscribe()
+        database.musicDao().insertReccentMusic(itemRecent)
     }
 
     fun allRecentMusic(): MutableList<ItemRecent> {
@@ -151,7 +144,6 @@ class MusicRepository @Inject constructor(var database: Database) {
 
 
     fun deleteRecentMusic() {
-        Completable.fromAction { database.musicDao().deleteReccentMusic() }
-            .subscribeOn(Schedulers.io()).subscribe()
+       database.musicDao().deleteReccentMusic()
     }
 }

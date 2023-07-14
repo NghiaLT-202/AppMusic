@@ -35,11 +35,14 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding?, MusicViewModel>(
             }
         }
     var musicAdapter: MusicAdapter? = null
-    override val layoutId: Int
-        get() = R.layout.fragment_song
 
-    override fun getViewModel(): Class<MusicViewModel>? {
+
+    override fun getViewModel(): Class<MusicViewModel> {
         return MusicViewModel::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_song
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
@@ -49,7 +52,7 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding?, MusicViewModel>(
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             if (musicList.size == 0) {
-                mainViewModel!!.getAllMusicDetail(context)
+                context?.let { mainViewModel!!.getAllMusicDetail(it) }
             }
         } else {
             requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -64,12 +67,12 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding?, MusicViewModel>(
             val bottomSheetSortFragment = BottomSheetSortFragment()
             bottomSheetSortFragment.musicList = musicList
             bottomSheetSortFragment.show(childFragmentManager, null)
-            musicAdapter!!.setArrayList(bottomSheetSortFragment.musicList)
+            musicAdapter?.arrayList=bottomSheetSortFragment.musicList
         }
         binding!!.imPlay.setOnClickListener {
             randomListMusic(musicList)
-            App.Companion.getInstance().setListMusic(musicList)
-            App.Companion.getInstance().setMusicCurrent(musicList[1])
+            App.Companion.instance.listMusic=(musicList)
+            App.Companion.instance.musicCurrent=(musicList[1])
             (requireActivity() as MainActivity).navController!!.navigate(
                 R.id.fragment_detail_music,
                 null
@@ -91,7 +94,7 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding?, MusicViewModel>(
         binding!!.rcMusic.adapter = musicAdapter
         musicAdapter!!.setIclickMusic(object : MusicAdapter.IclickMusic {
             override fun clickItem(position: Int) {
-                App.Companion.getInstance().setMusicCurrent(musicList[position])
+                App.Companion.instance.musicCurrent=(musicList[position])
                 val bundle = Bundle()
                 bundle.putBoolean(Constant.RUN_NEW_MUSIC, true)
                 (requireActivity() as MainActivity).navController!!.navigate(
@@ -109,32 +112,30 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding?, MusicViewModel>(
     }
 
     private fun initData() {
-        mainViewModel!!.listAllMusicDevice.observe(viewLifecycleOwner) { music: List<Music?>? ->
+        mainViewModel!!.listAllMusicDevice.observe(viewLifecycleOwner) { music->
             if (music != null) {
                 musicList.clear()
                 musicList.addAll(music)
-                musicAdapter!!.setArrayList(music)
+                musicAdapter?.arrayList=(music.toMutableList())
                 binding!!.loading.visibility = View.GONE
             }
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(messageEvent: MessageEvent) {
-        if (messageEvent.stringValue === Constant.SORT_NAME) {
-            Collections.sort(musicList) { o1: Music?, o2: Music? ->
-                o1.getMusicName()
-                    .compareTo(o2.getMusicName())
-            }
-        }
-        if (messageEvent.stringValue === Constant.SORT_TIME) {
-            Collections.sort(musicList) { o1: Music?, o2: Music? ->
-                o1.getDate()
-                    .compareTo(o2.getDate())
-            }
-        }
-        musicAdapter!!.setArrayList(musicList)
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    fun onEvent(messageEvent: MessageEvent) {
+//        if (messageEvent.stringValue === Constant.SORT_NAME) {
+//            Collections.sort(musicList) { o1: Music, o2: Music ->
+//                o1.musicName.compareTo(o2.musicName)
+//            }
+//        }
+//        if (messageEvent.stringValue === Constant.SORT_TIME) {
+//            Collections.sort(musicList) { o1: Music?, o2: Music? ->
+//                o1.date.compareTo(o2.date())
+//            }
+//        }
+//        musicAdapter!!.setArrayList(musicList)
+//    }
 
     override fun onDetach() {
         super.onDetach()

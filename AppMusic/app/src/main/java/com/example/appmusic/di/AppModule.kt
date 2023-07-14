@@ -1,8 +1,17 @@
 package com.example.appmusic.di
 
-import android.app.Applicationimport
+import android.app.Application
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
+import androidx.room.Room
+import com.example.appmusic.data.database.Database
+import com.example.appmusic.data.database.MusicDao
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-android.content.SharedPreferencesimport android.preference.PreferenceManagerimport androidx.room.Roomimport com.example.appmusic.data .database.Databaseimport com.example.appmusic.data .database.MusicDaoimport dagger.Moduleimport dagger.Providesimport dagger.hilt.InstallInimport dagger.hilt.components.SingletonComponentimport javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {

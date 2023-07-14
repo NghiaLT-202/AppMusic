@@ -14,7 +14,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import androidx.lifecycle.ViewModelProvider.get
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -49,11 +48,14 @@ class MusicDetailFragment :
     var isKillApp = false
     var handler = Handler(Looper.getMainLooper())
     private var checked = false
-    override val layoutId: Int
-        get() = R.layout.fragment_detail_song
+
 
     override fun getViewModel(): Class<MusicDetailViewModel>? {
         return MusicDetailViewModel::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_detail_song
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -76,7 +78,7 @@ class MusicDetailFragment :
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         if (arguments != null) {
-            val isRunNew = arguments!!.getBoolean(Constant.RUN_NEW_MUSIC, false)
+            val isRunNew = requireArguments().getBoolean(Constant.RUN_NEW_MUSIC, false)
             if (isRunNew) {
                 if (!isKillApp) {
                     startService(Constant.START_MEDIA_SERVICE)
@@ -94,14 +96,14 @@ class MusicDetailFragment :
             PorterDuff.Mode.SRC_ATOP
         )
         initSeekBarChangeListener()
-        if (App.Companion.getInstance().getMusicCurrent().getMusicName() != null) {
-            binding!!.tvNameSong.setText(
-                App.Companion.getInstance().getMusicCurrent().getMusicName()
-            )
-            binding!!.tvNameSinger.setText(
-                App.Companion.getInstance().getMusicCurrent().getNameSinger()
-            )
-            setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+        if (App.Companion.instance.musicCurrent?.musicName != null) {
+            binding!!.tvNameSong.text = (
+                    App.Companion.instance.musicCurrent!!.musicName
+                    )
+            binding!!.tvNameSinger.text = (
+                    App.Companion.instance.musicCurrent!!.nameSinger
+                    )
+            setImageSong(App.Companion.instance.musicCurrent!!.musicFile)
         }
         if (savedInstanceState != null) {
             isKillApp = savedInstanceState.getBoolean(getString(R.string.KillAPP), false)
@@ -120,7 +122,7 @@ class MusicDetailFragment :
     fun insertReccently(music: Music?, itemRecent: ItemRecent?) {
         var checkExistedRecent = false
         for (reccent in listRecent) {
-            if (reccent.getMusicFile() == music.getMusicFile()) {
+            if (reccent?.musicFile == music?.musicFile) {
                 checkExistedRecent = true
                 break
             }
@@ -132,7 +134,7 @@ class MusicDetailFragment :
     }
 
     private fun initData() {
-        mainViewModel.getAllReccentMusic()
+        mainViewModel.allReccentMusic()
         observerData()
     }
 
@@ -141,15 +143,15 @@ class MusicDetailFragment :
             if (reccentlies != null) {
                 listRecent.clear()
                 listRecent.addAll(reccentlies)
-                val musicCurrent: Music = App.Companion.getInstance().getMusicCurrent()
+                val musicCurrent: Music? = App.Companion.instance.musicCurrent
                 val itemRecent = ItemRecent(
-                    musicCurrent.musicFile,
-                    musicCurrent.musicName,
-                    musicCurrent.nameSinger,
-                    musicCurrent.nameAlbum,
-                    musicCurrent.namePlayList
+                    musicCurrent?.musicFile,
+                    musicCurrent?.musicName,
+                    musicCurrent?.nameSinger,
+                    musicCurrent?.nameAlbum,
+                    musicCurrent?.namePlayList
                 )
-                itemRecent.imageSong = musicCurrent.imageSong
+                itemRecent.imageSong = musicCurrent?.imageSong
                 insertReccently(musicCurrent, itemRecent)
                 mainViewModel!!.listRecentLiveData.postValue(null)
             }
@@ -164,16 +166,15 @@ class MusicDetailFragment :
         }
         mainViewModel!!.listAllMusicDevice.observe(viewLifecycleOwner) { songs: List<Music?>? ->
             if (songs != null) {
-                App.Companion.getInstance().getListMusic().clear()
-                App.Companion.getInstance().getListMusic().addAll(songs)
+                App.Companion.instance.listMusic.clear()
+                App.Companion.instance.listMusic.addAll(songs)
             }
         }
     }
 
     private fun getPosCurrentMusic(music: Music?): Int {
-        for (i in App.Companion.getInstance().getListMusic().indices) {
-            if (App.Companion.getInstance().getListMusic().get(i)
-                    .getMusicFile() == music.getMusicFile()
+        for (i in App.Companion.instance.listMusic.indices) {
+            if (App.Companion.instance.listMusic[i]?.musicFile == music?.musicFile
             ) {
                 return i
             }
@@ -188,60 +189,60 @@ class MusicDetailFragment :
                 checked = true
                 var checkFavourite = false
                 for (i in listFavourite.indices) {
-                    if (listFavourite[i].getMusicFile() == App.Companion.getInstance()
-                            .getMusicCurrent().getMusicFile()
+                    if (listFavourite[i]?.musicFile == App.Companion.instance
+                            .musicCurrent?.musicFile
                     ) {
                         checkFavourite = true
                         break
                     }
                 }
                 if (!checkFavourite) {
-                    App.Companion.getInstance().getMusicCurrent().setCheckFavorite(true)
-                    viewModel!!.insertFavorite(App.Companion.getInstance().getMusicCurrent())
+                    App.Companion.instance.musicCurrent?.isCheckFavorite = (true)
+                    viewModel!!.insertFavorite(App.Companion.instance.musicCurrent)
                 }
             } else {
                 checked = false
                 binding!!.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
-                App.Companion.getInstance().getMusicCurrent().setCheckFavorite(checked)
+                App.Companion.instance.musicCurrent?.isCheckFavorite = (checked)
                 viewModel!!.deleteFavourite(
-                    App.Companion.getInstance().getMusicCurrent().getMusicFile()
+                    App.Companion.instance.musicCurrent?.musicFile
                 )
             }
             startService(Constant.FAVOURITE)
         }
-        binding!!.imPlaySong.setOnClickListener { view: View? -> startService(Constant.STOP_MEDIA_SERVICE) }
+        binding!!.imPlaySong.setOnClickListener { startService(Constant.STOP_MEDIA_SERVICE) }
         binding!!.imListPlay.setOnClickListener {
             val bottomSheetAddPlayListFrag = BottomSheetAddPlayListFrag()
-            bottomSheetAddPlayListFrag.setMusicCurent(App.Companion.getInstance().getMusicCurrent())
+            bottomSheetAddPlayListFrag.setMusicCurent(App.Companion.instance.musicCurrent)
             bottomSheetAddPlayListFrag.show(childFragmentManager, null)
         }
         binding!!.imFastForward.setOnClickListener { view: View? ->
             binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-            var currentPos = getPosCurrentMusic(App.Companion.getInstance().getMusicCurrent())
+            var currentPos = getPosCurrentMusic(App.Companion.instance.musicCurrent)
             currentPos++
-            if (currentPos > App.Companion.getInstance().getListMusic().size - 1) {
+            if (currentPos > App.Companion.instance.listMusic.size - 1) {
                 currentPos = 0
             }
-            App.Companion.getInstance()
-                .setMusicCurrent(App.Companion.getInstance().getListMusic().get(currentPos))
+            App.Companion.instance
+                .musicCurrent = (App.Companion.instance.listMusic[currentPos])
             binding!!.sbTimeSong.progress = 0
-            setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+            setImageSong(App.Companion.instance.musicCurrent?.musicFile)
             startService(Constant.CHANGE_MUSIC_SERVICE)
         }
         binding!!.imRewind.setOnClickListener { view: View? ->
-            var currentPos = getPosCurrentMusic(App.Companion.getInstance().getMusicCurrent())
+            var currentPos = getPosCurrentMusic(App.Companion.instance.musicCurrent)
             currentPos--
             if (currentPos < 0) {
-                currentPos = App.Companion.getInstance().getListMusic().size - 1
+                currentPos = App.Companion.instance.listMusic.size - 1
             }
             startService(Constant.STOP_MEDIA_SERVICE)
-            App.Companion.getInstance()
-                .setMusicCurrent(App.Companion.getInstance().getListMusic().get(currentPos))
+            App.Companion.instance
+                .musicCurrent = (App.Companion.instance.listMusic[currentPos])
             binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-            setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+            setImageSong(App.Companion.instance.musicCurrent?.musicFile)
             startService(Constant.START_MEDIA_SERVICE)
         }
-        binding!!.imPlayAgain.setOnClickListener { v: View? ->
+        binding!!.imPlayAgain.setOnClickListener {
             if (!App.Companion.isLoop) {
                 App.Companion.isLoop = true
                 binding!!.imPlayAgain.setColorFilter(R.color.black)
@@ -254,7 +255,7 @@ class MusicDetailFragment :
     }
 
     private fun setImageSong(path: String?) {
-        if (App.Companion.getInstance().getMusicCurrent().getImageSong() != null) {
+        if (App.Companion.instance.musicCurrent?.imageSong != null) {
             try {
                 MediaMetadataRetriever().use { mmr ->
                     mmr.setDataSource(path)
@@ -300,8 +301,8 @@ class MusicDetailFragment :
         var isExit = false
         if (listFavourite.size > 0) {
             for (i in listFavourite.indices) {
-                if (listFavourite[i].getMusicFile() == App.Companion.getInstance().getMusicCurrent()
-                        .getMusicFile()
+                if (listFavourite[i]?.musicFile == App.Companion.instance.musicCurrent
+                        ?.musicFile
                 ) {
                     isExit = true
                     break
@@ -354,13 +355,13 @@ class MusicDetailFragment :
         when (messageEvent.typeEvent) {
             Constant.CHANGE_MUSIC_CURRENT -> {
                 Timber.e("nghialt: CHANGE_MUSIC_CURRENT")
-                binding!!.tvNameSong.setText(
-                    App.Companion.getInstance().getMusicCurrent().getMusicName()
-                )
-                binding!!.tvNameSinger.setText(
-                    App.Companion.getInstance().getMusicCurrent().getNameSinger()
-                )
-                setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+                binding!!.tvNameSong.text = (
+                        App.Companion.instance.musicCurrent?.musicName
+                        )
+                binding!!.tvNameSinger.text = (
+                        App.Companion.instance.musicCurrent?.nameSinger
+                        )
+                setImageSong(App.Companion.instance.musicCurrent?.musicFile)
                 binding!!.tvEndTime.text =
                     TimeUtils.getTimeDurationMusic(messageEvent.intValue1)
                 binding!!.sbTimeSong.max = messageEvent.intValue1
@@ -374,15 +375,15 @@ class MusicDetailFragment :
                 Timber.e("nghialt: COMPLETE_PLAY_MUSIC")
                 binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_play_arrow_24)
                 var currentPos: Int
-                currentPos = getPosCurrentMusic(App.Companion.getInstance().getMusicCurrent())
+                currentPos = getPosCurrentMusic(App.Companion.instance.musicCurrent)
                 if (!App.Companion.isLoop) {
                     currentPos++
-                    if (currentPos > App.Companion.getInstance().getListMusic().size - 1) {
+                    if (currentPos > App.Companion.instance.listMusic.size - 1) {
                         currentPos = 0
                     }
                 }
-                App.Companion.getInstance()
-                    .setMusicCurrent(App.Companion.getInstance().getListMusic().get(currentPos))
+                App.Companion.instance
+                    .musicCurrent = (App.Companion.instance.listMusic[currentPos])
                 startService(Constant.CHANGE_MUSIC_SERVICE)
             }
 
@@ -396,7 +397,7 @@ class MusicDetailFragment :
             Constant.FAVORITE_MEDIA -> {}
             Constant.STOP_MEDIA -> {
                 if (messageEvent.isBooleanValue) {
-                    setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+                    setImageSong(App.Companion.instance.musicCurrent?.musicFile)
                     binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_filled_60)
                 } else {
                     binding!!.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)

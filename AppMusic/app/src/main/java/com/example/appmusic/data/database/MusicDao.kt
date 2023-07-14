@@ -11,14 +11,14 @@ import com.example.appmusic.data.model.PlayList
 @Dao
 interface MusicDao {
     //MUSIC
-    @Query("SELECT * FROM music where checkFavorite=:check")
-    fun getAllFavouriteMusic(check: Boolean): List<Music?>?
+    @Query("SELECT * FROM music where isCheckFavorite=:check")
+    fun getAllFavouriteMusic(check: Boolean): MutableList<Music>
 
     @get:Query("SELECT * FROM music ")
-    val allMusicDB: List<Music?>?
+    val allMusicDB: MutableList<Music?>?
 
     @get:Query("SELECT * FROM music ORDER BY namePlayList DESC ")
-    val allMusicSortDB: List<Music?>?
+    val allMusicSortDB: MutableList<Music>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMusic(music: Music?)
@@ -31,11 +31,12 @@ interface MusicDao {
 
     //GET MUSIC PLAYLIST
     @Query("SELECT * FROM music where namePlayList=:namePlayListMusic")
-    fun getAllMusicPlayList(namePlayListMusic: String?): List<Music?>?
+    fun getAllMusicPlayList(namePlayListMusic: String): MutableList<Music>
 
     //PLAYLIST
-    @get:Query("SELECT * FROM playlist")
-    val allPlayListMusic: List<PlayList?>?
+    //PLAYLIST
+    @Query("SELECT * FROM playlist")
+    fun getAllPlayListMusic(): MutableList<PlayList>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPlayListMusic(playList: PlayList?)
@@ -60,7 +61,7 @@ interface MusicDao {
     val allReccentMusic: List<ItemRecent?>?
 
     @Query("SELECT * FROM music where namePlayList=:name")
-    fun getDetailPlaylist(name: String?): List<Music?>?
+    fun getDetailPlaylist(name: String?): MutableList<Music>
 
     @Query("DELETE  From ItemRecent ")
     fun deleteReccentMusic()

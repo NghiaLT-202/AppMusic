@@ -18,8 +18,10 @@ class OptionPlayListDialog :
         this.iOptionCollectionDialog = iOptionCollectionDialog
     }
 
-    override val layoutId: Int
-        get() = R.layout.custom_dialog_option_playlist
+
+    override fun getLayoutId(): Int {
+        return R.layout.custom_dialog_option_playlist
+    }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initLayoutParam()
@@ -44,7 +46,7 @@ class OptionPlayListDialog :
             iOptionCollectionDialog!!.delete()
             dismiss()
         }
-        binding!!.view.setOnClickListener { Objects.requireNonNull(dialog).dismiss() }
+        binding!!.view.setOnClickListener { Objects.requireNonNull(dialog)?.dismiss() }
     }
 
     override fun getViewModel(): Class<MainViewModel>? {
@@ -58,11 +60,11 @@ class OptionPlayListDialog :
     ) {
         this.posX = posX
         this.posY = posY
-        show(fragmentManager!!, null)
+        show(requireFragmentManager(), null)
     }
 
     private fun initLayoutParam() {
-        Objects.requireNonNull(dialog).setCancelable(true)
+        Objects.requireNonNull(dialog)?.setCancelable(true)
         dialog!!.window!!.decorView.post {
             if (isAdded) {
                 binding!!.rootContainer.x = posX - binding!!.rootContainer.width

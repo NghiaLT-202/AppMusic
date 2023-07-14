@@ -18,15 +18,17 @@ import com.example.appmusic.ui.main.home.mymusic.playlistfragment.dialogFragment
 import com.example.appmusic.ui.main.home.mymusic.playlistfragment.dialogFragmentAddPlayList.DialogAddPlayListFragment.IDialogAdd
 
 class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding?, PlaylistViewModel>() {
-    private val listPlayList: MutableList<PlayList?> = ArrayList()
-    private val listMusicPlaylist: MutableList<Music?> = ArrayList()
+    private val listPlayList: MutableList<PlayList?> = mutableListOf()
+    private val listMusicPlaylist: MutableList<Music?> = mutableListOf()
     private var playlistAdapter: PlaylistAdapter? = null
     private var dialogAddPlayListFragment: DialogAddPlayListFragment? = null
-    override val layoutId: Int
-        get() = R.layout.fragment_play_list_music
 
     override fun getViewModel(): Class<PlaylistViewModel>? {
         return PlaylistViewModel::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return  R.layout.fragment_play_list_music
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -52,14 +54,14 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding?, Play
                 val optionPlayListDialog = OptionPlayListDialog()
                 optionPlayListDialog.setiOptionCollectionDialog(object : IOptionCollectionDialog {
                     override fun delete() {
-                        viewModel!!.deletePlayList(playList.getNamePlayList())
+                        playList?.namePlayList?.let { viewModel!!.deletePlayList(it) }
                         listPlayList.remove(playList)
                         if (listPlayList.size < 1) {
                             binding!!.tvAddPlayList.visibility = View.VISIBLE
                             binding!!.tvPlayRandom.visibility = View.INVISIBLE
                             binding!!.imAddPlayList.visibility = View.INVISIBLE
                         }
-                        playlistAdapter!!.setListPlayList(listPlayList)
+                        playlistAdapter?.listPlayList=(listPlayList)
                     }
 
                     override fun edit() {
@@ -75,7 +77,7 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding?, Play
 
             override fun clickItem(position: Int) {
                 val bundle = Bundle()
-                bundle.putString(Constant.NAME_PLAYLIST, listPlayList[position].getNamePlayList())
+                bundle.putString(Constant.NAME_PLAYLIST, listPlayList[position]?.namePlayList)
                 (requireActivity() as MainActivity).navController!!.navigate(
                     R.id.fragment_detail_playlist,
                     bundle
@@ -85,15 +87,15 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding?, Play
     }
 
     private fun intitData() {
-        viewModel.getAllPlayList()
+        viewModel.allPlayList()
         viewModel!!.listPlayList.observe(viewLifecycleOwner) { playLists: List<PlayList?>? ->
             if (playLists != null) {
                 listPlayList.clear()
                 listPlayList.addAll(playLists)
                 for (i in listPlayList.indices) {
-                    viewModel!!.getAllMusicPlayList(listPlayList[i].getNamePlayList())
+                    listPlayList[i]?.namePlayList?.let { viewModel!!.getAllMusicPlayList(it) }
                 }
-                playlistAdapter!!.setListPlayList(listPlayList)
+                playlistAdapter?.listPlayList=(listPlayList)
                 if (listPlayList.size > 0) {
                     binding!!.tvAddPlayList.visibility = View.INVISIBLE
                     binding!!.tvPlayRandom.visibility = View.VISIBLE
@@ -104,7 +106,7 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding?, Play
         viewModel!!.listMusicPlaylist.observe(viewLifecycleOwner) { music: List<Music?>? ->
             listMusicPlaylist.clear()
             listMusicPlaylist.addAll(music!!)
-            playlistAdapter.setTotalSong(listMusicPlaylist.size)
+            playlistAdapter?.totalSong=(listMusicPlaylist.size)
         }
     }
 
@@ -117,7 +119,7 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding?, Play
     fun showDialogEditPlayList(position: Int) {
         dialogAddPlayListFragment = DialogAddPlayListFragment()
         dialogAddPlayListFragment!!.setText(getString(R.string.edit))
-        dialogAddPlayListFragment!!.setTextEdit(listPlayList[position].getNamePlayList())
+        dialogAddPlayListFragment!!.setTextEdit(listPlayList[position]?.namePlayList)
         dialogAddPlayListFragment!!.isCancelable = true
         dialogAddPlayListFragment!!.setiDialogAdd(object : IDialogAdd {
             override fun cancle(position: Int) {
@@ -127,15 +129,17 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding?, Play
             override fun ok(inputName: String) {
                 if (!TextUtils.isEmpty(inputName)) {
                     if (!checkNamePlayList(inputName)) {
-                        viewModel!!.updateNamePlayList(
-                            inputName,
-                            listPlayList[position].getIdPlayList()
-                        )
-                        listPlayList[position].setNamePlayList(inputName)
+                        listPlayList[position]?.idPlayList?.let {
+                            viewModel!!.updateNamePlayList(
+                                inputName,
+                                it
+                            )
+                        }
+                        listPlayList[position]?.namePlayList=(inputName)
                         if (listPlayList.size > 0) {
                             binding!!.tvAddPlayList.visibility = View.INVISIBLE
                         }
-                        playlistAdapter!!.setListPlayList(listPlayList)
+                        playlistAdapter?.listPlayList=(listPlayList)
                         dialogAddPlayListFragment!!.dismiss()
                     } else {
                         toast(getString(R.string.listNameAlreadyExists))
@@ -168,7 +172,7 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding?, Play
                         binding!!.tvAddPlayList.visibility = View.INVISIBLE
                         binding!!.tvPlayRandom.visibility = View.VISIBLE
                         binding!!.imAddPlayList.visibility = View.VISIBLE
-                        playlistAdapter!!.setListPlayList(listPlayList)
+                        playlistAdapter?.listPlayList=(listPlayList)
                     } else {
                         toast(getString(R.string.listNameAlreadyExists))
                     }
@@ -182,7 +186,7 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding?, Play
 
     fun checkNamePlayList(inputName: String): Boolean {
         for (i in listPlayList.indices) {
-            if (inputName == listPlayList[i].getNamePlayList()) {
+            if (inputName == listPlayList[i]?.namePlayList) {
                 return true
             }
         }

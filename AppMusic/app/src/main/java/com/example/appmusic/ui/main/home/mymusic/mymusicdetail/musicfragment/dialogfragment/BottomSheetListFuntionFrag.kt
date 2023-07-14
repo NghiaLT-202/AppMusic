@@ -16,8 +16,10 @@ class BottomSheetListFuntionFrag :
         return BottomSheetListFuntionVM::class.java
     }
 
-    override val layoutId: Int
-        get() = R.layout.bottom_sheet_list_funtion
+    override fun getLayoutId(): Int {
+        return R.layout.bottom_sheet_list_funtion
+    }
+
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initData()

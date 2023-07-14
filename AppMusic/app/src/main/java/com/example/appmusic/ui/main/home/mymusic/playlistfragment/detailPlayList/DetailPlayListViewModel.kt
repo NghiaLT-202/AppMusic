@@ -5,28 +5,15 @@ import com.example.appmusic.data.model.Music
 import com.example.appmusic.data.repository.MusicRepository
 import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.rxjava3.core.SingleObserver
-import io.reactivex.rxjava3.disposables.Disposable
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailPlayListViewModel @Inject constructor(private val musicRepository: MusicRepository) :
     BaseViewModel() {
-    var listSong = MutableLiveData<List<Music>>()
+    var listSong = MutableLiveData<MutableList<Music>>()
     fun getAllMusicPlayList(name: String?) {
-        musicRepository.getAllDetailPlayListName(name)
-            .subscribe(object : SingleObserver<List<Music>> {
-                override fun onSubscribe(d: Disposable) {
-                    compositeDisposable.add(d)
-                }
+        listSong.postValue(name?.let { musicRepository.getAllDetailPlayListName(it) })
 
-                override fun onSuccess(list: List<Music>) {
-                    listSong.postValue(list)
-                }
 
-                override fun onError(e: Throwable) {
-                    e.printStackTrace()
-                }
-            })
     }
 }

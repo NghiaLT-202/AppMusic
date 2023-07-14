@@ -13,15 +13,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MyMusicViewmodel @Inject constructor(private val singerRepository: MusicRepository) :
     BaseViewModel() {
-    var listArtist = MutableLiveData<List<Music>>()
+    var listArtist = MutableLiveData<MutableList<Music>>()
     fun getAllAudioFromDevice(context: Context?) {
-        singerRepository.getMusicDevice(context).subscribe(object : SingleObserver<List<Music>> {
-            override fun onSubscribe(d: Disposable) {}
-            override fun onSuccess(artists: List<Music>) {
-                listArtist.postValue(artists)
-            }
+        listArtist.postValue(singerRepository.getMusicDevice(context))
 
-            override fun onError(e: Throwable) {}
-        })
     }
 }

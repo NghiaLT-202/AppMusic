@@ -9,14 +9,15 @@ import com.example.appmusic.R
 import com.example.appmusic.databinding.ActivityMainBinding
 import com.example.appmusic.service.MusicService
 import com.example.appmusic.ui.base.BaseBindingActivity
+import timber.log.Timber
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding?, MainViewModel>() {
     var navHostFragment: NavHostFragment? = null
     var navController: NavController? = null
-    override val layoutId: Int
-        get() = R.layout.activity_main
+
 
     override fun setupView(savedInstanceState: Bundle?) {
+        Timber.e("nghialt: onCreatedView")
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
         navController = navHostFragment!!.navController
@@ -30,14 +31,21 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding?, MainViewModel>() 
 
     override fun setupData() {}
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+        Timber.e("nghialt: onCreatedView")
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
     }
 
-    override fun getViewModel(): Class<MainViewModel>? {
+    override fun getLayoutId(): Int {
+        return  R.layout.activity_main
+    }
+
+    override fun getViewModel(): Class<MainViewModel> {
         return MainViewModel::class.java
     }
 }

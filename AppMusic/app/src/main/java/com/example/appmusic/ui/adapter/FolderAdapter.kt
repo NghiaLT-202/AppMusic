@@ -1,26 +1,32 @@
 package com.example.appmusic.ui.adapter
 
+import android.annotation.SuppressLint
 import com.example.appmusic.R
 import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.ItemFolderBinding
 import com.example.appmusic.ui.base.BaseBindingAdapter
 
 class FolderAdapter : BaseBindingAdapter<ItemFolderBinding>() {
-    private val listFolder: MutableList<Music?> = ArrayList()
-    fun setListFolder(listFolder: List<Music?>?) {
-        this.listFolder.clear()
-        this.listFolder.addAll(listFolder!!)
-        notifyDataSetChanged()
-    }
+     var listFolder: MutableList<Music?> = mutableListOf()
+        @SuppressLint("NotifyDataSetChanged")
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onBindViewHolderBase(holder: BaseHolder<ItemFolderBinding>, position: Int) {
-        holder.binding.tvNamefolder.text = listFolder[position].getMusicFile()
+        holder.binding.tvNamefolder.text = listFolder[position]?.musicFile
         holder.binding.tvTotalSong.text = "5"
         holder.itemView.setOnClickListener { iBaseClickAdapter!!.clickItem(holder.adapterPosition) }
     }
 
-    protected override val layoutIdItem: Int
-        protected get() = R.layout.item_folder
-    protected override val sizeItem: Int
-        protected get() = listFolder.size
+
+
+    override fun getLayoutIdItem(): Int {
+        return  R.layout.item_folder
+    }
+
+    override fun getSizeItem(): Int {
+        return listFolder.size
+    }
 }

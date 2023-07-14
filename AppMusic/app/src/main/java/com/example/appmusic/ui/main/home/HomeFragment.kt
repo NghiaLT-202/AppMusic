@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.LinearInterpolator
-import androidx.lifecycle.ViewModelProvider.get
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -33,11 +32,14 @@ import org.greenrobot.eventbus.ThreadMode
 import timber.log.Timber
 
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding?, HomeViewModel>() {
-    override val layoutId: Int
-        get() = R.layout.fragment_home
 
-    override fun getViewModel(): Class<HomeViewModel>? {
+
+    override fun getViewModel(): Class<HomeViewModel> {
         return HomeViewModel::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_home
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
@@ -64,14 +66,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding?, HomeViewModel>() 
     }
 
     private fun initListener() {
-        if (App.Companion.getInstance().getMusicCurrent() != null) {
-            binding!!.tvNameSong.setText(
-                App.Companion.getInstance().getMusicCurrent().getMusicName()
-            )
-            binding!!.tvNameSinger.setText(
-                App.Companion.getInstance().getMusicCurrent().getNameSinger()
-            )
-            setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
+        if (App.Companion.instance.musicCurrent != null) {
+            binding!!.tvNameSong.text = App.Companion.instance.musicCurrent?.musicName
+
+            binding!!.tvNameSinger.text = App.Companion.instance.musicCurrent?.nameSinger
+
+            setImageSong(App.Companion.instance.musicCurrent?.musicFile)
             val objectAnimator = ObjectAnimator.ofFloat(binding!!.imMusicSong, "rotation", 0f, 360f)
             objectAnimator.duration = 8000 // Thời gian quay tròn trong 5 giây
             objectAnimator.repeatCount = ObjectAnimator.INFINITE // Lặp vô hạn
@@ -86,28 +86,25 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding?, HomeViewModel>() 
         binding!!.imPlaySong.setOnClickListener { startService(Constant.STOP_MEDIA_SERVICE) }
         binding!!.imNextSong.setOnClickListener {
             binding!!.imPlaySong.setImageResource(R.drawable.icons8_circled_play_72_black)
-            var currentPos = getPosCurrentMusic(App.Companion.getInstance().getMusicCurrent())
+            var currentPos = getPosCurrentMusic(App.Companion.instance.musicCurrent)
             currentPos++
-            if (currentPos > App.Companion.getInstance().getListMusic().size - 1) {
+            if (currentPos > App.Companion.instance.listMusic.size - 1) {
                 currentPos = 0
             }
-            App.Companion.getInstance()
-                .setMusicCurrent(App.Companion.getInstance().getListMusic().get(currentPos))
-            setImageSong(App.Companion.getInstance().getMusicCurrent().getMusicFile())
-            binding!!.tvNameSong.setText(
-                App.Companion.getInstance().getMusicCurrent().getMusicName()
-            )
-            binding!!.tvNameSinger.setText(
-                App.Companion.getInstance().getMusicCurrent().getNameSinger()
-            )
+            App.Companion.instance.musicCurrent = App.Companion.instance.listMusic[currentPos]
+            setImageSong(App.Companion.instance.musicCurrent?.musicFile)
+            binding!!.tvNameSong.text = App.Companion.instance.musicCurrent?.musicName
+
+            binding!!.tvNameSinger.text = App.Companion.instance.musicCurrent?.nameSinger
+
             startService(Constant.CHANGE_MUSIC_SERVICE)
         }
     }
 
     private fun getPosCurrentMusic(music: Music?): Int {
-        for (i in App.Companion.getInstance().getListMusic().indices) {
-            if (App.Companion.getInstance().getListMusic().get(i)
-                    .getMusicFile() == music.getMusicFile()
+        for (i in App.Companion.instance.listMusic.indices) {
+            if (App.Companion.instance.listMusic[i]
+                    ?.musicFile == music?.musicFile
             ) {
                 return i
             }
@@ -132,7 +129,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding?, HomeViewModel>() 
     }
 
     private fun initData() {
-        mainViewModel!!.isStartMedia.observe(viewLifecycleOwner) { aBoolean ->
+        mainViewModel.isStartMedia.observe(viewLifecycleOwner) { aBoolean ->
             if (aBoolean != null) {
                 if (aBoolean) {
                     binding!!.imPlaySong.setImageResource(R.drawable.icons8_pause_button_72_black)
@@ -160,7 +157,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding?, HomeViewModel>() 
     }
 
     private fun setImageSong(path: String?) {
-        if (App.Companion.getInstance().getMusicCurrent().getImageSong() != null) {
+        if (App.Companion.instance.musicCurrent?.imageSong != null) {
             try {
                 MediaMetadataRetriever().use { mmr ->
                     mmr.setDataSource(path)

@@ -6,32 +6,22 @@ import com.example.appmusic.data.model.Music
 import com.example.appmusic.data.repository.MusicRepository
 import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.rxjava3.core.SingleObserver
-import io.reactivex.rxjava3.disposables.Disposable
 import javax.inject.Inject
 
 @HiltViewModel
-class MusicDetailViewModel @Inject constructor(private val musicRepository: MusicRepository) :
+class MusicDetailViewModel :
     BaseViewModel() {
-    var listMusic = MutableLiveData<List<Music>>()
-    var listFavourite = MutableLiveData<List<Music>>()
-    fun setListMusic(listMusic: MutableLiveData<List<Music>>) {
-        this.listMusic = listMusic
-    }
+    private val musicRepository: MusicRepository=MusicRepository()
+    var listMusic = MutableLiveData<MutableList<Music>>()
+    var listFavourite = MutableLiveData<MutableList<Music>>()
 
-    fun setListFavourite(listFavourite: MutableLiveData<List<Music>>) {
-        this.listFavourite = listFavourite
-    }
 
-    fun initData(context: Context?) {
-        musicRepository.getMusicDevice(context).subscribe(object : SingleObserver<List<Music>> {
-            override fun onSubscribe(d: Disposable) {}
-            override fun onSuccess(list: List<Music>) {
-                listMusic.postValue(list)
-            }
 
-            override fun onError(e: Throwable) {}
-        })
+
+    fun initData(context: Context) {
+        listMusic.postValue(musicRepository.getMusicDevice(context))
+
+
     }
 
     fun insertFavorite(music: Music?) {
@@ -43,14 +33,7 @@ class MusicDetailViewModel @Inject constructor(private val musicRepository: Musi
     }
 
     fun getAllFavourite(checkFavorite: Boolean) {
-        musicRepository.getAllMusicFavourite(checkFavorite)
-            .subscribe(object : SingleObserver<List<Music>> {
-                override fun onSubscribe(d: Disposable) {}
-                override fun onSuccess(list: List<Music>) {
-                    listFavourite.postValue(list)
-                }
+        listFavourite.postValue(musicRepository.getAllMusicFavourite(checkFavorite))
 
-                override fun onError(e: Throwable) {}
-            })
     }
 }

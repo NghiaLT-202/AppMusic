@@ -12,13 +12,16 @@ import org.greenrobot.eventbus.EventBus
 
 class BottomSheetSortFragment :
     BaseBottomSheetDialogFragment<BottomsheetSortBinding?, BottomSheetSortViewModel>() {
-    var musicList: List<Music?> = ArrayList()
-    override fun getViewModel(): Class<BottomSheetSortViewModel>? {
+    var musicList: MutableList<Music?> = mutableListOf()
+    override fun getViewModel(): Class<BottomSheetSortViewModel> {
         return BottomSheetSortViewModel::class.java
     }
 
-    override val layoutId: Int
-        get() = R.layout.bottomsheet_sort
+    override fun getLayoutId(): Int {
+        return R.layout.bottomsheet_sort
+    }
+
+
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initListener()

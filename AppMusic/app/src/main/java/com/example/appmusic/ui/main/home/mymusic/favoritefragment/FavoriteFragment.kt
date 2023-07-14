@@ -15,11 +15,14 @@ import timber.log.Timber
 class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding?, FavoriteViewModel>() {
     private val listFavourite: MutableList<Music?> = ArrayList()
     private var favoriteAdapter: FavoriteAdapter? = null
-    override val layoutId: Int
-        get() = R.layout.fragment_favorite
+
 
     override fun getViewModel(): Class<FavoriteViewModel>? {
         return FavoriteViewModel::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_favorite
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
@@ -42,7 +45,7 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding?, FavoriteV
         binding!!.rcFavorite.adapter = favoriteAdapter
         favoriteAdapter!!.setIclickMusic(object : FavoriteAdapter.IclickMusic {
             override fun clickItem(position: Int) {
-                App.Companion.getInstance().setMusicCurrent(listFavourite[position])
+                App.Companion.instance.musicCurrent=(listFavourite[position])
                 (requireActivity() as MainActivity).navController!!.navigate(R.id.fragment_detail_music)
             }
 
@@ -59,12 +62,12 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding?, FavoriteV
 
     private fun initData() {
         viewModel!!.getAllMusicFavourite(true)
-        viewModel!!.listFavourite.observe(viewLifecycleOwner) { songs: List<Music?>? ->
+        viewModel!!.listFavourite.observe(viewLifecycleOwner) { songs ->
             listFavourite.clear()
             listFavourite.addAll(songs!!)
             if (listFavourite.size > 0) binding!!.tvNoDataFavorite.visibility =
                 View.INVISIBLE else binding!!.tvNoDataFavorite.visibility = View.VISIBLE
-            favoriteAdapter!!.setArrayList(songs)
+            favoriteAdapter?.list=(songs.toMutableList())
         }
     }
 }

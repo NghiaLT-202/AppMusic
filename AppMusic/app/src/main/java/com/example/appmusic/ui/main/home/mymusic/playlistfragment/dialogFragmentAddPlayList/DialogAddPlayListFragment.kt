@@ -25,11 +25,14 @@ class DialogAddPlayListFragment :
         this.iDialogAdd = iDialogAdd
     }
 
-    override val layoutId: Int
-        get() = R.layout.dialog_add_play_list
+
 
     override fun getViewModel(): Class<DialogAddPlayListVM>? {
         return DialogAddPlayListVM::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.dialog_add_play_list
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
@@ -53,7 +56,7 @@ class DialogAddPlayListFragment :
     }
 
     private fun initData() {
-        viewModel.getAllPlayList()
+        viewModel.allPlayList()
         viewModel!!.listPlayList.observe(viewLifecycleOwner) { playLists: List<PlayList?>? ->
             listPlayList.clear()
             listPlayList.addAll(playLists!!)

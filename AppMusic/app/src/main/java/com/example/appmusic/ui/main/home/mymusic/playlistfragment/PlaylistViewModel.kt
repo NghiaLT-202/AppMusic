@@ -8,54 +8,32 @@ import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.SingleObserver
 import io.reactivex.rxjava3.disposables.Disposable
-import javax.inject.Inject
 
 @HiltViewModel
-class PlaylistViewModel @Inject constructor(private val musicRepository: MusicRepository) :
+class PlaylistViewModel :
     BaseViewModel() {
-    var listPlayList = MutableLiveData<List<PlayList>>()
-    var listMusicPlaylist = MutableLiveData<List<Music>>()
-    val allPlayList: Unit
-        get() {
-            musicRepository.allPlayList.subscribe(object : SingleObserver<List<PlayList>> {
-                override fun onSubscribe(d: Disposable) {
-                    compositeDisposable.add(d)
-                }
-
-                override fun onSuccess(playLists: List<PlayList>) {
-                    listPlayList.postValue(playLists)
-                }
-
-                override fun onError(e: Throwable) {
-                    e.printStackTrace()
-                }
-            })
-        }
+    private val musicRepository: MusicRepository = MusicRepository()
+    var listPlayList = MutableLiveData<MutableList<PlayList>>()
+    var listMusicPlaylist = MutableLiveData<MutableList<Music>>()
+    fun allPlayList() {
+        listPlayList.postValue(musicRepository.getAllPlayList())
+    }
 
     fun insertPlayList(playList: PlayList?) {
         musicRepository.insertPlayList(playList)
     }
 
-    fun deletePlayList(name: String?) {
+    fun deletePlayList(name: String) {
         musicRepository.deletePlayList(name)
     }
 
-    fun updateNamePlayList(name: String?, id: Int) {
+    fun updateNamePlayList(name: String, id: Int) {
         musicRepository.updateNamePlayList(name, id)
     }
 
-    fun getAllMusicPlayList(namePlayList: String?) {
-        musicRepository.getAllMusicPlayList(namePlayList)
-            .subscribe(object : SingleObserver<List<Music>> {
-                override fun onSubscribe(d: Disposable) {
-                    compositeDisposable.add(d)
-                }
+    fun getAllMusicPlayList(namePlayList: String) {
+        listMusicPlaylist.postValue(  musicRepository.getAllMusicPlayList(namePlayList))
 
-                override fun onSuccess(playLists: List<Music>) {
-                    listMusicPlaylist.postValue(playLists)
-                }
 
-                override fun onError(e: Throwable) {}
-            })
     }
 }

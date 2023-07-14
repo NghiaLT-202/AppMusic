@@ -16,11 +16,14 @@ import java.util.Locale
 class SearchFragment : BaseBindingFragment<FragmentResearchBinding?, SearchViewModel>() {
     private val musicList: MutableList<Music?> = ArrayList()
     var researchAdapter: ResearchAdapter? = null
-    override val layoutId: Int
-        get() = R.layout.fragment_research
+
 
     override fun getViewModel(): Class<SearchViewModel>? {
         return SearchViewModel::class.java
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.fragment_research
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
@@ -37,14 +40,14 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding?, SearchViewM
                 val research = binding!!.edtSearch.text.toString()
                 val listSearch = ArrayList<Music?>()
                 for (i in musicList.indices) {
-                    if (musicList[i].getMusicName().lowercase(Locale.getDefault())
-                            .trim { it <= ' ' }
-                            .contains(research.lowercase(Locale.getDefault()).trim { it <= ' ' })
+                    if (musicList[i]?.musicName?.lowercase(Locale.getDefault())
+                            ?.trim { it <= ' ' }
+                            ?.contains(research.lowercase(Locale.getDefault()).trim { it <= ' ' })!!
                     ) {
                         listSearch.add(musicList[i])
                     }
                 }
-                researchAdapter!!.setArrayList(listSearch)
+                researchAdapter?.arrayList=(listSearch)
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -55,17 +58,17 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding?, SearchViewM
         researchAdapter = ResearchAdapter()
         binding!!.rcListResearch.adapter = researchAdapter
         researchAdapter!!.setiBaseClickAdapter { position: Int ->
-            App.Companion.getInstance().setMusicCurrent(musicList[position])
+            App.Companion.instance.musicCurrent=(musicList[position])
             (requireActivity() as MainActivity).navController!!.navigate(R.id.fragment_detail_music)
         }
     }
 
     private fun initData() {
-        viewModel!!.getAllMusicSearch(context)
+        viewModel!!.getAllMusicSearch(requireContext())
         viewModel!!.listMusic.observe(viewLifecycleOwner) { music: List<Music?>? ->
             musicList.clear()
             musicList.addAll(music!!)
-            researchAdapter!!.setArrayList(musicList)
+            researchAdapter?.arrayList=(musicList)
         }
     }
 }
