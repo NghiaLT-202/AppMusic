@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+
 
 }
 android {
@@ -62,33 +64,26 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata:2.6.0-alpha01"
     // Lifecycles only (without ViewModel or LiveData)
     implementation "androidx.lifecycle:lifecycle-runtime:2.6.0-alpha01"
+
+
+    def versions_roomVersion = "2.4.0-alpha04"
+// Room
+    implementation "androidx.room:room-runtime:$versions_roomVersion"
+    kapt "androidx.room:room-compiler:$versions_roomVersion"
+    kapt "androidx.room:room-ktx:$versions_roomVersion"
     implementation 'com.jakewharton.timber:timber:4.7.1'
-    implementation "android.arch.persistence.room:runtime:1.1.1"
-    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:design:27.1.0'
-    //rxjava
-    implementation libraries.rxJava
+
+//glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+
     //navigation
     implementation libraries.androidxNavigationKtx
     /*Database ( if use Room) */
-    implementation libraries.room
-    implementation libraries.eventBus
-    implementation libraries.roomRxjava
-    annotationProcessor libraries.roomAP
+
     //hilt
-    implementation libraries.hilt
-    annotationProcessor libraries.hiltAP
-    implementation libraries.gson
-    //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
-//    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
-    implementation libraries.rxJava
-    implementation libraries.retrofitWithLogger
-    implementation libraries.retrofitRXjavaAdapter
+    implementation("com.google.dagger:hilt-android:2.33-beta")
+    kapt("com.google.dagger:hilt-android-compiler:2.33-beta")
+    1
     //circleimageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.aseem.versatileprogressbar:MultiProgressBar:1.1.0'

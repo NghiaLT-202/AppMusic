@@ -10,43 +10,33 @@
         android:name="com.example.appmusic.ui.main.home.HomeFragment"
         android:label="FragmentHome"
         tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/fragment_detail_music"
+        android:name="com.example.appmusic.ui.main.home.musicfragment.musicdetail.MusicDetailFragment"
+        android:label="FragmentDetailMusic"
+        tools:layout="@layout/fragment_detail_song" />
+
     <fragment
         android:id="@+id/fragment_favorite"
-        android:name="com.example.appmusic.ui.main.home.mymusic.favoritefragment.FavoriteFragment"
+        android:name="com.example.appmusic.ui.main.home.favoritefragment.FavoriteFragment"
         android:label="FragmentFavorite"
         tools:layout="@layout/fragment_favorite" />
     <fragment
         android:id="@+id/fragment_list_music"
-        android:name="com.example.appmusic.ui.main.home.mymusic.playlistfragment.PlaylistFragment"
+        android:name="com.example.appmusic.ui.main.home.playlistfragment.PlaylistFragment"
         android:label="FragmentPlayList"
         tools:layout="@layout/fragment_play_list_music" />
     <fragment
         android:id="@+id/fragment_recently"
-        android:name="com.example.appmusic.ui.main.home.mymusic.mymusicdetail.recentlyfragment.ReccentMyMusicFragment"
+        android:name="com.example.appmusic.ui.main.home.recentlyfragment.ReccentMyMusicFragment"
         android:label="FragmentRecently"
         tools:layout="@layout/fragment_recently" />
     <fragment
         android:id="@+id/fragment_research"
-        android:name="com.example.appmusic.ui.main.home.mymusic.searchfragment.SearchFragment"
+        android:name="com.example.appmusic.ui.main.home.searchfragment.SearchFragment"
         android:label="FragmentResearch"
         tools:layout="@layout/fragment_research" />
-    <fragment
-        android:id="@+id/fragment_detail_music"
-        android:name="com.example.appmusic.ui.main.home.mymusic.mymusicdetail.MusicDetailFragment"
-        android:label="FragmentDetailMusic"
-        tools:layout="@layout/fragment_detail_song" />
-    <fragment
-        android:id="@+id/fragment_mymusic"
-        android:name="com.example.appmusic.ui.main.home.mymusic.MyMusicFragment"
-        android:label="FragmenMymusic"
-        tools:layout="@layout/fragment_mymusic" />
-
-
-    <fragment
-        android:id="@+id/fragment_detail_playlist"
-        android:name="com.example.appmusic.ui.main.home.mymusic.playlistfragment.detailPlayList.DetailPlayListFragment"
-        android:label="FragmenDetailPlaylist"
-        tools:layout="@layout/fragment_detail_play_list" />
 
 
 </navigation>

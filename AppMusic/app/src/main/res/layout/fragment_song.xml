@@ -71,12 +71,12 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.aseem.versatileprogressbar.ProgBar
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:indeterminate="true"
-                app:barType="@drawable/infinity_bar" />
+<!--            <com.aseem.versatileprogressbar.ProgBar-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:indeterminate="true"-->
+<!--                app:barType="@drawable/infinity_bar" />-->
         </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

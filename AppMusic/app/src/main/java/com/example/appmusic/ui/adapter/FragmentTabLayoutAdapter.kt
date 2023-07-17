@@ -4,10 +4,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.appmusic.ui.main.home.mymusic.mymusicdetail.albumfragment.AlbumFragment
-import com.example.appmusic.ui.main.home.mymusic.mymusicdetail.folderfragment.FolderFragment
-import com.example.appmusic.ui.main.home.mymusic.mymusicdetail.musicfragment.MusicFragment
-import com.example.appmusic.ui.main.home.mymusic.mymusicdetail.singerfragment.SingerFragment
+import com.example.appmusic.ui.main.home.HomeFragment
+import com.example.appmusic.ui.main.home.albumfragment.AlbumFragment
+import com.example.appmusic.ui.main.home.folderfragment.FolderFragment
+import com.example.appmusic.ui.main.home.musicfragment.MusicFragment
+import com.example.appmusic.ui.main.home.singerfragment.SingerFragment
 
 class FragmentTabLayoutAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
@@ -16,7 +17,7 @@ class FragmentTabLayoutAdapter(fragmentManager: FragmentManager, lifecycle: Life
         when (position) {
             0 -> {
                 if (musicFragment == null) musicFragment = MusicFragment()
-                return musicFragment!!
+                return musicFragment as MusicFragment
             }
 
             1 -> return SingerFragment()

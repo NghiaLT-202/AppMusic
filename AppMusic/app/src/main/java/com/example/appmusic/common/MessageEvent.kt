@@ -6,7 +6,7 @@ import com.example.appmusic.data.model.PlayList
 class MessageEvent {
     var typeEvent = 0
         private set
-    var stringValue: String? = ""
+    var stringValue = ""
         private set
     var intValue1 = 0
         private set
@@ -16,7 +16,7 @@ class MessageEvent {
     var playList: PlayList? = null
     var action = 0
 
-    constructor(stringValue: String?, stringAction: String?) {
+    constructor(stringValue: String, stringAction: String) {
         this.stringValue = stringValue
         this.stringAction = stringAction
     }
@@ -28,15 +28,14 @@ class MessageEvent {
         this.action = action
     }
 
-    private var musicList: List<Music?>? = null
+    private var musicList: List<Music>? = null
 
-    constructor(stringValue: String?, musicList: List<Music?>?) {
+    constructor(stringValue: String, musicList: List<Music>) {
         this.stringValue = stringValue
         this.musicList = musicList
     }
 
     var isBooleanValue = false
-        private set
 
     constructor(typeEvent: Int, booleanValue: Boolean) {
         this.typeEvent = typeEvent

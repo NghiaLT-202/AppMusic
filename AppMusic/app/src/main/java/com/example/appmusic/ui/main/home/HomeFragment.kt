@@ -1,207 +1,93 @@
 package com.example.appmusic.ui.main.home
 
-import android.animation.ObjectAnimator
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.MediaMetadataRetriever
-import android.os.Build
+import android.graphics.Color
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
-import android.view.animation.LinearInterpolator
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
-import com.example.appmusic.App
 import com.example.appmusic.R
-import com.example.appmusic.common.Constant
-import com.example.appmusic.common.MessageEvent
-import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.FragmentHomeBinding
-import com.example.appmusic.service.MusicService
-import com.example.appmusic.ui.adapter.MenuBottomAdapter
+import com.example.appmusic.ui.adapter.FragmentTabLayoutAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
-import timber.log.Timber
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
-class HomeFragment : BaseBindingFragment<FragmentHomeBinding?, HomeViewModel>() {
+class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
 
     override fun getViewModel(): Class<HomeViewModel> {
         return HomeViewModel::class.java
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.fragment_home
-    }
+    override val layoutId: Int
+        get() = R.layout.fragment_home
+
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        Timber.e("nghialt: onCreatedView")
-        viewpager()
+        initAdapter()
         initListener()
-        initData()
+    }
+
+    private fun initAdapter() {
+        val list = ArrayList<String>()
+        list.add(getString(R.string.song))
+        list.add(getString(R.string.singer))
+        list.add(getString(R.string.album))
+        list.add(getString(R.string.folder))
+        val adapter = FragmentTabLayoutAdapter(
+            childFragmentManager,
+            lifecycle
+        )
+        binding.tabLayout.setTabTextColors(
+            Color.parseColor("#80000000"),
+            Color.parseColor("#000000")
+        )
+        binding.viewpager2.adapter = adapter
+        TabLayoutMediator(
+            binding.tabLayout, binding.viewpager2
+        ) { tab: TabLayout.Tab, position: Int ->
+            tab.text = list[position]
+        }.attach()
+
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Timber.e("nghialt: DEstroyview")
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Timber.e("nghialt: onDetach")
-        EventBus.getDefault().unregister(this)
-    }
 
     private fun initListener() {
-        if (App.Companion.instance.musicCurrent != null) {
-            binding!!.tvNameSong.text = App.Companion.instance.musicCurrent?.musicName
-
-            binding!!.tvNameSinger.text = App.Companion.instance.musicCurrent?.nameSinger
-
-            setImageSong(App.Companion.instance.musicCurrent?.musicFile)
-            val objectAnimator = ObjectAnimator.ofFloat(binding!!.imMusicSong, "rotation", 0f, 360f)
-            objectAnimator.duration = 8000 // Thời gian quay tròn trong 5 giây
-            objectAnimator.repeatCount = ObjectAnimator.INFINITE // Lặp vô hạn
-            objectAnimator.interpolator = LinearInterpolator() // Độ mượt của quay tròn
-            objectAnimator.start()
-        }
-        binding!!.tvNameSong.setOnClickListener {
-            (requireActivity() as MainActivity).navController!!.navigate(
-                R.id.fragment_detail_music
+        binding.tvSearch.setOnClickListener {
+            (requireActivity() as MainActivity).navController?.navigate(
+                R.id.fragment_research
             )
         }
-        binding!!.imPlaySong.setOnClickListener { startService(Constant.STOP_MEDIA_SERVICE) }
-        binding!!.imNextSong.setOnClickListener {
-            binding!!.imPlaySong.setImageResource(R.drawable.icons8_circled_play_72_black)
-            var currentPos = getPosCurrentMusic(App.Companion.instance.musicCurrent)
-            currentPos++
-            if (currentPos > App.Companion.instance.listMusic.size - 1) {
-                currentPos = 0
-            }
-            App.Companion.instance.musicCurrent = App.Companion.instance.listMusic[currentPos]
-            setImageSong(App.Companion.instance.musicCurrent?.musicFile)
-            binding!!.tvNameSong.text = App.Companion.instance.musicCurrent?.musicName
-
-            binding!!.tvNameSinger.text = App.Companion.instance.musicCurrent?.nameSinger
-
-            startService(Constant.CHANGE_MUSIC_SERVICE)
+//
+//        binding?.imMenu?.setOnClickListener { binding?.drawerLayout?.openDrawer(GravityCompat.START) }
+//
+//        binding!!.navView.setNavigationItemSelectedListener { item ->
+//            item.isChecked = true
+//            binding!!.drawerLayout.closeDrawers()
+//            true
+//        }
+        binding.viewFavourite.setOnClickListener {
+            (requireActivity() as MainActivity).navController?.navigate(
+                R.id.fragment_favorite
+            )
         }
+        binding.viewListPlay.setOnClickListener {
+            (requireActivity() as MainActivity).navController?.navigate(
+                R.id.fragment_list_music
+            )
+        }
+        binding.viewRecent.setOnClickListener {
+            (requireActivity() as MainActivity).navController?.navigate(
+                R.id.fragment_recently
+            )
+        }
+
+
     }
 
-    private fun getPosCurrentMusic(music: Music?): Int {
-        for (i in App.Companion.instance.listMusic.indices) {
-            if (App.Companion.instance.listMusic[i]
-                    ?.musicFile == music?.musicFile
-            ) {
-                return i
-            }
-        }
-        return -1
-    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(messageEvent: MessageEvent) {
-        when (messageEvent.typeEvent) {
-            Constant.CHANGE_MUSIC_CURRENT -> binding!!.imPlaySong.setImageResource(R.drawable.icons8_pause_button_72_black)
-            Constant.START_MEDIA -> {
-                Timber.e("tunglt: START_MEDIA")
-                binding!!.imPlaySong.setImageResource(R.drawable.icons8_pause_button_72_black)
-            }
-
-            Constant.STOP_MEDIA -> {
-                Timber.e("nghialt: STOP_MEDIA")
-                binding!!.imPlaySong.setImageResource(R.drawable.icons8_circled_play_72_black)
-            }
-        }
-    }
-
-    private fun initData() {
-        mainViewModel.isStartMedia.observe(viewLifecycleOwner) { aBoolean ->
-            if (aBoolean != null) {
-                if (aBoolean) {
-                    binding!!.imPlaySong.setImageResource(R.drawable.icons8_pause_button_72_black)
-                } else {
-                    binding!!.imPlaySong.setImageResource(R.drawable.icons8_circled_play_72_black)
-                }
-                mainViewModel!!.isStartMedia.postValue(null)
-            }
-        }
-    }
-
-    fun viewpager() {
-        val menuBottomAdapter = MenuBottomAdapter(childFragmentManager, lifecycle)
-        binding!!.viewpager2.adapter = menuBottomAdapter
-        binding!!.viewpager2.offscreenPageLimit = 2
-        //tắt scroll viewpager
-        binding!!.viewpager2.isUserInputEnabled = false
-        binding!!.btnMenu.setOnItemSelectedListener { item: MenuItem ->
-            when (item.itemId) {
-                R.id.fragment_myMusic -> binding!!.viewpager2.currentItem = 0
-                R.id.fragment_homeMusic -> binding!!.viewpager2.currentItem = 1
-            }
-            true
-        }
-    }
-
-    private fun setImageSong(path: String?) {
-        if (App.Companion.instance.musicCurrent?.imageSong != null) {
-            try {
-                MediaMetadataRetriever().use { mmr ->
-                    mmr.setDataSource(path)
-                    val data = mmr.embeddedPicture
-                    val bitmap = BitmapFactory.decodeByteArray(data, 0, data!!.size)
-                    binding!!.imMusicSong.setImageBitmap(bitmap)
-                }
-            } catch (e: Exception) {
-                throw RuntimeException(e)
-            }
-        } else {
-            Glide.with(requireContext()).asBitmap().load(R.drawable.bg_music)
-                .listener(object : RequestListener<Bitmap?> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any,
-                        target: Target<Bitmap?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: Bitmap?,
-                        model: Any,
-                        target: Target<Bitmap?>,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        binding!!.imMusicSong.setImageBitmap(resource)
-                        //                    Blurry.with(requireContext()).radius(16).from(resource).into(binding.imMusicSong);
-                        return true
-                    }
-                }).submit()
-        }
-    }
-
-    private fun startService(action: String?) {
-        val intent = Intent(requireActivity(), MusicService::class.java)
-        intent.action = action
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            requireActivity().startForegroundService(intent)
-        } else {
-            requireActivity().startService(intent)
-        }
-    }
 }

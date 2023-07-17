@@ -4,15 +4,13 @@ import com.example.appmusic.data.model.ItemRecent
 import com.example.appmusic.data.model.Music
 
 class CommonEvent {
-    val typeEvent: Int
-    var music: Music? = null
-        private set
-    var reccently: ItemRecent? = null
-        private set
+    private val typeEvent: Int
+    private var music: Music? = null
+    private var itemRecent: ItemRecent? = null
 
     constructor(typeEvent: Int, itemRecent: ItemRecent?) {
         this.typeEvent = typeEvent
-        reccently = itemRecent
+        this.itemRecent = itemRecent
     }
 
     constructor(typeEvent: Int, music: Music?) {
