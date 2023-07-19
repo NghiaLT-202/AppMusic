@@ -3,6 +3,7 @@ package com.example.appmusic.ui.main.home
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.GravityCompat
 import com.example.appmusic.R
 import com.example.appmusic.databinding.FragmentHomeBinding
 import com.example.appmusic.ui.adapter.FragmentTabLayoutAdapter
@@ -62,14 +63,13 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 R.id.fragment_research
             )
         }
-//
-//        binding?.imMenu?.setOnClickListener { binding?.drawerLayout?.openDrawer(GravityCompat.START) }
-//
-//        binding!!.navView.setNavigationItemSelectedListener { item ->
-//            item.isChecked = true
-//            binding!!.drawerLayout.closeDrawers()
-//            true
-//        }
+
+        binding.imMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
+        binding.navView.setNavigationItemSelectedListener { item ->
+            item.isChecked = true
+            binding.drawerLayout.closeDrawers()
+            true
+        }
         binding.viewFavourite.setOnClickListener {
             (requireActivity() as MainActivity).navController?.navigate(
                 R.id.fragment_favorite

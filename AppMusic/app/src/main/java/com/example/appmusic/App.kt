@@ -9,7 +9,7 @@ import timber.log.Timber
 @HiltAndroidApp
 class App : Application() {
      lateinit var musicCurrent: Music
-     val listMusic: MutableList<Music> = mutableListOf()
+     var listMusic: MutableList<Music> = mutableListOf()
 
 
     init {

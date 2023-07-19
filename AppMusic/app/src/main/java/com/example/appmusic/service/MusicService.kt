@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
+import android.media.MediaPlayer.OnCompletionListener
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
@@ -11,18 +12,21 @@ import android.widget.RemoteViews
 import com.example.appmusic.App
 import com.example.appmusic.R
 import com.example.appmusic.common.Constant
+import com.example.appmusic.common.Constant.CHANGE_MUSIC_CURRENT
+import com.example.appmusic.common.MessageEvent
 import com.example.appmusic.ui.main.MainActivity
+import org.greenrobot.eventbus.EventBus
 import timber.log.Timber
 
 class MusicService : Service() {
-    var mediaPlayer: MediaPlayer? = null
+    var mediaPlayer: MediaPlayer = MediaPlayer()
     override fun onBind(intent: Intent): IBinder? {
         throw UnsupportedOperationException("Not yet implemented")
     }
 
     override fun onCreate() {
         super.onCreate()
-        notification()
+//        notification()
     }
 
     override fun onUnbind(intent: Intent): Boolean {
@@ -30,30 +34,31 @@ class MusicService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        notification()
-        if (intent != null && intent.action != null) {
+//        notification()
+        if (intent.action != null) {
             when (intent.action) {
                 Constant.CHANGE_MUSIC_SERVICE, Constant.START_MEDIA_SERVICE -> {
                     Timber.e("nghialt: CHANGE_MUSIC_SERVICE")
                     startMedia()
                 }
 
-                Constant.SEEK_TO_MEDIA_SERVICE -> if (mediaPlayer != null) {
-                    mediaPlayer!!.seekTo(intent.getIntExtra("SEEK_TO", 0))
-                }
+                Constant.SEEK_TO_MEDIA_SERVICE -> mediaPlayer.seekTo(
+                    intent.getIntExtra(
+                        "SEEK_TO",
+                        0
+                    )
+                )
 
                 Constant.FAVOURITE -> Timber.e("nghialt: FAVOURITE")
                 Constant.STOP_MEDIA_SERVICE -> {
                     Timber.e("nghialt: STOP_MEDIA_SERVICE")
-                    if (mediaPlayer != null) {
-                        if (mediaPlayer!!.isPlaying) {
-                            mediaPlayer!!.pause()
+                    if (mediaPlayer.isPlaying) {
+                        mediaPlayer.pause()
 
-//                            EventBus.getDefault().post(new MessageEvent(Constant.STOP_MEDIA, false));
-                        } else {
-                            mediaPlayer!!.start()
-                            //                            EventBus.getDefault().post(new MessageEvent(Constant.START_MEDIA, true));
-                        }
+                        EventBus.getDefault().post(MessageEvent(Constant.STOP_MEDIA, false))
+                    } else {
+                        mediaPlayer.start()
+                        EventBus.getDefault().post(MessageEvent(Constant.START_MEDIA, true))
                     }
                 }
             }
@@ -62,25 +67,24 @@ class MusicService : Service() {
     }
 
     private fun startMedia() {
-        if (mediaPlayer != null) {
-            if (mediaPlayer!!.isPlaying) {
-                mediaPlayer!!.stop()
-                mediaPlayer!!.release()
-                mediaPlayer = null
-            }
-
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+            mediaPlayer.release()
+//                mediaPlayer = null
         }
-        mediaPlayer = MediaPlayer.create(applicationContext, Uri.parse(App.instance.musicCurrent.musicFile))
-        mediaPlayer!!.start()
-
-        //
-//        EventBus.getDefault().post(new MessageEvent(CHANGE_MUSIC_CURRENT, mediaPlayer.getDuration(), mediaPlayer.getCurrentPosition()));
-//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mediaPlayer) {
-//                EventBus.getDefault().post(new MessageEvent(Constant.COMPLETE_PLAY_MUSIC));
-//            }
-//        });
+        mediaPlayer =
+            MediaPlayer.create(applicationContext, Uri.parse(App.instance.musicCurrent.musicFile))
+        EventBus.getDefault().post(
+            MessageEvent(
+                CHANGE_MUSIC_CURRENT,
+                mediaPlayer.duration,
+                mediaPlayer.currentPosition
+            )
+        )
+        mediaPlayer.setOnCompletionListener(OnCompletionListener {
+            EventBus.getDefault().post(MessageEvent(Constant.COMPLETE_PLAY_MUSIC))
+        })
+        mediaPlayer.start()
     }
 
     private fun notification() {
@@ -99,7 +103,7 @@ class MusicService : Service() {
             contentView.setTextViewText(R.id.nameSong, App.instance.musicCurrent.musicName)
             contentView.setTextViewText(R.id.nameSinger, App.instance.musicCurrent.nameSinger)
             if (mediaPlayer != null) {
-                if (mediaPlayer!!.isPlaying) {
+                if (mediaPlayer.isPlaying) {
                     contentView.setImageViewResource(R.id.im_playSong, R.drawable.baseline_pause_24)
                 }
                 if (!App.instance.musicCurrent.checkFavorite) {
@@ -123,7 +127,7 @@ class MusicService : Service() {
 //        contentView.setOnClickPendingIntent(R.id.im_favorite, getPendingSelfIntent(getApplicationContext(), Constant.PLAY_SONG));
 //        contentView.setOnClickPendingIntent(R.id.im_nextSong, getPendingSelfIntent(getApplicationContext(), Constant.NEXT_SONG));
 //        contentView.setOnClickPendingIntent(R.id.im_backSong, getPendingSelfIntent(getApplicationContext(), Constant.BACK_SONG));
-
+//
 //        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 //        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? getNotificationChannel(Objects.requireNonNull(notificationManager)) : "");
 //        notificationBuilder.setContent(contentView);
@@ -145,7 +149,7 @@ class MusicService : Service() {
 //        return PendingIntent.getBroadcast(context, 0, intent, (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) ? PendingIntent.FLAG_MUTABLE : PendingIntent.FLAG_UPDATE_CURRENT);
 //    }
 
-//    @RequiresApi(Build.VERSION_CODES.O)
+        //    @RequiresApi(Build.VERSION_CODES.O)
 //    private String getNotificationChannel(NotificationManager notificationManager) {
 //        String channelId = "app_active_channel";
 //        NotificationChannel channel = new NotificationChannel(channelId, "App Active", NotificationManager.IMPORTANCE_HIGH);
@@ -154,13 +158,11 @@ class MusicService : Service() {
 //        notificationManager.createNotificationChannel(channel);
 //        return channelId;
 //    }
-
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        mediaPlayer.stop();
-//        mediaPlayer.release();
-//    }
+        @Override
+        fun onDestroy() {
+            super.onDestroy()
+            mediaPlayer.stop()
+            mediaPlayer.release()
+        }
     }
 }

@@ -15,6 +15,7 @@ import com.example.appmusic.databinding.FragmentSongBinding
 import com.example.appmusic.ui.adapter.MusicAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
+import com.example.appmusic.ui.main.home.musicfragment.bottomsheetsort.BottomSheetSortFragment
 import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetListFuntionFrag
 import java.util.Random
 
@@ -69,25 +70,25 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>()
     }
 
     private fun initListener() {
-//        binding.imSortSong.setOnClickListener { v ->
-//            val bottomSheetSortFragment = BottomSheetSortFragment()
-//            bottomSheetSortFragment.setMusicList(musicList)
-//            bottomSheetSortFragment.show(childFragmentManager, null)
-//            musicAdapter.setArrayList(bottomSheetSortFragment.getMusicList())
-//        }
-//        binding.imPlay.setOnClickListener {
-//            randomListMusic(musicList)
-//            App.getInstance().setListMusic(musicList)
-//            App.getInstance().setMusicCurrent(musicList[1])
-//            (requireActivity() as MainActivity).navController.navigate(
-//                R.id.fragment_detail_music,
-//                null
-//            )
-//        }
+        binding.imSortSong.setOnClickListener { v ->
+            val bottomSheetSortFragment = BottomSheetSortFragment()
+            bottomSheetSortFragment.musicList = (musicList)
+            bottomSheetSortFragment.show(childFragmentManager, null)
+            musicAdapter?.arrayList = (bottomSheetSortFragment.musicList)
+        }
+        binding.imPlay.setOnClickListener {
+            randomListMusic(musicList)
+            App.instance.listMusic = (musicList)
+            App.instance.musicCurrent = (musicList[1])
+            (requireActivity() as MainActivity).navController?.navigate(
+                R.id.fragment_detail_music,
+                null
+            )
+        }
 
     }
 
-    fun randomListMusic(musicList: MutableList<Music?>): List<Music?> {
+    fun randomListMusic(musicList: MutableList<Music>): MutableList<Music> {
         val rand = Random()
         for (i in musicList.indices) {
             val randomNum = rand.nextInt(musicList.size - 1)

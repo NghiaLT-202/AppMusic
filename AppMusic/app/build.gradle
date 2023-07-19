@@ -83,11 +83,12 @@ dependencies {
     //hilt
     implementation("com.google.dagger:hilt-android:2.33-beta")
     kapt("com.google.dagger:hilt-android-compiler:2.33-beta")
-    1
+
     //circleimageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.aseem.versatileprogressbar:MultiProgressBar:1.1.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-
+//eventbus
+    implementation 'org.greenrobot:eventbus:3.2.0'
 
 }

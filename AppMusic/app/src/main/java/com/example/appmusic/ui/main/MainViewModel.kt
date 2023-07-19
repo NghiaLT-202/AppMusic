@@ -1,7 +1,6 @@
 package com.example.appmusic.ui.main
 
 import android.content.Context
-import androidx.annotation.NonNull
 import androidx.lifecycle.MutableLiveData
 import com.example.appmusic.data.MusicRepository
 import com.example.appmusic.data.model.Music
@@ -12,11 +11,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(var musicRepository: MusicRepository): BaseViewModel() {
     var listAllMusicDevice = MutableLiveData<MutableList<Music>>()
+    var isStartMedia = MutableLiveData<Boolean>()
 
 
     fun getAllMusicDetail(context: Context) {
-        if (listAllMusicDevice.getValue() != null) {
-            if (listAllMusicDevice.getValue()!!.size > 0) return
+        if (listAllMusicDevice.value != null) {
+            if (listAllMusicDevice.value!!.size > 0) return
         }
         listAllMusicDevice.postValue( musicRepository.getMusicDevice(context))
 
