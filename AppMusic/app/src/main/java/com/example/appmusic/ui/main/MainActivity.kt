@@ -6,6 +6,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.appmusic.R
 import com.example.appmusic.databinding.ActivityMainBinding
 import com.example.appmusic.ui.base.BaseBindingActivity
+import timber.log.Timber
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
     var navHostFragment: NavHostFragment? = null
@@ -22,6 +23,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     override fun setupData() {
+        viewModel.getAllMusicDetail(this)
+        Timber.e("ltnghia"+viewModel.listAllMusicDevice.value?.size)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

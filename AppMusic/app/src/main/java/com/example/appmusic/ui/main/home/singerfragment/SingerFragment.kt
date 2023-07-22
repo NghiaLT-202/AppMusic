@@ -40,8 +40,7 @@ class SingerFragment : BaseBindingFragment<FragmentSingerBinding, SingerViewMode
         mainViewModel.getAllMusicDetail(requireContext())
 
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) {
-            Timber.e("ltnghia"+it.size)
-            Timber.e("ltnghia")
+
             singerAdapter?.lisSing=it
         }
     }

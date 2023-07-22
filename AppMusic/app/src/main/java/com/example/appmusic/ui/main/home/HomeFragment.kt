@@ -59,9 +59,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initListener() {
         binding.tvSearch.setOnClickListener {
-            (requireActivity() as MainActivity).navController?.navigate(
-                R.id.fragment_research
-            )
+            navigateFragment(R.id.fragment_research)
         }
 
         binding.imMenu.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
@@ -71,19 +69,13 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             true
         }
         binding.viewFavourite.setOnClickListener {
-            (requireActivity() as MainActivity).navController?.navigate(
-                R.id.fragment_favorite
-            )
+            navigateFragment(R.id.fragment_favorite)
         }
         binding.viewListPlay.setOnClickListener {
-            (requireActivity() as MainActivity).navController?.navigate(
-                R.id.fragment_list_music
-            )
+            navigateFragment(R.id.fragment_list_music)
         }
         binding.viewRecent.setOnClickListener {
-            (requireActivity() as MainActivity).navController?.navigate(
-                R.id.fragment_recently
-            )
+            navigateFragment(R.id.fragment_recently)
         }
 
 

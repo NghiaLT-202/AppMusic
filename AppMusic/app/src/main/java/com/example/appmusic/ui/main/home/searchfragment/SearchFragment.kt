@@ -15,7 +15,7 @@ import com.example.appmusic.ui.main.MainActivity
 import java.util.Locale
 
 class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewModel>() {
-    private val musicList: MutableList<Music> = ArrayList()
+    private val musicList: MutableList<Music> = mutableListOf()
     var researchAdapter: ResearchAdapter? = null
     override val layoutId: Int
         get() = R.layout.fragment_research
@@ -43,7 +43,7 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
                         listSearch.add(musicList[i])
                     }
                 }
-                researchAdapter!!.arrayList = listSearch
+                researchAdapter?.arrayList = listSearch
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -56,17 +56,17 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
         researchAdapter?.setiBaseClickAdapter(object : IBaseClickAdapter {
             override fun clickItem(position: Int) {
                 App.instance.musicCurrent = (musicList[position])
-                (requireActivity() as MainActivity).navController?.navigate(R.id.fragment_detail_music)
+                navigateFragment(R.id.fragment_detail_music)
             }
         })
     }
 
     private fun initData() {
-        viewModel.getAllMusicSearch(context)
+//        viewModel.getAllMusicSearch(context)
         viewModel.listMusic.observe(viewLifecycleOwner) {
             musicList.clear()
             musicList.addAll(it)
-            researchAdapter?.arrayList = musicList
+            researchAdapter?.arrayList = it
         }
     }
 }

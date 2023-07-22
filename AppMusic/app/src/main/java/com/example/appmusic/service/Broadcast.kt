@@ -21,7 +21,6 @@ class Broadcast : BroadcastReceiver() {
             }
 
             Constant.NEXT_SONG -> {
-                //                    YoutubeService.ACTIVITY_SERVICE..setImageViewResource(R.id.im_playSong, R.drawable.baseline_pause_24);
                 var currentPos = getPosCurrentMusic(App.instance.musicCurrent)
                 currentPos++
                 if (currentPos > App.instance.listMusic.size - 1) {

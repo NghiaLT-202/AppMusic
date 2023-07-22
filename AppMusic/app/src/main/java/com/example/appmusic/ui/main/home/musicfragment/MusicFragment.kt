@@ -18,6 +18,7 @@ import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.ui.main.home.musicfragment.bottomsheetsort.BottomSheetSortFragment
 import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetListFuntionFrag
 import java.util.Random
+import kotlin.random.Random.Default.nextInt
 
 class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>() {
     private val musicList: MutableList<Music> = mutableListOf()
@@ -56,9 +57,7 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>()
         initListener()
         initData()
     }
-
     private fun initData() {
-
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { music ->
             if (music != null) {
                 musicList.clear()
@@ -68,22 +67,19 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>()
             }
         }
     }
-
     private fun initListener() {
         binding.imSortSong.setOnClickListener { v ->
-            val bottomSheetSortFragment = BottomSheetSortFragment()
-            bottomSheetSortFragment.musicList = (musicList)
-            bottomSheetSortFragment.show(childFragmentManager, null)
-            musicAdapter?.arrayList = (bottomSheetSortFragment.musicList)
+            BottomSheetSortFragment().apply {
+              musicList = (musicList)
+               show(childFragmentManager, null)
+                musicAdapter?.arrayList = musicList
+            }
         }
         binding.imPlay.setOnClickListener {
             randomListMusic(musicList)
             App.instance.listMusic = (musicList)
             App.instance.musicCurrent = (musicList[1])
-            (requireActivity() as MainActivity).navController?.navigate(
-                R.id.fragment_detail_music,
-                null
-            )
+            navigateFragment( R.id.fragment_detail_music)
         }
 
     }
@@ -96,25 +92,27 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>()
         }
         return musicList
     }
-
     private fun initAdapter() {
         musicAdapter = MusicAdapter()
         binding.rcMusic.adapter = musicAdapter
         musicAdapter?.setIclickMusic(object : MusicAdapter.IclickMusic {
             override fun clickItem(position: Int) {
                 App.instance.musicCurrent = (musicList[position])
-                val bundle = Bundle()
-                bundle.putBoolean(Constant.RUN_NEW_MUSIC, true)
-                (requireActivity() as MainActivity).navController?.navigate(
-                    R.id.fragment_detail_music,
-                    bundle
-                )
-            }
+               Bundle().apply {
+                  putBoolean(Constant.RUN_NEW_MUSIC, true)
+                   (requireActivity() as MainActivity).navController?.navigate(
+                       R.id.fragment_detail_music,
+                       this
+                   )
+               }
 
+            }
             override fun clickMenu(position: Int) {
-                val bottomSheetFragment = BottomSheetListFuntionFrag()
-                bottomSheetFragment.music = musicList[position]
-                bottomSheetFragment.show(childFragmentManager, null)
+                BottomSheetListFuntionFrag().apply {
+                    music = musicList[position]
+                    show(childFragmentManager, null)
+                }
+
             }
         })
 

@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
+import com.example.appmusic.R
+import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.ui.main.MainViewModel
 
 abstract class BaseBindingFragment<B : ViewDataBinding, T : BaseViewModel> : BaseFragment() {
@@ -47,5 +49,10 @@ abstract class BaseBindingFragment<B : ViewDataBinding, T : BaseViewModel> : Bas
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onCreatedView(view, savedInstanceState)
+    }
+    fun navigateFragment(id:Int){
+        (requireActivity() as MainActivity).navController?.navigate(
+            id
+        )
     }
 }
