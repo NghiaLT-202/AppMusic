@@ -28,31 +28,26 @@ import java.util.Objects
 class MusicService : Service() {
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     override fun onBind(intent: Intent): IBinder? {
-        throw UnsupportedOperationException("Not yet implemented")
+        return null
     }
 
     override fun onCreate() {
         super.onCreate()
-//        notification()
+        notification()
     }
 
-    override fun onUnbind(intent: Intent): Boolean {
-        return super.onUnbind(intent)
-    }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-//        notification()
-        if (intent.action != null) {
-            when (intent.action) {
+        notification()
+        intent.action?.let {
+            when (it) {
                 Constant.CHANGE_MUSIC_SERVICE, Constant.START_MEDIA_SERVICE -> {
-                    Timber.e("nghialt: CHANGE_MUSIC_SERVICE")
                     startMedia()
                 }
 
                 Constant.SEEK_TO_MEDIA_SERVICE -> mediaPlayer.seekTo(
                     intent.getIntExtra(
-                        "SEEK_TO",
-                        0
+                        "SEEK_TO", 0
                     )
                 )
 
@@ -61,7 +56,6 @@ class MusicService : Service() {
                     Timber.e("nghialt: STOP_MEDIA_SERVICE")
                     if (mediaPlayer.isPlaying) {
                         mediaPlayer.pause()
-
                         EventBus.getDefault().post(MessageEvent(Constant.STOP_MEDIA, false))
                     } else {
                         mediaPlayer.start()
@@ -102,49 +96,51 @@ class MusicService : Service() {
             notificationIntent,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val contentView = RemoteViews(packageName, R.layout.notification_music)
-        contentView.setImageViewResource(R.id.im_account, R.mipmap.ic_launcher)
-        contentView.setImageViewResource(R.id.backgroud, R.drawable.bg_music)
-        contentView.setTextViewText(R.id.nameSong, App.instance.musicCurrent.musicName)
-        contentView.setTextViewText(R.id.nameSinger, App.instance.musicCurrent.nameSinger)
-        if (mediaPlayer.isPlaying) {
-            contentView.setImageViewResource(R.id.im_playSong, R.drawable.baseline_pause_24)
+        val contentView = RemoteViews(packageName, R.layout.notification_music).apply {
+            setImageViewResource(R.id.im_account, R.mipmap.ic_launcher)
+            setImageViewResource(R.id.backgroud, R.drawable.bg_music)
+            setTextViewText(R.id.nameSong, App.instance.musicCurrent.musicName)
+            setTextViewText(R.id.nameSinger, App.instance.musicCurrent.nameSinger)
+            if (mediaPlayer.isPlaying) {
+               setImageViewResource(R.id.im_playSong, R.drawable.baseline_pause_24)
+            }
+            if (!App.instance.musicCurrent.checkFavorite) {
+               setImageViewResource(
+                    R.id.im_favorite,
+                    R.drawable.ic_baseline_favorite_border_24
+                )
+            } else {
+               setImageViewResource(
+                    R.id.im_favorite,
+                    R.drawable.ic_baseline_favorite_24_red
+                )
+            }
+
+
+            setOnClickPendingIntent(
+                R.id.im_playSong, getPendingSelfIntent(
+                    applicationContext, Constant.PLAY_SONG
+                )
+            )
+
+
+           setOnClickPendingIntent(
+                R.id.im_favorite, getPendingSelfIntent(
+                    applicationContext, Constant.PLAY_SONG
+                )
+            )
+            setOnClickPendingIntent(
+                R.id.im_nextSong, getPendingSelfIntent(
+                    applicationContext, Constant.NEXT_SONG
+                )
+            )
+           setOnClickPendingIntent(
+                R.id.im_backSong, getPendingSelfIntent(
+                    applicationContext, Constant.BACK_SONG
+                )
+            )
         }
-        if (!App.instance.musicCurrent.checkFavorite) {
-            contentView.setImageViewResource(
-                R.id.im_favorite,
-                R.drawable.ic_baseline_favorite_border_24
-            )
-        } else {
-            contentView.setImageViewResource(
-                R.id.im_favorite,
-                R.drawable.ic_baseline_favorite_24_red
-            )
-        }
 
-
-        contentView.setOnClickPendingIntent(
-            R.id.im_playSong, getPendingSelfIntent(
-                applicationContext, Constant.PLAY_SONG
-            )
-        )
-
-
-        contentView.setOnClickPendingIntent(
-            R.id.im_favorite, getPendingSelfIntent(
-                applicationContext, Constant.PLAY_SONG
-            )
-        )
-        contentView.setOnClickPendingIntent(
-            R.id.im_nextSong, getPendingSelfIntent(
-                applicationContext, Constant.NEXT_SONG
-            )
-        )
-        contentView.setOnClickPendingIntent(
-            R.id.im_backSong, getPendingSelfIntent(
-                applicationContext, Constant.BACK_SONG
-            )
-        )
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val notificationBuilder = NotificationCompat.Builder(
@@ -175,6 +171,7 @@ class MusicService : Service() {
         notificationManager.createNotificationChannel(channel)
         return channelId
     }
+
     protected fun getPendingSelfIntent(context: Context, action: String): PendingIntent? {
         val intent = Intent(context, Broadcast::class.java)
         intent.action = action

@@ -2,10 +2,13 @@ package com.example.appmusic.ui.main
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.appmusic.data.MusicRepository
 import com.example.appmusic.data.model.Music
 import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,12 +18,9 @@ class MainViewModel @Inject constructor(var musicRepository: MusicRepository): B
 
 
     fun getAllMusicDetail(context: Context) {
-        if (listAllMusicDevice.value != null) {
-            if (listAllMusicDevice.value!!.size > 0) return
+        viewModelScope.launch(Dispatchers.IO) {
+            listAllMusicDevice.postValue( musicRepository.getMusicDevice(context))
         }
-        listAllMusicDevice.postValue( musicRepository.getMusicDevice(context))
-
-
     }
 
 }

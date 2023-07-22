@@ -31,14 +31,9 @@ class SingerFragment : BaseBindingFragment<FragmentSingerBinding, SingerViewMode
     private fun initAdapter() {
         singerAdapter = SingerAdapter()
         binding.rcSinger.adapter = singerAdapter
-//        singerAdapter?.setiBaseClickAdapter {
-//
-//        }
     }
 
     fun initData() {
-        mainViewModel.getAllMusicDetail(requireContext())
-
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) {
 
             singerAdapter?.lisSing=it

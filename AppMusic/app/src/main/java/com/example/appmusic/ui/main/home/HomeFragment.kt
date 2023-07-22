@@ -52,10 +52,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
 
     private fun initListener() {
         binding.tvSearch.setOnClickListener {

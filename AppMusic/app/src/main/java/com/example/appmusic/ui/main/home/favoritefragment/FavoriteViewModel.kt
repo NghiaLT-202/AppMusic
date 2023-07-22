@@ -12,7 +12,7 @@ class FavoriteViewModel @Inject constructor(private val musicRepository: MusicRe
     BaseViewModel() {
     var listFavourite = MutableLiveData<MutableList<Music>>()
     fun getAllMusicFavourite(checkFavorite: Boolean) {
-        listFavourite.postValue(musicRepository.getAllMusicFavourite(checkFavorite))
+        listFavourite.postValue(musicRepository.getAllMusicFavourite())
 
 //        listFavourite.postValue(musicRepository.getAllMusicFavourite(database.musicDao()));
 //        musicRepository.getAllMusicFavourite(database.musicDao()).subscribe(new SingleObserver<List<Music>>() {

@@ -18,10 +18,8 @@ import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.ui.main.home.musicfragment.bottomsheetsort.BottomSheetSortFragment
 import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetListFuntionFrag
 import java.util.Random
-import kotlin.random.Random.Default.nextInt
 
-class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>() {
-    private val musicList: MutableList<Music> = mutableListOf()
+class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
     var musicAdapter: MusicAdapter? = null
 
 
@@ -32,8 +30,8 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>()
             }
         }
 
-    override fun getViewModel(): Class<MusicViewModel> {
-        return MusicViewModel::class.java
+    override fun getViewModel(): Class<SongViewModel> {
+        return SongViewModel::class.java
     }
 
     override val layoutId: Int
@@ -41,15 +39,12 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>()
 
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            if (musicList.size == 0) {
-                mainViewModel.getAllMusicDetail(requireContext())
-            }
+            mainViewModel.getAllMusicDetail(requireContext())
         } else {
             requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
@@ -57,29 +52,31 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>()
         initListener()
         initData()
     }
+
     private fun initData() {
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { music ->
             if (music != null) {
-                musicList.clear()
-                musicList.addAll(music)
+                App.instance.listMusic.clear()
+                App.instance.listMusic.addAll(music)
                 musicAdapter?.arrayList = (music)
                 binding.loading.visibility = View.GONE
             }
         }
     }
+
     private fun initListener() {
         binding.imSortSong.setOnClickListener { v ->
             BottomSheetSortFragment().apply {
-              musicList = (musicList)
-               show(childFragmentManager, null)
+                musicList = (musicList)
+                show(childFragmentManager, null)
                 musicAdapter?.arrayList = musicList
             }
         }
         binding.imPlay.setOnClickListener {
-            randomListMusic(musicList)
-            App.instance.listMusic = (musicList)
-            App.instance.musicCurrent = (musicList[1])
-            navigateFragment( R.id.fragment_detail_music)
+            randomListMusic(App.instance.listMusic)
+            App.instance.listMusic = (App.instance.listMusic)
+            App.instance.musicCurrent = (App.instance.listMusic[1])
+            navigateFragment(R.id.fragment_detail_music)
         }
 
     }
@@ -92,24 +89,26 @@ class MusicFragment : BaseBindingFragment<FragmentSongBinding, MusicViewModel>()
         }
         return musicList
     }
+
     private fun initAdapter() {
         musicAdapter = MusicAdapter()
         binding.rcMusic.adapter = musicAdapter
         musicAdapter?.setIclickMusic(object : MusicAdapter.IclickMusic {
             override fun clickItem(position: Int) {
-                App.instance.musicCurrent = (musicList[position])
-               Bundle().apply {
-                  putBoolean(Constant.RUN_NEW_MUSIC, true)
-                   (requireActivity() as MainActivity).navController?.navigate(
-                       R.id.fragment_detail_music,
-                       this
-                   )
-               }
+                App.instance.musicCurrent = (App.instance.listMusic[position])
+                Bundle().apply {
+                    putBoolean(Constant.RUN_NEW_MUSIC, true)
+                    (requireActivity() as MainActivity).navController?.navigate(
+                        R.id.fragment_detail_music,
+                        this
+                    )
+                }
 
             }
+
             override fun clickMenu(position: Int) {
                 BottomSheetListFuntionFrag().apply {
-                    music = musicList[position]
+                    music = App.instance.listMusic[position]
                     show(childFragmentManager, null)
                 }
 

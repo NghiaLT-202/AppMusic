@@ -40,7 +40,7 @@ class MusicAdapter : BaseBindingAdapter<ItemMusicBinding>() {
     }
 
     override val layoutIdItem: Int
-        protected get() = R.layout.item_music
+        get() = R.layout.item_music
     override val sizeItem: Int
         get() = arrayList.size
 

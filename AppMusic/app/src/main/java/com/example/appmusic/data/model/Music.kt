@@ -9,14 +9,15 @@ import androidx.room.PrimaryKey
 class Music {
     @PrimaryKey(autoGenerate = true)
     val id = 0
-    var musicFile: String? = null
-    var musicName: String? = null
-    var nameSinger: String? = null
-    var nameAlbum: String? = null
+    var musicFile: String = ""
+    var musicName: String = ""
+    var nameSinger: String = ""
+    var nameAlbum: String = ""
 
     @Ignore
     var imageSong: Bitmap? = null
+
     var checkFavorite = false
-    var namePlayList: String? = null
-    var date: String? = null
+    var namePlayList: String = ""
+    var date: String = ""
 }

@@ -23,19 +23,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     override fun setupData() {
-        viewModel.getAllMusicDetail(this)
-        Timber.e("ltnghia"+viewModel.listAllMusicDevice.value?.size)
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 
     override fun getViewModel(): Class<MainViewModel> {
         return MainViewModel::class.java

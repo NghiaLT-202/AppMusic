@@ -31,15 +31,14 @@ class MusicRepository @Inject constructor() {
             arrayOf("%mp3"),
             null
         )?.use { cursor ->
+            val columnDuration = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION)
+            val columnData = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA)
+            val columnAlbum = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM)
             while (cursor.moveToNext()) {
-                val column = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION)
-                val duration = if (column >= 0) cursor.getLong(column) else -1
-
+                val duration = if (columnDuration >= 0) cursor.getLong(columnDuration) else -1
                 if (duration > 0) {
-                    val path =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.DATA))
-                    val album =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ALBUM))
+                    val path = cursor.getString(columnData)
+                    val album = cursor.getString(columnAlbum)
                     val artist =
                         cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ARTIST))
                     val dateTime =
@@ -58,13 +57,12 @@ class MusicRepository @Inject constructor() {
                                 nameAlbum = album
                                 imageSong = null
                                 checkFavorite = false
-                                namePlayList = null
+                                namePlayList = ""
                                 date = dateTime
                             }
-                            if (data != null) {
-                                music.imageSong = BitmapFactory.decodeByteArray(data, 0, data.size)
+                            data?.let {
+                                music.imageSong = BitmapFactory.decodeByteArray(it, 0, it.size)
                             }
-
                             musicList.add(music)
                         }
                     } catch (e: Exception) {
@@ -74,12 +72,13 @@ class MusicRepository @Inject constructor() {
             }
         }
         musicList.reverse()
+
+        Timber.e("tunglt: musicList: " + musicList.size)
         return musicList
     }
-    fun getAllMusicFavourite(checkFavorite: Boolean): MutableList<Music> {
-        val musicList = mutableListOf<Music>()
 
-//        return database.musicDao().getAllFavouriteMusic(checkFavorite)
+    fun getAllMusicFavourite(): MutableList<Music> {
+        val musicList = mutableListOf<Music>()
         return musicList
     }
 }

@@ -1,5 +1,6 @@
 package com.example.appmusic.ui.main.home.musicfragment.musicdetail
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.PorterDuff
@@ -17,7 +18,6 @@ import com.example.appmusic.R
 import com.example.appmusic.common.Constant
 import com.example.appmusic.common.Constant.SEEK_TO_MEDIA_SERVICE
 import com.example.appmusic.common.MessageEvent
-import com.example.appmusic.data.model.ItemRecent
 import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.FragmentDetailSongBinding
 import com.example.appmusic.service.MusicService
@@ -25,18 +25,17 @@ import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.utils.TimeUtils
 import jp.wasabeef.blurry.Blurry
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import timber.log.Timber
 
-class MusicDetailFragment :
-    BaseBindingFragment<FragmentDetailSongBinding, MusicDetailViewModel>() {
-    private val listFavourite: MutableList<Music> = mutableListOf()
-    private val listRecent: MutableList<ItemRecent> = mutableListOf<ItemRecent>()
+class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, MusicDetailViewModel>() {
     private val runnable = Runnable {
         if (isAdded) {
             binding.sbTimeSong.progress = binding.sbTimeSong.progress + 1000
         }
     }
-
     var isKillApp = false
     var handler = Handler(Looper.getMainLooper())
 
@@ -56,15 +55,24 @@ class MusicDetailFragment :
         return MusicDetailViewModel::class.java
     }
 
-
     override val layoutId: Int
         get() = R.layout.fragment_detail_song
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        EventBus.getDefault().unregister(this)
+    }
+
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         if (arguments != null) {
@@ -88,47 +96,32 @@ class MusicDetailFragment :
         )
         initSeekBarChangeListener()
         with(binding) {
-            if (App.instance.musicCurrent.musicName != null) {
-                tvNameSong.text = (App.instance.musicCurrent.musicName)
-                tvNameSinger.text = (App.instance.musicCurrent.nameSinger)
-                App.instance.musicCurrent.musicFile?.let { setImageSong(it) }
-
+            with(App.instance.musicCurrent) {
+                tvNameSong.text = musicName
+                tvNameSinger.text = nameSinger
+                setImageSong(musicFile)
             }
-            if (savedInstanceState != null) {
-                isKillApp = savedInstanceState.getBoolean(getString(R.string.KillAPP), false)
-                sbTimeSong.max = savedInstanceState.getInt(getString(R.string.maxProgress))
-                sbTimeSong.progress = savedInstanceState.getInt(getString(R.string.progress))
-                tvStartTime.text =
-                    savedInstanceState.getString(getString(R.string.textViewStartTime))
-                tvEndTime.text =
-                    savedInstanceState.getString(getString(R.string.textViewEndTime))
-                imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_filled_60)
+
+            savedInstanceState?.let {
+                isKillApp = it.getBoolean(getString(R.string.KillAPP), false)
+                sbTimeSong.max = it.getInt(getString(R.string.maxProgress))
+                sbTimeSong.progress = it.getInt(getString(R.string.progress))
+                tvStartTime.text = it.getString(getString(R.string.textViewStartTime))
+                tvEndTime.text = it.getString(getString(R.string.textViewEndTime))
             }
         }
         initListener()
-        initData()
-    }
-
-    private fun initData() {
         observerData()
     }
 
     private fun observerData() {
-        mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { songs ->
-            if (songs != null) {
-                App.instance.listMusic.clear()
-                App.instance.listMusic.addAll(songs)
-            }
-        }
 
     }
 
     private fun getPosCurrentMusic(music: Music): Int {
-        for (i in 0 until App.instance.listMusic.size) {
-            if (App.instance.listMusic[i].musicFile
-                    .equals(music.musicFile)
-            ) {
-                return i
+        App.instance.listMusic.let {
+            for (i in 0 until it.size) {
+                if (it[i].musicFile == music.musicFile) return i
             }
         }
         return -1
@@ -138,17 +131,19 @@ class MusicDetailFragment :
 
         binding.imFastForward.setOnClickListener {
             binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-
-            var currentPos = getPosCurrentMusic(App.instance.musicCurrent)
-            currentPos++
-            if (currentPos > App.instance.listMusic.size - 1) {
-                currentPos = 0
+            with(App.instance.musicCurrent){
+                var currentPos = getPosCurrentMusic(this)
+                currentPos++
+                if (currentPos > App.instance.listMusic.size - 1) {
+                    currentPos = 0
+                }
+                App.instance.musicCurrent = (App.instance.listMusic[currentPos])
+                binding.sbTimeSong.progress = 0
+                setImageSong(musicFile)
+                startService(Constant.CHANGE_MUSIC_SERVICE)
             }
-            App.instance.musicCurrent = (App.instance.listMusic[currentPos])
 
-            binding.sbTimeSong.progress = 0
-            App.instance.musicCurrent.musicFile?.let { setImageSong(it) }
-            startService(Constant.CHANGE_MUSIC_SERVICE)
+
 
         }
         binding.imPlaySong.setOnClickListener { startService(Constant.STOP_MEDIA_SERVICE) }
@@ -173,11 +168,11 @@ class MusicDetailFragment :
     }
 
 
-    private fun setImageSong(path: String) {
+    private fun setImageSong(pathMusic: String) {
         if (App.instance.musicCurrent.imageSong != null) {
             try {
                 MediaMetadataRetriever().use { mmr ->
-                    mmr.setDataSource(path)
+                    mmr.setDataSource(pathMusic)
                     val data = mmr.embeddedPicture
                     val bitmap =
                         BitmapFactory.decodeByteArray(data, 0, data!!.size)
@@ -193,10 +188,11 @@ class MusicDetailFragment :
         }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(messageEvent: MessageEvent) {
         when (messageEvent.typeEvent) {
             Constant.CHANGE_MUSIC_CURRENT -> {
-                Timber.e("nghialt: CHANGE_MUSIC_CURRENT")
                 with(binding) {
                     tvNameSong.text = (App.instance.musicCurrent.musicName)
                     tvNameSinger.text = (App.instance.musicCurrent.nameSinger)
@@ -252,7 +248,6 @@ class MusicDetailFragment :
         val intent = Intent(requireActivity(), MusicService::class.java)
         intent.action = action
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Timber.e("ltnghia startService")
             requireActivity().startForegroundService(intent)
         } else {
             requireActivity().startService(intent)
@@ -262,7 +257,6 @@ class MusicDetailFragment :
     private fun initSeekBarChangeListener() {
         binding.sbTimeSong.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                Timber.e("ltnghia"+TimeUtils.getTimeDurationMusic(i))
                 binding.tvStartTime.text = (TimeUtils.getTimeDurationMusic(i))
                 handler.removeCallbacks(runnable)
                 handler.postDelayed(runnable, 1000)
