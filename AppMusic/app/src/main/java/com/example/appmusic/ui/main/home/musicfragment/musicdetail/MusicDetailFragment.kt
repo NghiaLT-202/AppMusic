@@ -18,11 +18,13 @@ import com.example.appmusic.R
 import com.example.appmusic.common.Constant
 import com.example.appmusic.common.Constant.SEEK_TO_MEDIA_SERVICE
 import com.example.appmusic.common.MessageEvent
+import com.example.appmusic.data.model.ItemRecent
 import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.FragmentDetailSongBinding
 import com.example.appmusic.service.MusicService
 import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
+import com.example.appmusic.utils.StatusBarUtils
 import com.example.appmusic.utils.TimeUtils
 import jp.wasabeef.blurry.Blurry
 import org.greenrobot.eventbus.EventBus
@@ -36,8 +38,14 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             binding.sbTimeSong.progress = binding.sbTimeSong.progress + 1000
         }
     }
+    private val listFavourite: MutableList<Music> = mutableListOf()
+    private val listRecent: MutableList<ItemRecent> = mutableListOf()
+
+
     var isKillApp = false
     var handler = Handler(Looper.getMainLooper())
+    private var checked = false
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -86,10 +94,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             }
 
         }
-        requireActivity().window.setFlags(
-            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
-            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
-        )
+        StatusBarUtils.makeStatusBarLight(requireActivity())
         binding.sbTimeSong.progressDrawable.setColorFilter(
             resources.getColor(R.color.white),
             PorterDuff.Mode.SRC_ATOP
@@ -115,6 +120,30 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
     }
 
     private fun observerData() {
+        mainViewModel.getAllReccentMusic()
+
+        mainViewModel.listRecentLiveData.observe(viewLifecycleOwner) { reccentlies ->
+            if (reccentlies != null) {
+                Timber.e("ltnghia")
+                listRecent.clear()
+                listRecent.addAll(reccentlies)
+                val musicCurrent: Music = App.instance.musicCurrent
+                Timber.e("ltnghia" + musicCurrent.musicFile)
+                insertReccently(musicCurrent, ItemRecent().apply {
+                    musicCurrent.musicFile
+                    musicCurrent.musicName
+                    musicCurrent.nameSinger
+                    musicCurrent.nameAlbum
+                    musicCurrent.namePlayList
+                    imageSong = (musicCurrent.imageSong)
+                }
+                )
+
+
+
+                mainViewModel.listRecentLiveData.postValue(null)
+            }
+        }
 
     }
 
@@ -128,10 +157,36 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
     }
 
     private fun initListener() {
+        binding.imFavorite.setOnClickListener {
+            Timber.e("ltnghia" + App.instance.musicCurrent.musicName)
 
+            binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_24_red)
+            if (!checked) {
+                checked = true
+                var checkFavourite = false
+                for (i in listFavourite.indices) {
+                    if (listFavourite[i].musicFile == App.instance.musicCurrent.musicFile
+                    ) {
+                        checkFavourite = true
+                        break
+                    }
+                }
+                if (!checkFavourite) {
+                    App.instance.musicCurrent.checkFavorite = (true)
+                    Timber.e("ltnghia" + App.instance.musicCurrent.musicName)
+                    viewModel.insertFavorite(App.instance.musicCurrent)
+                }
+            } else {
+                checked = false
+                binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+                App.instance.musicCurrent.checkFavorite = (checked)
+                viewModel.deleteFavourite(App.instance.musicCurrent.musicFile)
+            }
+            startService(Constant.FAVOURITE)
+        }
         binding.imFastForward.setOnClickListener {
             binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-            with(App.instance.musicCurrent){
+            with(App.instance.musicCurrent) {
                 var currentPos = getPosCurrentMusic(this)
                 currentPos++
                 if (currentPos > App.instance.listMusic.size - 1) {
@@ -144,19 +199,21 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             }
 
 
-
         }
         binding.imPlaySong.setOnClickListener { startService(Constant.STOP_MEDIA_SERVICE) }
         binding.imRewind.setOnClickListener {
-            var currentPos = getPosCurrentMusic(App.instance.musicCurrent)
-            currentPos--
-            if (currentPos < 0) {
-                currentPos = App.instance.listMusic.size - 1
+            with(App.instance.musicCurrent) {
+                var currentPos = getPosCurrentMusic(this)
+                currentPos--
+                if (currentPos < 0) {
+                    currentPos = App.instance.listMusic.size - 1
+                }
+                startService(Constant.STOP_MEDIA_SERVICE)
+                App.instance.musicCurrent = (App.instance.listMusic[currentPos])
+                binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
+                setImageSong(this.musicFile)
             }
-            startService(Constant.STOP_MEDIA_SERVICE)
-            App.instance.musicCurrent = (App.instance.listMusic[currentPos])
-            binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-            App.instance.musicCurrent.musicFile?.let { it1 -> setImageSong(it1) }
+
             startService(Constant.START_MEDIA_SERVICE)
         }
         binding.imDown.setOnClickListener {
@@ -264,7 +321,6 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-
                 val intent = Intent(requireActivity(), MusicService::class.java)
                 intent.action = SEEK_TO_MEDIA_SERVICE
                 binding.sbTimeSong.progress = binding.sbTimeSong.progress
@@ -277,6 +333,41 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             }
         })
     }
+
+    private fun checkFavourite() {
+        var isExit = false
+        if (listFavourite.size > 0) {
+            for (i in listFavourite.indices) {
+                if (listFavourite[i].musicFile == App.instance.musicCurrent.musicFile) {
+                    isExit = true
+                    break
+                }
+            }
+        }
+        if (isExit) {
+            binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_24_red)
+        } else {
+            binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+        }
+    }
+
+    fun insertReccently(music: Music, itemRecent: ItemRecent) {
+        Timber.e("ltnghia" + itemRecent.musicName)
+
+        var checkExistedRecent = false
+        for (reccent in listRecent) {
+            if (reccent.musicFile == music.musicFile) {
+                checkExistedRecent = true
+                break
+            }
+        }
+        if (!checkExistedRecent) {
+            Timber.e("ltnghia" + itemRecent.musicName)
+            mainViewModel.insertReccentMusic(itemRecent)
+            listRecent.add(itemRecent)
+        }
+    }
+
 }
 
 

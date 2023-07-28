@@ -8,6 +8,14 @@ import javax.inject.Inject
 @HiltViewModel
 class ReccentMyMusicVM //    public void deleteReccentMusic() {
 @Inject constructor(var musicRepository: MusicRepository) : BaseViewModel() {
-    //        musicRepository.deleteRecentMusic();
-    //    }
+
+    @Inject
+    fun ReccentMyMusicVM(musicRepository: MusicRepository) {
+        this.musicRepository = musicRepository
+    }
+
+
+    fun deleteReccentMusic() {
+        musicRepository.deleteRecentMusic()
+    }
 }

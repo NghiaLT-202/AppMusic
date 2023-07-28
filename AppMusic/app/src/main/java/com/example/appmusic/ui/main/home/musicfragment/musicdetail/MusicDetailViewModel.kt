@@ -13,9 +13,13 @@ class MusicDetailViewModel @Inject constructor(val musicRepository: MusicReposit
     BaseViewModel() {
     var listMusic = MutableLiveData<MutableList<Music>>()
     var listFavourite = MutableLiveData<MutableList<Music>>()
-
-
     fun initData(context: Context) {
         listMusic.postValue(musicRepository.getMusicDevice(context))
+    }    fun insertFavorite(music: Music) {
+        musicRepository.insert(music)
     }
+    fun deleteFavourite(path: String) {
+        musicRepository.deleteFavourite(path)
+    }
+
 }

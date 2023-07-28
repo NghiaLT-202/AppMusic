@@ -44,13 +44,11 @@ class MusicService : Service() {
                 Constant.CHANGE_MUSIC_SERVICE, Constant.START_MEDIA_SERVICE -> {
                     startMedia()
                 }
-
                 Constant.SEEK_TO_MEDIA_SERVICE -> mediaPlayer.seekTo(
                     intent.getIntExtra(
                         "SEEK_TO", 0
                     )
                 )
-
                 Constant.FAVOURITE -> Timber.e("nghialt: FAVOURITE")
                 Constant.STOP_MEDIA_SERVICE -> {
                     Timber.e("nghialt: STOP_MEDIA_SERVICE")
@@ -164,11 +162,12 @@ class MusicService : Service() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getNotificationChannel(notificationManager: NotificationManager): String {
         val channelId = "app_active_channel"
-        val channel =
-            NotificationChannel(channelId, "App Active", NotificationManager.IMPORTANCE_HIGH)
-        channel.importance = NotificationManager.IMPORTANCE_NONE
-        channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-        notificationManager.createNotificationChannel(channel)
+        NotificationChannel(channelId, "App Active", NotificationManager.IMPORTANCE_HIGH).apply {
+            importance = NotificationManager.IMPORTANCE_NONE
+            lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+            notificationManager.createNotificationChannel(this)
+        }
+
         return channelId
     }
 

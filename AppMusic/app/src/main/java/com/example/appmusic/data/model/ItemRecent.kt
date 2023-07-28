@@ -8,13 +8,13 @@ import androidx.room.PrimaryKey
 @Entity
 class ItemRecent {
     @PrimaryKey(autoGenerate = true)
-    val id = 0
-    val musicFile: String? = null
-    val musicName: String? = null
-    val nameSinger: String? = null
-    val nameAlbum: String? = null
+    var id = 0
+    var musicFile: String = ""
+    var musicName: String = ""
+    var nameSinger: String = ""
+    var nameAlbum: String = ""
 
     @Ignore
-     val imageSong: Bitmap? = null
-     val namePlayList: String? = null
+    var imageSong: Bitmap? = null
+    var namePlayList: String = ""
 }

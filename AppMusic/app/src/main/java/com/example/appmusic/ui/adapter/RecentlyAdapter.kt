@@ -13,8 +13,10 @@ class RecentlyAdapter : BaseBindingAdapter<ItemMusicBinding>() {
             field = value
             notifyDataSetChanged()
         }
-    private var iclickMusic: FavoriteAdapter.IclickMusic? = null
-
+    private var iclickMusic: IclickMusic ?= null
+    fun setIclickMusic(iclickMusic:IclickMusic) {
+        this.iclickMusic = iclickMusic
+    }
 
     protected override fun onBindViewHolderBase(
         holder: BaseHolder<ItemMusicBinding>,

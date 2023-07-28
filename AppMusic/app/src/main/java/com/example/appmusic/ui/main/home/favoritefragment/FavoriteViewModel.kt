@@ -1,5 +1,6 @@
 package com.example.appmusic.ui.main.home.favoritefragment
 
+import androidx.annotation.NonNull
 import androidx.lifecycle.MutableLiveData
 import com.example.appmusic.data.MusicRepository
 import com.example.appmusic.data.model.Music
@@ -12,25 +13,7 @@ class FavoriteViewModel @Inject constructor(private val musicRepository: MusicRe
     BaseViewModel() {
     var listFavourite = MutableLiveData<MutableList<Music>>()
     fun getAllMusicFavourite(checkFavorite: Boolean) {
-        listFavourite.postValue(musicRepository.getAllMusicFavourite())
+        listFavourite.postValue(musicRepository.getAllMusicFavourite(checkFavorite))
 
-//        listFavourite.postValue(musicRepository.getAllMusicFavourite(database.musicDao()));
-//        musicRepository.getAllMusicFavourite(database.musicDao()).subscribe(new SingleObserver<List<Music>>() {
-//            @Override
-//            public void onSubscribe(@NonNull Disposable d) {
-//
-//            }
-//
-//            @Override
-//            public void onSuccess(@NonNull List<Music> list) {
-//                listFavourite.postValue(list);
-//
-//            }
-//
-//            @Override
-//            public void onError(@NonNull Throwable e) {
-//
-//            }
-//        });
     }
 }

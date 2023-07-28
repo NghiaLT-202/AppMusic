@@ -18,7 +18,6 @@ class MusicAdapter : BaseBindingAdapter<ItemMusicBinding>() {
     fun setIclickMusic(iclickMusic: IclickMusic?) {
         this.iclickMusic = iclickMusic
     }
-
     protected override fun onBindViewHolderBase(
         holder: BaseHolder<ItemMusicBinding>,
         position: Int
@@ -32,10 +31,10 @@ class MusicAdapter : BaseBindingAdapter<ItemMusicBinding>() {
             tvNameSong.text = arrayList[position].musicName
             tvNameSinger.text = arrayList[position].nameSinger
             tvNameAlbum.text = arrayList[position].nameAlbum
-            imMore.setOnClickListener {  iclickMusic?.clickMenu(holder.adapterPosition) }
+            imMore.setOnClickListener {  iclickMusic?.clickMenu(holder.adapterPosition,arrayList[position]) }
         }
 
-        holder.itemView.setOnClickListener { iclickMusic?.clickItem(position) }
+        holder.itemView.setOnClickListener { iclickMusic?.clickItem(position,arrayList[position]) }
 
     }
 
@@ -46,7 +45,7 @@ class MusicAdapter : BaseBindingAdapter<ItemMusicBinding>() {
 
 
     interface IclickMusic {
-        fun clickItem(position: Int)
-        fun clickMenu(position: Int)
+        fun clickItem(position: Int,music: Music)
+        fun clickMenu(position: Int,music: Music)
     }
 }

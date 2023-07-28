@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 @Entity
 class Music {
     @PrimaryKey(autoGenerate = true)
-    val id = 0
+    var id = 0
     var musicFile: String = ""
     var musicName: String = ""
     var nameSinger: String = ""

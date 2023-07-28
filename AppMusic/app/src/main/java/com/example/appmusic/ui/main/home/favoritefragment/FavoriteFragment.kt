@@ -41,16 +41,16 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteVi
         favoriteAdapter = FavoriteAdapter()
         binding.rcFavorite.adapter = favoriteAdapter
 
-//        favoriteAdapter?.iclickMusic(object : FavoriteAdapter.IclickMusic {
-//            override fun clickItem(position: Int) {
-//                App.instance.musicCurrent=(listFavourite[position])
-//                (requireActivity() as MainActivity).navController!!.navigate(R.id.fragment_detail_music)
-//            }
-//
-//            override fun clickMenu(position: Int) {
-//                showBottomSheetDialog()
-//            }
-//        })
+        favoriteAdapter?.setIclickMusic(object : FavoriteAdapter.IclickMusic {
+            override fun clickItem(position: Int) {
+                App.instance.musicCurrent=(listFavourite[position])
+                (requireActivity() as MainActivity).navController!!.navigate(R.id.fragment_detail_music)
+            }
+
+            override fun clickMenu(position: Int) {
+                showBottomSheetDialog()
+            }
+        })
     }
 
     fun showBottomSheetDialog() {
@@ -60,7 +60,7 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteVi
 
     private fun initData() {
         viewModel.getAllMusicFavourite(true)
-        viewModel.listFavourite.observe(viewLifecycleOwner) { songs: MutableList<Music> ->
+        viewModel.listFavourite.observe(viewLifecycleOwner) { songs ->
             listFavourite.clear()
             listFavourite.addAll(songs)
             if (listFavourite.size > 0) binding.tvNoDataFavorite.visibility =

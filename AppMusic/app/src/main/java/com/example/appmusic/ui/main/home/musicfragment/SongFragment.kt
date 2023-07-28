@@ -21,8 +21,6 @@ import java.util.Random
 
 class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
     var musicAdapter: MusicAdapter? = null
-
-
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -52,7 +50,6 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
         initListener()
         initData()
     }
-
     private fun initData() {
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { music ->
             if (music != null) {
@@ -78,7 +75,6 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             App.instance.musicCurrent = (App.instance.listMusic[1])
             navigateFragment(R.id.fragment_detail_music)
         }
-
     }
 
     fun randomListMusic(musicList: MutableList<Music>): MutableList<Music> {
@@ -94,8 +90,9 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
         musicAdapter = MusicAdapter()
         binding.rcMusic.adapter = musicAdapter
         musicAdapter?.setIclickMusic(object : MusicAdapter.IclickMusic {
-            override fun clickItem(position: Int) {
-                App.instance.musicCurrent = (App.instance.listMusic[position])
+
+            override fun clickItem(position: Int, music: Music) {
+                App.instance.musicCurrent = (music)
                 Bundle().apply {
                     putBoolean(Constant.RUN_NEW_MUSIC, true)
                     (requireActivity() as MainActivity).navController?.navigate(
@@ -103,15 +100,13 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
                         this
                     )
                 }
-
             }
 
-            override fun clickMenu(position: Int) {
+            override fun clickMenu(position: Int, itemMusic: Music) {
                 BottomSheetListFuntionFrag().apply {
-                    music = App.instance.listMusic[position]
+                    music = itemMusic
                     show(childFragmentManager, null)
                 }
-
             }
         })
 
