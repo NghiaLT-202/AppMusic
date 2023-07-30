@@ -121,7 +121,6 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
 
     private fun observerData() {
         mainViewModel.getAllReccentMusic()
-
         mainViewModel.listRecentLiveData.observe(viewLifecycleOwner) { reccentlies ->
             if (reccentlies != null) {
                 Timber.e("ltnghia")
@@ -130,19 +129,28 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                 val musicCurrent: Music = App.instance.musicCurrent
                 Timber.e("ltnghia" + musicCurrent.musicFile)
                 insertReccently(musicCurrent, ItemRecent().apply {
-                    musicCurrent.musicFile
-                    musicCurrent.musicName
-                    musicCurrent.nameSinger
-                    musicCurrent.nameAlbum
-                    musicCurrent.namePlayList
+                    Timber.e("ltnghia" + musicCurrent.musicFile)
+
+                   musicFile= musicCurrent.musicFile
+                    musicName= musicCurrent.musicName
+                    nameSinger=  musicCurrent.nameSinger
+                    nameAlbum= musicCurrent.nameAlbum
+                    namePlayList =musicCurrent.namePlayList
                     imageSong = (musicCurrent.imageSong)
                 }
                 )
-
-
-
                 mainViewModel.listRecentLiveData.postValue(null)
             }
+        }
+        viewModel.getAllFavourite(true)
+
+
+        viewModel.listFavourite.observe(viewLifecycleOwner) { list ->
+            if (list != null) {
+                listFavourite.clear()
+                listFavourite.addAll(list)
+            }
+            checkFavourite()
         }
 
     }

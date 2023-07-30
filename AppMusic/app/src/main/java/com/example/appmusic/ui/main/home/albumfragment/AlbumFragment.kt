@@ -9,6 +9,7 @@ import com.example.appmusic.databinding.FragmentAlbumBinding
 import com.example.appmusic.ui.adapter.AlbumAdapter
 import com.example.appmusic.ui.base.BaseBindingAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
+import timber.log.Timber
 
 class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding, AlbumViewModel>() {
     private var albumAdapter: AlbumAdapter? = null
@@ -37,6 +38,7 @@ class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding, AlbumViewModel>(
 
     private fun initData() {
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { songs ->
+            Timber.e("ltnghia"+ songs.size)
             if (songs != null) {
                 albumAdapter?.list=(songs)
             }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.example.appmusic.App
 import com.example.appmusic.R
+import com.example.appmusic.common.Constant
 import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.FragmentFavoriteBinding
 import com.example.appmusic.ui.adapter.FavoriteAdapter
@@ -44,8 +45,14 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteVi
         favoriteAdapter?.setIclickMusic(object : FavoriteAdapter.IclickMusic {
             override fun clickItem(position: Int) {
                 App.instance.musicCurrent=(listFavourite[position])
-                (requireActivity() as MainActivity).navController!!.navigate(R.id.fragment_detail_music)
-            }
+                Timber.e("ltnghia"+ listFavourite[position].imageSong)
+                Bundle().apply {
+                    putBoolean(Constant.RUN_NEW_MUSIC, true)
+                    (requireActivity() as MainActivity).navController?.navigate(
+                        R.id.fragment_detail_music,
+                        this
+                    )
+                }            }
 
             override fun clickMenu(position: Int) {
                 showBottomSheetDialog()

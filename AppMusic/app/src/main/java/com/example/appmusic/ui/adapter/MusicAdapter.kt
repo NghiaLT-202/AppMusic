@@ -33,7 +33,6 @@ class MusicAdapter : BaseBindingAdapter<ItemMusicBinding>() {
             tvNameAlbum.text = arrayList[position].nameAlbum
             imMore.setOnClickListener {  iclickMusic?.clickMenu(holder.adapterPosition,arrayList[position]) }
         }
-
         holder.itemView.setOnClickListener { iclickMusic?.clickItem(position,arrayList[position]) }
 
     }

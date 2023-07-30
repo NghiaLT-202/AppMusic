@@ -34,8 +34,9 @@ interface MusicDao {
     fun getAllMusicPlayList(namePlayListMusic: String): MutableList<Music>
 
     //PLAYLIST
-    @get:Query("SELECT * FROM playlist")
-    val allPlayListMusic: MutableList<PlayList>
+    //PLAYLIST
+
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPlayListMusic(playList: PlayList)
@@ -57,7 +58,9 @@ interface MusicDao {
     fun insertReccentMusic(itemRecent: ItemRecent)
 
 
-
+    //PLAYLIST
+    @Query("SELECT * FROM playlist")
+    fun getAllPlayListMusic(): MutableList<PlayList>
     @Query("SELECT * FROM music where namePlayList=:name")
     fun getDetailPlaylist(name: String?): MutableList<Music>
 

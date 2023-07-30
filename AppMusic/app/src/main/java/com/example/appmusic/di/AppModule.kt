@@ -29,7 +29,7 @@ class AppModule {
             Database::class.java,
             Database.Companion.DATABASE_NAME
         )
-            .addMigrations(Database.Companion.MIGRATION_1)
+//            .addMigrations(Database.Companion.MIGRATION_1)
             .allowMainThreadQueries()
             .build()
     }

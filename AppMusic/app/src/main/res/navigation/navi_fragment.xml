@@ -38,5 +38,9 @@
         android:label="FragmentResearch"
         tools:layout="@layout/fragment_research" />
 
-
+    <fragment
+        android:id="@+id/fragment_detail_playlist"
+        android:name="com.example.appmusic.ui.main.home.playlistfragment.detailPlayList.DetailPlayListFragment"
+        android:label="FragmentDetailPlayList"
+        tools:layout="@layout/fragment_detail_play_list" />
 </navigation>

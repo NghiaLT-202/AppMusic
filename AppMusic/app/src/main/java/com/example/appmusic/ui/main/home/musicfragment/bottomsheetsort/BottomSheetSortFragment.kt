@@ -9,6 +9,7 @@ import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.BottomsheetSortBinding
 import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
 import org.greenrobot.eventbus.EventBus
+import timber.log.Timber
 
 class BottomSheetSortFragment :
     BaseBottomSheetDialogFragment<BottomsheetSortBinding, BottomSheetSortViewModel>() {
@@ -21,6 +22,7 @@ class BottomSheetSortFragment :
         get() = R.layout.bottomsheet_sort
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+        Timber.e("ltnghia")
         initListener()
     }
 

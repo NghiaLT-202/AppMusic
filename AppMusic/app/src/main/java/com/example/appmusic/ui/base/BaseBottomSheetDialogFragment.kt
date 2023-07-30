@@ -14,6 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
+
 abstract class BaseBottomSheetDialogFragment<B : ViewDataBinding, T : BaseViewModel> :
     BottomSheetDialogFragment() {
     lateinit var binding: B
@@ -33,7 +34,6 @@ abstract class BaseBottomSheetDialogFragment<B : ViewDataBinding, T : BaseViewMo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get<T>(getViewModel())
         onCreatedView(view, savedInstanceState)
     }
 

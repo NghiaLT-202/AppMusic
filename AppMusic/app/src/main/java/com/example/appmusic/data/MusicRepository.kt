@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import com.example.appmusic.data.database.Database
 import com.example.appmusic.data.model.ItemRecent
 import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.PlayList
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -102,6 +103,33 @@ class MusicRepository @Inject constructor(var database: Database) {
     }
     fun insertRecentMusic(itemRecent: ItemRecent) {
         database.musicDao().insertReccentMusic(itemRecent)
+    }
+    fun getAllDetailPlayListName(name: String): MutableList<Music> {
+        return  database.musicDao().getDetailPlaylist(name)
+    }
+    fun getAllMusicPlayList(namePlayList: String): MutableList<Music> {
+        return database.musicDao().getAllMusicPlayList(namePlayList)
+    }
+
+
+    fun insertPlayList(playList: PlayList) {
+        database.musicDao().insertPlayListMusic(playList)
+    }
+    fun getAllPlayList(): MutableList<PlayList> {
+        return database.musicDao().getAllPlayListMusic()
+    }
+    fun deletePlayList(name: String) {
+        database.musicDao().deletePlayListMusic(name)
+    }
+
+    fun updateNamePlayList(name: String, id: Int) {
+      database.musicDao().UpdateNamePlayList(name, id)
+    }
+    fun UpdateNameMusic(name: String, id: Int) {
+         database.musicDao().UpdateNameMusic(name, id)
+    }
+    fun insertMusicOfPlayList(music: Music) {
+       database.musicDao().insertMusicofPlayList(music)
     }
 }
 
