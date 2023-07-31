@@ -60,9 +60,9 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
     }
 
     private fun initData() {
+
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { music ->
             if (music != null) {
-                Timber.e("ltnghia" + music.size)
                 songList.clear()
                 songList.addAll(music)
                 musicAdapter?.arrayList = (music)

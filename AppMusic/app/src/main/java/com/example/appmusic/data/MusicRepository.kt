@@ -79,12 +79,10 @@ class MusicRepository @Inject constructor(var database: Database) {
             }
         }
         musicList.reverse()
-        Timber.e("tunglt: musicList: " + musicList.size)
         return musicList
     }
 
     fun insert(music: Music) {
-        Timber.e("ltnghia"+database.toString())
         database.musicDao().insertMusic(music)
 
     }

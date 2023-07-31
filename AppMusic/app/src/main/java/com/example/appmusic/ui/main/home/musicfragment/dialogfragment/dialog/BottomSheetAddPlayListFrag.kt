@@ -11,8 +11,8 @@ import com.example.appmusic.ui.adapter.ListPlayListAdapter
 import com.example.appmusic.ui.base.BaseBindingAdapter.IBaseClickAdapter
 import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
 import com.example.appmusic.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-
 class BottomSheetAddPlayListFrag :
     BaseBottomSheetDialogFragment<BottomSheetAddPlaylistBinding, BottomSheetAddPlayListVM>() {
     private var listPlayListAdapter: ListPlayListAdapter? = null
@@ -21,8 +21,9 @@ class BottomSheetAddPlayListFrag :
     private var positionPlayList = 0
     var musicCurent: Music? = null
     override fun getViewModel(): Class<BottomSheetAddPlayListVM> {
-        return BottomSheetAddPlayListVM::class.java
+        return  BottomSheetAddPlayListVM::class.java
     }
+
     override val layoutId: Int
         get() = R.layout.bottom_sheet_add_playlist
 
@@ -46,6 +47,7 @@ class BottomSheetAddPlayListFrag :
     }
 
     private fun initListener() {
+
         binding.framelayout.setOnClickListener { dismiss() }
         binding.tvConllectionNew.setOnClickListener {
             (requireActivity() as MainActivity).navController?.navigate(
@@ -55,8 +57,8 @@ class BottomSheetAddPlayListFrag :
     }
 
     private fun initData() {
-        viewModel.getAllPlayList()
-        viewModel.listPlaylist.observe(viewLifecycleOwner) { playLists ->
+        mainViewModel.getAllPlayList()
+        mainViewModel.listPlaylist.observe(viewLifecycleOwner) { playLists ->
             listPlayList.clear()
             listPlayList.addAll(playLists)
             listPlayListAdapter!!.listPlay = (listPlayList)

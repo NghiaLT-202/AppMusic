@@ -10,15 +10,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
 import com.example.appmusic.R
+import com.example.appmusic.ui.main.MainViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
 abstract class BaseBottomSheetDialogFragment<B : ViewDataBinding, T : BaseViewModel> :
-    BottomSheetDialogFragment() {
+    BaseBottomSheet() {
     lateinit var binding: B
     lateinit var viewModel: T
+    lateinit var mainViewModel: MainViewModel
+
     protected abstract fun getViewModel(): Class<T>
     abstract val layoutId: Int
     protected abstract fun onCreatedView(view: View?, savedInstanceState: Bundle?)
@@ -28,12 +30,15 @@ abstract class BaseBottomSheetDialogFragment<B : ViewDataBinding, T : BaseViewMo
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
         viewModel = ViewModelProvider(this).get<T>(getViewModel())
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        viewModel = ViewModelProvider(this).get<T>(getViewModel())
         onCreatedView(view, savedInstanceState)
     }
 

@@ -43,8 +43,15 @@ class DetailPlayListFragment :
         musicAdapter?.setIclickMusic(object : MusicAdapter.IclickMusic {
 
             override fun clickItem(position: Int, music: Music) {
-                App.instance.musicCurrent=(listMusic[position])
-                (requireActivity() as MainActivity).navController!!.navigate(R.id.fragment_detail_music)            }
+                App.instance.musicCurrent = (listMusic[position])
+                Bundle().apply {
+                    putBoolean(Constant.RUN_NEW_MUSIC, true)
+                    (requireActivity() as MainActivity).navController?.navigate(
+                        R.id.fragment_detail_music,
+                        this
+                    )
+                }
+            }
 
             override fun clickMenu(position: Int, music: Music) {
 

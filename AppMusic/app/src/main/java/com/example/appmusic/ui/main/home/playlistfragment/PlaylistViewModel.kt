@@ -9,11 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 @HiltViewModel
 class PlaylistViewModel  @Inject constructor(private val musicRepository: MusicRepository) : BaseViewModel(){
-    var listPlayList = MutableLiveData<MutableList<PlayList>>()
     var listMusicPlaylist = MutableLiveData<MutableList<Music>>()
-    fun getAllPlayList() {
-        listPlayList.postValue(  musicRepository.getAllPlayList())
-    }
+
 
     fun insertPlayList(playList: PlayList) {
         musicRepository.insertPlayList(playList)

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.appmusic.data.MusicRepository
 import com.example.appmusic.data.model.ItemRecent
 import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.PlayList
 import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -19,6 +20,7 @@ import kotlin.coroutines.CoroutineContext
 class MainViewModel @Inject constructor(var musicRepository: MusicRepository): BaseViewModel() {
     var listAllMusicDevice = MutableLiveData<MutableList<Music>>()
     var listRecentLiveData = MutableLiveData<MutableList<ItemRecent>>()
+    var listPlaylist = MutableLiveData<MutableList<PlayList>>()
 
     var isStartMedia = MutableLiveData<Boolean>()
 
@@ -44,6 +46,17 @@ class MainViewModel @Inject constructor(var musicRepository: MusicRepository): B
     fun insertReccentMusic(itemRecent: ItemRecent) {
         Timber.e("ltnghia"+itemRecent.musicName)
         musicRepository.insertRecentMusic(itemRecent)
+    }
+    fun getAllPlayList() {
+        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
+            _: CoroutineContext, throwable: Throwable
+        ) {
+            run {
+                Timber.e(throwable)
+            }
+        })) {
+            listPlaylist.postValue( musicRepository.getAllPlayList())
+        }
     }
 
 

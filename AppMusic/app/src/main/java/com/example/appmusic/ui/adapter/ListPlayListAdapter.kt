@@ -20,7 +20,8 @@ class ListPlayListAdapter : BaseBindingAdapter<ItemListPlayListBinding>() {
         position: Int
     ) {
         holder.binding.tvNamePlayList.text = listPlay[position].namePlayList
-        holder.itemView.setOnClickListener { v: View? -> iBaseClickAdapter!!.clickItem(holder.adapterPosition) }
+        holder.itemView.setOnClickListener {
+            iBaseClickAdapter!!.clickItem(holder.adapterPosition) }
     }
 
     override val layoutIdItem: Int

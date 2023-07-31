@@ -82,8 +82,8 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
     }
 
     private fun intitData() {
-        viewModel.getAllPlayList()
-        viewModel.listPlayList.observe(viewLifecycleOwner) { playLists ->
+        mainViewModel.getAllPlayList()
+        mainViewModel.listPlaylist.observe(viewLifecycleOwner) { playLists ->
             if (playLists != null) {
                 listPlayList.clear()
                 listPlayList.addAll(playLists)
@@ -163,6 +163,8 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
                         totalSong= 0
                         if (!checkNamePlayList(inputName)) {
                             viewModel.insertPlayList(this)
+                            mainViewModel.listPlaylist.value?.add(this)
+                            mainViewModel.listPlaylist.postValue(mainViewModel.listPlaylist.value)
                             dialogAddPlayListFragment?.dismiss()
                             listPlayList.add(this)
                             listPlayList.size

@@ -6,6 +6,7 @@ import com.example.appmusic.R
 import com.example.appmusic.data.model.PlayList
 import com.example.appmusic.databinding.DialogAddPlayListBinding
 import com.example.appmusic.ui.base.BaseBindingDialogFragment
+import timber.log.Timber
 
 class DialogAddPlayListFragment :
     BaseBindingDialogFragment<DialogAddPlayListBinding, DialogAddPlayListVM>() {
@@ -25,6 +26,7 @@ class DialogAddPlayListFragment :
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+        Timber.e("ltnghia")
         initView()
         initListener()
         initData()
