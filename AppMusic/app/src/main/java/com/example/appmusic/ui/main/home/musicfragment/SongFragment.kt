@@ -22,7 +22,6 @@ import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomShee
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import timber.log.Timber
 import java.util.Random
 
 class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
@@ -65,7 +64,7 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             if (music != null) {
                 songList.clear()
                 songList.addAll(music)
-                musicAdapter?.arrayList = (music)
+                musicAdapter?.listMusic = (music)
                 binding.loading.visibility = View.GONE
             }
         }
@@ -76,7 +75,7 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             val bottomSheetSortFragment = BottomSheetSortFragment()
             bottomSheetSortFragment.musicList=(songList)
             bottomSheetSortFragment.show(childFragmentManager, null)
-            musicAdapter?.arrayList = songList
+            musicAdapter?.listMusic = songList
 
         }
         binding.imPlay.setOnClickListener {
@@ -105,7 +104,7 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
     private fun initAdapter() {
         musicAdapter = MusicAdapter()
         binding.rcMusic.adapter = musicAdapter
-        musicAdapter?.setIclickMusic(object : MusicAdapter.IclickMusic {
+        musicAdapter?.setIClickMusic(object : MusicAdapter.IclickMusic {
 
             override fun clickItem(position: Int, music: Music) {
                 App.instance.musicCurrent = (music)
@@ -138,7 +137,7 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             songList.sortWith { o1, o2 -> o1.date.compareTo(o2.date) }
 
         }
-        musicAdapter?.arrayList = (songList)
+        musicAdapter?.listMusic = (songList)
     }
 
     override fun onDetach() {

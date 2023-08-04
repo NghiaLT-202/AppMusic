@@ -11,8 +11,8 @@ import com.example.appmusic.ui.adapter.ListPlayListAdapter
 import com.example.appmusic.ui.base.BaseBindingAdapter.IBaseClickAdapter
 import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
 import com.example.appmusic.ui.main.MainActivity
-import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+
 class BottomSheetAddPlayListFrag :
     BaseBottomSheetDialogFragment<BottomSheetAddPlaylistBinding, BottomSheetAddPlayListVM>() {
     private var listPlayListAdapter: ListPlayListAdapter? = null
@@ -21,7 +21,7 @@ class BottomSheetAddPlayListFrag :
     private var positionPlayList = 0
     var musicCurent: Music? = null
     override fun getViewModel(): Class<BottomSheetAddPlayListVM> {
-        return  BottomSheetAddPlayListVM::class.java
+        return BottomSheetAddPlayListVM::class.java
     }
 
     override val layoutId: Int

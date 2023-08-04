@@ -40,7 +40,7 @@ class DetailPlayListFragment :
     private fun initAdapter() {
         musicAdapter = MusicAdapter()
         binding.rcListPlayList.adapter = musicAdapter
-        musicAdapter?.setIclickMusic(object : MusicAdapter.IclickMusic {
+        musicAdapter?.setIClickMusic(object : MusicAdapter.IclickMusic {
 
             override fun clickItem(position: Int, music: Music) {
                 App.instance.musicCurrent = (listMusic[position])
@@ -66,7 +66,7 @@ class DetailPlayListFragment :
         viewModel.listSong.observe(viewLifecycleOwner) { list ->
             listMusic.clear()
             listMusic.addAll(list)
-            musicAdapter?.arrayList = listMusic
+            musicAdapter?.listMusic = listMusic
         }
     }
 }

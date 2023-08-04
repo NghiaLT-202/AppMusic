@@ -18,30 +18,33 @@ class RecentlyAdapter : BaseBindingAdapter<ItemMusicBinding>() {
         this.iclickMusic = iclickMusic
     }
 
-    protected override fun onBindViewHolderBase(
+     override fun onBindViewHolderBase(
         holder: BaseHolder<ItemMusicBinding>,
         position: Int
     ) {
-        with(holder.binding) {
-            if (list[holder.adapterPosition].imageSong != null) {
-                imMusicSong.setImageBitmap(list[holder.adapterPosition].imageSong)
-            } else {
-                imMusicSong.setImageResource(R.drawable.ic_apple_music)
+        list[holder.adapterPosition].apply {
+            with(holder.binding) {
+                if (imageSong != null) {
+                    imMusicSong.setImageBitmap(imageSong)
+                } else {
+                    imMusicSong.setImageResource(R.drawable.ic_apple_music)
+                }
+                tvNameSong.text = (musicName)
+                tvNameSinger.text = (nameSinger)
+                tvNameAlbum.text = (nameAlbum)
+                imMore.setOnClickListener { iclickMusic!!.clickMenu(holder.adapterPosition) }
             }
-            tvNameSong.text = (list[position].musicName)
-            tvNameSinger.text = (list[position].nameSinger)
-            tvNameAlbum.text = (list[position].nameAlbum)
-            imMore.setOnClickListener { iclickMusic!!.clickMenu(holder.adapterPosition) }
         }
+
 
         holder.itemView.setOnClickListener { iclickMusic!!.clickItem(holder.adapterPosition) }
 
     }
 
     override val layoutIdItem: Int
-        protected get() = R.layout.item_music
+         get() = R.layout.item_music
     override val sizeItem: Int
-        protected get() = list.size
+         get() = list.size
 
     interface IclickMusic {
         fun clickItem(position: Int)

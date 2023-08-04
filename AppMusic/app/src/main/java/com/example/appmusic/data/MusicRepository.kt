@@ -4,14 +4,14 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
-import com.example.appmusic.data.database.Database
+import com.example.appmusic.data.database.MusicDao
 import com.example.appmusic.data.model.ItemRecent
 import com.example.appmusic.data.model.Music
 import com.example.appmusic.data.model.PlayList
 import timber.log.Timber
 import javax.inject.Inject
 
-class MusicRepository @Inject constructor(var database: Database) {
+class MusicRepository @Inject constructor(var musicDao: MusicDao) {
 
     fun getMusicDevice(context: Context): MutableList<Music> {
         return getMusicDevices(context)
@@ -45,32 +45,26 @@ class MusicRepository @Inject constructor(var database: Database) {
             while (cursor.moveToNext()) {
                 val duration = if (columnDuration >= 0) cursor.getLong(columnDuration) else -1
                 if (duration > 0) {
-                    val path = cursor.getString(columnData)
-                    val album = cursor.getString(columnAlbum)
-                    val artist =
-                        cursor.getString(columnArtist)
-                    val dateTime =
-                        cursor.getString(columnDateTime)
+
                     try {
                         MediaMetadataRetriever().use { mmr ->
-                            mmr.setDataSource(path)
-                            val data = mmr.embeddedPicture
-                            val name = cursor.getString(columnTitle)
-                            val music = Music().apply {
-                                musicFile = path
-                                musicName = name
-                                nameSinger = artist
-                                nameAlbum = album
+                            mmr.setDataSource(cursor.getString(columnData))
+                             Music().apply {
+                                musicFile = cursor.getString(columnData)
+                                musicName = cursor.getString(columnTitle)
+                                nameSinger = cursor.getString(columnArtist)
+                                nameAlbum = cursor.getString(columnAlbum)
                                 imageSong = null
                                 checkFavorite = false
                                 namePlayList = ""
-                                date = dateTime
-                            }
-                            data?.let {
-                                music.imageSong = BitmapFactory.decodeByteArray(it, 0, it.size)
+                                date = cursor.getString(columnDateTime)
+                                 mmr.embeddedPicture?.let {
+                                     this.imageSong = BitmapFactory.decodeByteArray(it, 0, it.size)
 
+                                 }
+                                 musicList.add(this)
                             }
-                            musicList.add(music)
+
                         }
                     } catch (e: Exception) {
                         Timber.e(e)
@@ -83,51 +77,51 @@ class MusicRepository @Inject constructor(var database: Database) {
     }
 
     fun insert(music: Music) {
-        database.musicDao().insertMusic(music)
+        musicDao.insertMusic(music)
 
     }
 
     fun deleteFavourite(path: String) {
-        database.musicDao().deleteFavourite(path)
+        musicDao.deleteFavourite(path)
     }
     fun getAllMusicFavourite(checkFavorite: Boolean): MutableList<Music> {
-      return database.musicDao().getAllFavouriteMusic(checkFavorite)
+      return musicDao.getAllFavouriteMusic(checkFavorite)
     }
     fun deleteRecentMusic() {
-        database.musicDao().deleteReccentMusic()
+        musicDao.deleteRecentMusic()
     }
     fun getAllRecentMusic(): MutableList<ItemRecent> {
-        return database.musicDao().getAllReccentMusic()
+        return musicDao.getAllRecentMusic()
     }
     fun insertRecentMusic(itemRecent: ItemRecent) {
-        database.musicDao().insertReccentMusic(itemRecent)
+        musicDao.insertRecentMusic(itemRecent)
     }
     fun getAllDetailPlayListName(name: String): MutableList<Music> {
-        return  database.musicDao().getDetailPlaylist(name)
+        return  musicDao.getDetailPlaylist(name)
     }
     fun getAllMusicPlayList(namePlayList: String): MutableList<Music> {
-        return database.musicDao().getAllMusicPlayList(namePlayList)
+        return musicDao.getAllMusicPlayList(namePlayList)
     }
 
 
     fun insertPlayList(playList: PlayList) {
-        database.musicDao().insertPlayListMusic(playList)
+        musicDao.insertPlayListMusic(playList)
     }
     fun getAllPlayList(): MutableList<PlayList> {
-        return database.musicDao().getAllPlayListMusic()
+        return musicDao.getAllPlayListMusic()
     }
     fun deletePlayList(name: String) {
-        database.musicDao().deletePlayListMusic(name)
+        musicDao.deletePlayListMusic(name)
     }
 
     fun updateNamePlayList(name: String, id: Int) {
-      database.musicDao().UpdateNamePlayList(name, id)
+        musicDao.updateNamePlayList(name, id)
     }
-    fun UpdateNameMusic(name: String, id: Int) {
-         database.musicDao().UpdateNameMusic(name, id)
+    fun updateNameMusic(name: String, id: Int) {
+        musicDao.updateNameMusic(name, id)
     }
     fun insertMusicOfPlayList(music: Music) {
-       database.musicDao().insertMusicofPlayList(music)
+        musicDao.insertMusicOfPlayList(music)
     }
 }
 

@@ -11,8 +11,7 @@ import com.example.appmusic.data.model.PlayList
 @Dao
 interface MusicDao {
     //MUSIC
-    @Query("SELECT * FROM music where checkFavorite=:check")
-    fun getAllFavouriteMusic(check: Boolean): MutableList<Music>
+
 
     @get:Query("SELECT * FROM music ")
     val allMusicDB: MutableList<Music>
@@ -23,26 +22,24 @@ interface MusicDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMusic(music: Music)
 
-    @Query("DELETE FROM music where musicFile=:path")
-    fun deleteFavourite(path: String)
-
     @Query("UPDATE  music  set namePlayList=:name where id=:id")
-    fun UpdateNameMusic(name: String, id: Int)
+    fun updateNameMusic(name: String, id: Int)
 
-    //GET MUSIC PLAYLIST
+    //PLAYLIST
+    @Query("SELECT * FROM playlist")
+    fun getAllPlayListMusic(): MutableList<PlayList>
+
+    @Query("SELECT * FROM music where namePlayList=:name")
+    fun getDetailPlaylist(name: String?): MutableList<Music>
+
     @Query("SELECT * FROM music where namePlayList=:namePlayListMusic")
     fun getAllMusicPlayList(namePlayListMusic: String): MutableList<Music>
-
-    //PLAYLIST
-    //PLAYLIST
-
-
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPlayListMusic(playList: PlayList)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMusicofPlayList(music: Music)
+    fun insertMusicOfPlayList(music: Music)
 
     @Query("DELETE FROM playlist")
     fun deletePlayListMusic()
@@ -51,22 +48,23 @@ interface MusicDao {
     fun deletePlayListMusic(name: String)
 
     @Query("UPDATE  playlist  set namePlayList=:name where idPlayList=:id")
-    fun UpdateNamePlayList(name: String, id: Int)
+    fun updateNamePlayList(name: String, id: Int)
 
+    
     //RECCENTLY
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertReccentMusic(itemRecent: ItemRecent)
-
-
-    //PLAYLIST
-    @Query("SELECT * FROM playlist")
-    fun getAllPlayListMusic(): MutableList<PlayList>
-    @Query("SELECT * FROM music where namePlayList=:name")
-    fun getDetailPlaylist(name: String?): MutableList<Music>
+    fun insertRecentMusic(itemRecent: ItemRecent)
 
     @Query("DELETE  From ItemRecent ")
-    fun deleteReccentMusic()
+    fun deleteRecentMusic()
 
     @Query("SELECT * FROM ItemRecent ")
-    fun getAllReccentMusic(): MutableList<ItemRecent>
+    fun getAllRecentMusic(): MutableList<ItemRecent>
+
+    //Favourite
+    @Query("DELETE FROM music where musicFile=:path")
+    fun deleteFavourite(path: String)
+    @Query("SELECT * FROM music where checkFavorite=:check")
+    fun getAllFavouriteMusic(check: Boolean): MutableList<Music>
+
 }

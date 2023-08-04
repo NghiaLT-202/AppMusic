@@ -36,7 +36,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideThreadDao(db: Database): MusicDao? {
+    fun provideThreadDao(db: Database): MusicDao {
         return db.musicDao()
     }
 }

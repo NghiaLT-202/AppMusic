@@ -5,18 +5,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.example.appmusic.App
+import com.example.appmusic.R
 import com.example.appmusic.common.Constant
 import com.example.appmusic.common.MessageEvent
 import com.example.appmusic.data.model.Music
 import org.greenrobot.eventbus.EventBus
 
 class Broadcast : BroadcastReceiver() {
-    private val checked = false
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == null) return
         when (intent.action) {
             Constant.PLAY_SONG -> {
-                EventBus.getDefault().post(MessageEvent("nameSong"))
+                EventBus.getDefault().post(MessageEvent(context.getString(R.string.namesong)))
                 startService(Constant.STOP_MEDIA_SERVICE)
             }
 
@@ -53,8 +53,9 @@ class Broadcast : BroadcastReceiver() {
     }
 
     private fun getPosCurrentMusic(music: Music): Int {
+        val musicFile=music.musicFile
         for (i in App.instance.listMusic.indices) {
-            if (App.instance.listMusic[i].musicFile == music.musicFile) {
+            if (App.instance.listMusic[i].musicFile == musicFile) {
                 return i
             }
         }

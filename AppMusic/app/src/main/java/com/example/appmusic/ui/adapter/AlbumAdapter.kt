@@ -14,23 +14,26 @@ class AlbumAdapter : BaseBindingAdapter<ItemAlbumBinding>() {
             notifyDataSetChanged()
         }
     override val layoutIdItem: Int
-        protected get() = R.layout.item_album
+         get() = R.layout.item_album
     override val sizeItem: Int
-        protected get() = list.size
+         get() = list.size
 
 
-    protected override fun onBindViewHolderBase(
+    override fun onBindViewHolderBase(
         holder: BaseHolder<ItemAlbumBinding>,
         position: Int
     ) {
-        with( holder.binding){
-            if (list[holder.adapterPosition].imageSong != null) {
-                imMusicSong.setImageBitmap(list[holder.adapterPosition].imageSong)
-            } else {
-                imMusicSong.setImageResource(R.drawable.ic_apple_music)
+        list[holder.adapterPosition].apply {
+            with( holder.binding){
+                if (imageSong != null) {
+                    imMusicSong.setImageBitmap(imageSong)
+                } else {
+                    imMusicSong.setImageResource(R.drawable.ic_apple_music)
+                }
+                tvNameAlbum.text = nameAlbum
+                tvNameSinger.text = nameSinger
             }
-            tvNameAlbum.text = list[position].nameAlbum
-            tvNameSinger.text = list[position].nameSinger
+
         }
 
         holder.itemView.setOnClickListener { iBaseClickAdapter?.clickItem(holder.adapterPosition) }

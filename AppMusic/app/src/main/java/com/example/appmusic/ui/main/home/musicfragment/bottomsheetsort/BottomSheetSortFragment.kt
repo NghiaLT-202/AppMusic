@@ -27,7 +27,7 @@ class BottomSheetSortFragment :
     }
 
     private fun initListener() {
-        binding.framelayout.setOnClickListener {  dismiss() }
+        binding.framelayout.setOnClickListener { dismiss() }
         binding.byTheTime.setOnClickListener {
             EventBus.getDefault().post(MessageEvent(Constant.SORT_TIME, musicList))
             dismiss()

@@ -46,12 +46,11 @@ class MusicService : Service() {
                 }
                 Constant.SEEK_TO_MEDIA_SERVICE -> mediaPlayer.seekTo(
                     intent.getIntExtra(
-                        "SEEK_TO", 0
+                        getString(R.string.seek_to), 0
                     )
                 )
-                Constant.FAVOURITE -> Timber.e("nghialt: FAVOURITE")
+                Constant.FAVOURITE -> Timber.e("")
                 Constant.STOP_MEDIA_SERVICE -> {
-                    Timber.e("nghialt: STOP_MEDIA_SERVICE")
                     if (mediaPlayer.isPlaying) {
                         mediaPlayer.pause()
                         EventBus.getDefault().post(MessageEvent(Constant.STOP_MEDIA, false))

@@ -14,7 +14,7 @@ class FolderAdapter : BaseBindingAdapter<ItemFolderBinding>() {
         notifyDataSetChanged()
         }
 
-    protected override fun onBindViewHolderBase(
+     override fun onBindViewHolderBase(
         holder: BaseHolder<ItemFolderBinding>,
         position: Int
     ) {
@@ -27,7 +27,7 @@ class FolderAdapter : BaseBindingAdapter<ItemFolderBinding>() {
     }
 
     override val layoutIdItem: Int
-        protected get() = R.layout.item_folder
+         get() = R.layout.item_folder
     override val sizeItem: Int
-        protected get() = listFolder.size
+         get() = listFolder.size
 }

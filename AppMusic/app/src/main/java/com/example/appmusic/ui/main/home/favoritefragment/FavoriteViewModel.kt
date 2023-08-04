@@ -1,6 +1,5 @@
 package com.example.appmusic.ui.main.home.favoritefragment
 
-import androidx.annotation.NonNull
 import androidx.lifecycle.MutableLiveData
 import com.example.appmusic.data.MusicRepository
 import com.example.appmusic.data.model.Music

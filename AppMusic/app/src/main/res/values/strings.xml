@@ -75,6 +75,8 @@
     <string name="history">History</string>
     <string name="hello">Hello</string>
     <string name="name_song">Name song</string>
+    <string name="namesong">nameSong</string>
+    <string name="seek_to">SEEK_TO</string>
 
 
 </resources>

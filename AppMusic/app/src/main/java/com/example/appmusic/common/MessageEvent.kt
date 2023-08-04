@@ -13,20 +13,11 @@ class MessageEvent {
     var intValue2 = 0
         private set
     private var str: String? = null
-    var playList: PlayList? = null
-    var action = 0
 
-    constructor(stringValue: String, stringAction: String) {
-        this.stringValue = stringValue
-        this.stringAction = stringAction
-    }
 
-    private var stringAction: String? = null
 
-    constructor(stringValue: Int, action: Int) {
-        typeEvent = stringValue
-        this.action = action
-    }
+
+
 
     private var musicList: List<Music>? = null
 

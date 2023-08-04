@@ -1,7 +1,6 @@
 package com.example.appmusic.ui.adapter
 
 import android.annotation.SuppressLint
-import android.view.View
 import com.example.appmusic.R
 import com.example.appmusic.data.model.PlayList
 import com.example.appmusic.databinding.ItemListPlayListBinding
@@ -15,7 +14,7 @@ class ListPlayListAdapter : BaseBindingAdapter<ItemListPlayListBinding>() {
             notifyDataSetChanged()
         }
 
-    protected override fun onBindViewHolderBase(
+     override fun onBindViewHolderBase(
         holder: BaseHolder<ItemListPlayListBinding>,
         position: Int
     ) {
@@ -25,7 +24,7 @@ class ListPlayListAdapter : BaseBindingAdapter<ItemListPlayListBinding>() {
     }
 
     override val layoutIdItem: Int
-        protected get() = R.layout.item_list_play_list
+         get() = R.layout.item_list_play_list
     override val sizeItem: Int
-        protected get() = listPlay.size
+         get() = listPlay.size
 }

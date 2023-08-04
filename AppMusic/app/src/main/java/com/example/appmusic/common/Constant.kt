@@ -1,11 +1,8 @@
 package com.example.appmusic.common
 
 object Constant {
-    //Event toDetail
-    const val PASS_DATA_FAVOURITE_MUSIC_TO_DETAIL = 1
-    const val PASS_MUSIC_TO_DETAIL = 2
-    const val KEY_SEARCH_HOME = "music trendding "
-    const val KEY_SEARCH_HOME_LOAD_MORE = "Music"
+
+
     const val RUN_NEW_MUSIC = "RUN_NEW_MUSIC"
 
     //Event Sort

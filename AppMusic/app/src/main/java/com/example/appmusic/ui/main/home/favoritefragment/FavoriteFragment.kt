@@ -11,7 +11,6 @@ import com.example.appmusic.ui.adapter.FavoriteAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetListFuntionFrag
-import timber.log.Timber
 
 class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteViewModel>() {
     private val listFavourite: MutableList<Music> = mutableListOf()
@@ -24,14 +23,13 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteVi
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        Timber.e("nghialt: onCreatedView Favourite")
         initAdapter()
         initListener()
         initData()
     }
 
     private fun initListener() {
-        binding.imBack.setOnClickListener { v: View? ->
+        binding.imBack.setOnClickListener {
             (requireActivity() as MainActivity).navController!!.navigate(
                 R.id.fragment_home
             )
@@ -39,25 +37,26 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteVi
     }
 
     private fun initAdapter() {
-        favoriteAdapter = FavoriteAdapter()
-        binding.rcFavorite.adapter = favoriteAdapter
+        FavoriteAdapter().apply {
+            binding.rcFavorite.adapter = this
+            this.setIClickMusic(object : FavoriteAdapter.IclickMusic {
+                override fun clickItem(position: Int) {
+                    App.instance.musicCurrent = (listFavourite[position])
+                    Bundle().apply {
+                        putBoolean(Constant.RUN_NEW_MUSIC, true)
+                        (requireActivity() as MainActivity).navController?.navigate(
+                            R.id.fragment_detail_music,
+                            this
+                        )
+                    }
+                }
 
-        favoriteAdapter?.setIclickMusic(object : FavoriteAdapter.IclickMusic {
-            override fun clickItem(position: Int) {
-                App.instance.musicCurrent=(listFavourite[position])
-                Timber.e("ltnghia"+ listFavourite[position].imageSong)
-                Bundle().apply {
-                    putBoolean(Constant.RUN_NEW_MUSIC, true)
-                    (requireActivity() as MainActivity).navController?.navigate(
-                        R.id.fragment_detail_music,
-                        this
-                    )
-                }            }
+                override fun clickMenu(position: Int) {
+                    showBottomSheetDialog()
+                }
+            })
+        }
 
-            override fun clickMenu(position: Int) {
-                showBottomSheetDialog()
-            }
-        })
     }
 
     fun showBottomSheetDialog() {

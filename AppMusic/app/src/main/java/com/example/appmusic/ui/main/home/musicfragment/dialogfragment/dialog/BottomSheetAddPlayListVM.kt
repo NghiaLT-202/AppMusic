@@ -1,11 +1,9 @@
 package com.example.appmusic.ui.main.home.musicfragment.dialogfragment.dialog
 
-import androidx.annotation.NonNull
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.appmusic.data.MusicRepository
 import com.example.appmusic.data.model.Music
-import com.example.appmusic.data.model.PlayList
 import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -20,7 +18,7 @@ class BottomSheetAddPlayListVM @Inject constructor( var musicRepository: MusicRe
     BaseViewModel() {
     var listMusicPlaylist = MutableLiveData<MutableList<Music>>()
     fun updateNamePlayList(name: String, id: Int) {
-        musicRepository.UpdateNameMusic(name, id)
+        musicRepository.updateNameMusic(name, id)
     }
 
     fun inSertMusicofPlayList(music: Music) {

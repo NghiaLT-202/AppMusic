@@ -43,7 +43,7 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
                         listSearch.add(musicList[i])
                     }
                 }
-                researchAdapter?.arrayList = listSearch
+                researchAdapter?.listMusic = listSearch
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -66,7 +66,7 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
         viewModel.listMusic.observe(viewLifecycleOwner) {
             musicList.clear()
             musicList.addAll(it)
-            researchAdapter?.arrayList = it
+            researchAdapter?.listMusic = it
         }
     }
 }

@@ -39,46 +39,47 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
 
     private fun initAdapter() {
         playlistAdapter = PlaylistAdapter()
-        binding.rcPlayList.adapter = playlistAdapter
-        playlistAdapter?.setIclickMenu(object : PlaylistAdapter.IclickMenu {
-
-
-            override fun clickMenu(
-                location: IntArray,
-                view: View,
-                playList: PlayList,
-                position: Int
-            ) {
-                val optionPlayListDialog = OptionPlayListDialog()
-                optionPlayListDialog.setiOptionCollectionDialog(object :
-                    OptionPlayListDialog.IOptionCollectionDialog {
-                    override fun delete() {
-                        playList.namePlayList.let { viewModel.deletePlayList(it) }
-                        listPlayList.remove(playList)
-                        if (listPlayList.size < 1) {
-                            binding.tvAddPlayList.visibility = View.VISIBLE
-                            binding.tvPlayRandom.visibility = View.INVISIBLE
-                            binding.imAddPlayList.visibility = View.INVISIBLE
+        with(binding){
+            rcPlayList.adapter = playlistAdapter
+            playlistAdapter?.setIclickMenu(object : PlaylistAdapter.IclickMenu {
+                override fun clickMenu(
+                    location: IntArray,
+                    view: View,
+                    playList: PlayList,
+                    position: Int
+                ) {
+                    val optionPlayListDialog = OptionPlayListDialog()
+                    optionPlayListDialog.setiOptionCollectionDialog(object :
+                        OptionPlayListDialog.IOptionCollectionDialog {
+                        override fun delete() {
+                            playList.namePlayList.let { viewModel.deletePlayList(it) }
+                            listPlayList.remove(playList)
+                            if (listPlayList.size < 1) {
+                               tvAddPlayList.visibility = View.VISIBLE
+                               tvPlayRandom.visibility = View.INVISIBLE
+                               imAddPlayList.visibility = View.INVISIBLE
+                            }
+                            playlistAdapter?.listPlayList=(listPlayList)
                         }
-                        playlistAdapter?.listPlayList=(listPlayList)
-                    }
 
-                    override fun edit() {
-                        showDialogEditPlayList(position)
-                    }
-                })
-                optionPlayListDialog.showDialog(location[0].toFloat(),
-                    location[1].toFloat(), childFragmentManager)            }
+                        override fun edit() {
+                            showDialogEditPlayList(position)
+                        }
+                    })
+                    optionPlayListDialog.showDialog(location[0].toFloat(),
+                        location[1].toFloat(), childFragmentManager)            }
 
-            override fun clickItem(position: Int) {
-                val bundle = Bundle()
-                bundle.putString(Constant.NAME_PLAYLIST, listPlayList[position].namePlayList)
-                (requireActivity() as MainActivity).navController?.navigate(
-                    R.id.fragment_detail_playlist,
-                    bundle
-                )
-            }
-        })
+                override fun clickItem(position: Int) {
+                    val bundle = Bundle()
+                    bundle.putString(Constant.NAME_PLAYLIST, listPlayList[position].namePlayList)
+                    (requireActivity() as MainActivity).navController?.navigate(
+                        R.id.fragment_detail_playlist,
+                        bundle
+                    )
+                }
+            })
+        }
+
     }
 
     private fun intitData() {
@@ -92,9 +93,12 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
                 }
                 playlistAdapter?.listPlayList=(listPlayList)
                 if (listPlayList.size > 0) {
-                    binding.tvAddPlayList.visibility = View.INVISIBLE
-                    binding.tvPlayRandom.visibility = View.VISIBLE
-                    binding.imAddPlayList.visibility = View.VISIBLE
+                    with(binding){
+                        tvAddPlayList.visibility = View.INVISIBLE
+                        tvPlayRandom.visibility = View.VISIBLE
+                        imAddPlayList.visibility = View.VISIBLE
+                    }
+
                 }
             }
         }
@@ -106,9 +110,12 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
     }
 
     private fun initlistener() {
-        binding.imBack.setOnClickListener { v -> (requireActivity() as MainActivity).navController?.popBackStack() }
-        binding.tvAddPlayList.setOnClickListener { v -> showDialogAddPlayList() }
-        binding.imAddPlayList.setOnClickListener { v -> showDialogAddPlayList() }
+        with(binding){
+            imBack.setOnClickListener { v -> (requireActivity() as MainActivity).navController?.popBackStack() }
+            tvAddPlayList.setOnClickListener { v -> showDialogAddPlayList() }
+            imAddPlayList.setOnClickListener { v -> showDialogAddPlayList() }
+        }
+
     }
 
     fun showDialogEditPlayList(position: Int) {
