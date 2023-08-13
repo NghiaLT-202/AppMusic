@@ -6,10 +6,9 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.appmusic.R
 import com.example.appmusic.databinding.ActivityMainBinding
 import com.example.appmusic.ui.base.BaseBindingActivity
-import timber.log.Timber
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
-    var navHostFragment: NavHostFragment? = null
+    private var navHostFragment: NavHostFragment? = null
     var navController: NavController? = null
     override val layoutId: Int
         get() = R.layout.activity_main

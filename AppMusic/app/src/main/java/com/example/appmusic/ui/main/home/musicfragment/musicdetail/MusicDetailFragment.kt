@@ -42,7 +42,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
     private val listRecent: MutableList<ItemRecent> = mutableListOf()
 
 
-    var isKillApp = false
+    private var isKillApp = false
     var handler = Handler(Looper.getMainLooper())
     private var checked = false
 
@@ -120,22 +120,18 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
     }
 
     private fun observerData() {
-        mainViewModel.getAllReccentMusic()
+        mainViewModel.getAllRecentMusic()
         mainViewModel.listRecentLiveData.observe(viewLifecycleOwner) { reccentlies ->
             if (reccentlies != null) {
-                Timber.e("ltnghia")
                 listRecent.clear()
                 listRecent.addAll(reccentlies)
                 val musicCurrent: Music = App.instance.musicCurrent
-                Timber.e("ltnghia" + musicCurrent.musicFile)
-                insertReccently(musicCurrent, ItemRecent().apply {
-                    Timber.e("ltnghia" + musicCurrent.musicFile)
-
-                   musicFile= musicCurrent.musicFile
-                    musicName= musicCurrent.musicName
-                    nameSinger=  musicCurrent.nameSinger
-                    nameAlbum= musicCurrent.nameAlbum
-                    namePlayList =musicCurrent.namePlayList
+                insertRecent(musicCurrent, ItemRecent().apply {
+                    musicFile = musicCurrent.musicFile
+                    musicName = musicCurrent.musicName
+                    nameSinger = musicCurrent.nameSinger
+                    nameAlbum = musicCurrent.nameAlbum
+                    namePlayList = musicCurrent.namePlayList
                     imageSong = (musicCurrent.imageSong)
                 }
                 )
@@ -166,8 +162,6 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
 
     private fun initListener() {
         binding.imFavorite.setOnClickListener {
-            Timber.e("ltnghia" + App.instance.musicCurrent.musicName)
-
             binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_24_red)
             if (!checked) {
                 checked = true
@@ -181,7 +175,6 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                 }
                 if (!checkFavourite) {
                     App.instance.musicCurrent.checkFavorite = (true)
-                    Timber.e("ltnghia" + App.instance.musicCurrent.musicName)
                     viewModel.insertFavorite(App.instance.musicCurrent)
                 }
             } else {
@@ -192,21 +185,32 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             }
             startService(Constant.FAVOURITE)
         }
+//        binding.imFastForward.setOnClickListener {
+//            binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
+//            with(App.instance.musicCurrent) {
+//                var currentPos = getPosCurrentMusic(this)
+//                currentPos++
+//                if (currentPos > App.instance.listMusic.size - 1) {
+//                    currentPos = 0
+//                }
+//                App.instance.musicCurrent = (App.instance.listMusic[currentPos])
+//                binding.sbTimeSong.progress = 0
+//                setImageSong(musicFile)
+//                startService(Constant.CHANGE_MUSIC_SERVICE)
+//            }
+//        }
         binding.imFastForward.setOnClickListener {
             binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-            with(App.instance.musicCurrent) {
-                var currentPos = getPosCurrentMusic(this)
-                currentPos++
-                if (currentPos > App.instance.listMusic.size - 1) {
-                    currentPos = 0
-                }
-                App.instance.musicCurrent = (App.instance.listMusic[currentPos])
-                binding.sbTimeSong.progress = 0
-                setImageSong(musicFile)
-                startService(Constant.CHANGE_MUSIC_SERVICE)
+            var currentPos = getPosCurrentMusic(App.instance.musicCurrent)
+            currentPos++
+            if (currentPos > App.instance.listMusic.size - 1) {
+                currentPos = 0
             }
-
-
+            Timber.e("ltnghia"+App.instance.listMusic.size)
+            App.instance.musicCurrent = (App.instance.listMusic[currentPos])
+            binding.sbTimeSong.progress = 0
+            setImageSong(App.instance.musicCurrent.musicFile)
+            startService(Constant.CHANGE_MUSIC_SERVICE)
         }
         binding.imPlaySong.setOnClickListener { startService(Constant.STOP_MEDIA_SERVICE) }
         binding.imRewind.setOnClickListener {
@@ -261,13 +265,13 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                 with(binding) {
                     tvNameSong.text = (App.instance.musicCurrent.musicName)
                     tvNameSinger.text = (App.instance.musicCurrent.nameSinger)
-                    App.instance.musicCurrent.musicFile?.let { setImageSong(it) }
+                    App.instance.musicCurrent.musicFile.let { setImageSong(it) }
                     binding.tvEndTime.text =
-                        (com.example.appmusic.utils.TimeUtils.getTimeDurationMusic(messageEvent.intValue1))
+                        (TimeUtils.getTimeDurationMusic(messageEvent.intValue1))
                     sbTimeSong.max = messageEvent.intValue1
                     imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_24)
                     tvStartTime.text =
-                        (com.example.appmusic.utils.TimeUtils.getTimeDurationMusic(messageEvent.intValue2))
+                        (TimeUtils.getTimeDurationMusic(messageEvent.intValue2))
                     sbTimeSong.progress = 0
                 }
 
@@ -298,7 +302,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             Constant.FAVORITE_MEDIA -> {}
             Constant.STOP_MEDIA -> {
                 if (messageEvent.isBooleanValue) {
-                    App.instance.musicCurrent.musicFile?.let { setImageSong(it) }
+                    App.instance.musicCurrent.musicFile.let { setImageSong(it) }
                     binding.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_filled_60)
                 } else {
                     binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
@@ -359,19 +363,17 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
         }
     }
 
-    fun insertReccently(music: Music, itemRecent: ItemRecent) {
-        Timber.e("ltnghia" + itemRecent.musicName)
+    fun insertRecent(music: Music, itemRecent: ItemRecent) {
 
         var checkExistedRecent = false
-        for (reccent in listRecent) {
-            if (reccent.musicFile == music.musicFile) {
+        for (recent in listRecent) {
+            if (recent.musicFile == music.musicFile) {
                 checkExistedRecent = true
                 break
             }
         }
         if (!checkExistedRecent) {
-            Timber.e("ltnghia" + itemRecent.musicName)
-            mainViewModel.insertReccentMusic(itemRecent)
+            mainViewModel.insertRecentMusic(itemRecent)
             listRecent.add(itemRecent)
         }
     }

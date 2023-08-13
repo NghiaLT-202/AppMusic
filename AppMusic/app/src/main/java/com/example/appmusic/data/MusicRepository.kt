@@ -29,6 +29,8 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
             MediaStore.Audio.AudioColumns.TITLE,
             MediaStore.Audio.AudioColumns.DATE_ADDED
         )
+
+        val mmr = MediaMetadataRetriever() // Create one instance of MediaMetadataRetriever
         context.contentResolver.query(
             uri,
             projection,
@@ -45,60 +47,60 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
             while (cursor.moveToNext()) {
                 val duration = if (columnDuration >= 0) cursor.getLong(columnDuration) else -1
                 if (duration > 0) {
-
                     try {
-                        MediaMetadataRetriever().use { mmr ->
-                            mmr.setDataSource(cursor.getString(columnData))
-                             Music().apply {
-                                musicFile = cursor.getString(columnData)
-                                musicName = cursor.getString(columnTitle)
-                                nameSinger = cursor.getString(columnArtist)
-                                nameAlbum = cursor.getString(columnAlbum)
-                                imageSong = null
-                                checkFavorite = false
-                                namePlayList = ""
-                                date = cursor.getString(columnDateTime)
-                                 mmr.embeddedPicture?.let {
-                                     this.imageSong = BitmapFactory.decodeByteArray(it, 0, it.size)
-
-                                 }
-                                 musicList.add(this)
+                        mmr.setDataSource(cursor.getString(columnData))
+                        val music = Music().apply {
+                            musicFile = cursor.getString(columnData)
+                            musicName = cursor.getString(columnTitle)
+                            nameSinger = cursor.getString(columnArtist)
+                            nameAlbum = cursor.getString(columnAlbum)
+                            imageSong = null
+                            checkFavorite = false
+                            namePlayList = ""
+                            date = cursor.getString(columnDateTime)
+                            mmr.embeddedPicture?.let {
+                                this.imageSong = BitmapFactory.decodeByteArray(it, 0, it.size)
                             }
-
                         }
+                        musicList.add(0, music) // Add items in reverse order directly
                     } catch (e: Exception) {
                         Timber.e(e)
                     }
                 }
             }
         }
-        musicList.reverse()
+        mmr.release() // Release MediaMetadataRetriever
         return musicList
     }
 
     fun insert(music: Music) {
         musicDao.insertMusic(music)
-
     }
 
     fun deleteFavourite(path: String) {
         musicDao.deleteFavourite(path)
     }
+
     fun getAllMusicFavourite(checkFavorite: Boolean): MutableList<Music> {
-      return musicDao.getAllFavouriteMusic(checkFavorite)
+        return musicDao.getAllFavouriteMusic(checkFavorite)
     }
+
     fun deleteRecentMusic() {
         musicDao.deleteRecentMusic()
     }
+
     fun getAllRecentMusic(): MutableList<ItemRecent> {
         return musicDao.getAllRecentMusic()
     }
+
     fun insertRecentMusic(itemRecent: ItemRecent) {
         musicDao.insertRecentMusic(itemRecent)
     }
+
     fun getAllDetailPlayListName(name: String): MutableList<Music> {
-        return  musicDao.getDetailPlaylist(name)
+        return musicDao.getDetailPlaylist(name)
     }
+
     fun getAllMusicPlayList(namePlayList: String): MutableList<Music> {
         return musicDao.getAllMusicPlayList(namePlayList)
     }
@@ -107,9 +109,11 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
     fun insertPlayList(playList: PlayList) {
         musicDao.insertPlayListMusic(playList)
     }
+
     fun getAllPlayList(): MutableList<PlayList> {
         return musicDao.getAllPlayListMusic()
     }
+
     fun deletePlayList(name: String) {
         musicDao.deletePlayListMusic(name)
     }
@@ -117,9 +121,11 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
     fun updateNamePlayList(name: String, id: Int) {
         musicDao.updateNamePlayList(name, id)
     }
+
     fun updateNameMusic(name: String, id: Int) {
         musicDao.updateNameMusic(name, id)
     }
+
     fun insertMusicOfPlayList(music: Music) {
         musicDao.insertMusicOfPlayList(music)
     }

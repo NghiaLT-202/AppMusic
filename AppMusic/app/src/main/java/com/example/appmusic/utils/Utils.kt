@@ -52,9 +52,10 @@ object Utils {
     }
 
     object NetworkUtil {
-        const val TYPE_NOT_CONNECTED = 0
-        const val TYPE_WIFI = 1
-        const val TYPE_MOBILE = 2
+        private const val TYPE_NOT_CONNECTED = 0
+        private const val TYPE_WIFI = 1
+        private const val TYPE_MOBILE = 2
+
         @RequiresApi(api = Build.VERSION_CODES.M)
         fun getConnectivityStatus(context: Context): Int {
             val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

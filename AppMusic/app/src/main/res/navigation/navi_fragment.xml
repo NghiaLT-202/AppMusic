@@ -29,7 +29,7 @@
         tools:layout="@layout/fragment_play_list_music" />
     <fragment
         android:id="@+id/fragment_recently"
-        android:name="com.example.appmusic.ui.main.home.recentlyfragment.ReccentMyMusicFragment"
+        android:name="com.example.appmusic.ui.main.home.recentlyfragment.RecentMyMusicFragment"
         android:label="FragmentRecently"
         tools:layout="@layout/fragment_recently" />
     <fragment

@@ -6,15 +6,15 @@ import com.example.appmusic.R
 import com.example.appmusic.data.model.PlayList
 import com.example.appmusic.databinding.DialogAddPlayListBinding
 import com.example.appmusic.ui.base.BaseBindingDialogFragment
-import timber.log.Timber
 
 class DialogAddPlayListFragment :
     BaseBindingDialogFragment<DialogAddPlayListBinding, DialogAddPlayListVM>() {
-    var listPlayList: MutableList<PlayList> = mutableListOf()
-    var iDialogAdd: IDialogAdd? = null
-    fun setiDialogAdd(iDialogAdd: IDialogAdd?) {
+    private var listPlayList: MutableList<PlayList> = mutableListOf()
+    private var iDialogAdd: IDialogAdd? = null
+    fun setDialogAdd(iDialogAdd: IDialogAdd?) {
         this.iDialogAdd = iDialogAdd
     }
+
     var text: String? = null
     var textEdit: String? = null
 
@@ -26,7 +26,6 @@ class DialogAddPlayListFragment :
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        Timber.e("ltnghia")
         initView()
         initListener()
         initData()
@@ -37,8 +36,8 @@ class DialogAddPlayListFragment :
     }
 
     private fun initListener() {
-        binding.btnCancle.setOnClickListener { v: View? -> dismiss() }
-        binding.btnOk.setOnClickListener { v: View? ->
+        binding.btnCancle.setOnClickListener { dismiss() }
+        binding.btnOk.setOnClickListener {
             iDialogAdd!!.ok(
                 binding.edtInputPlayList.text.toString()
             )
@@ -55,7 +54,7 @@ class DialogAddPlayListFragment :
     }
 
     interface IDialogAdd {
-        fun cancle(position: Int)
+        fun candle(position: Int)
         fun ok(inputName: String)
     }
 }

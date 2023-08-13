@@ -27,7 +27,7 @@ class AppModule {
         return Room.databaseBuilder<Database>(
             context.applicationContext,
             Database::class.java,
-            Database.Companion.DATABASE_NAME
+            Database.DATABASE_NAME
         )
 //            .addMigrations(Database.Companion.MIGRATION_1)
             .allowMainThreadQueries()

@@ -18,10 +18,11 @@ import com.example.appmusic.ui.adapter.MusicAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.ui.main.home.musicfragment.bottomsheetsort.BottomSheetSortFragment
-import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetListFuntionFrag
+import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetOptionsFragment
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import timber.log.Timber
 import java.util.Random
 
 class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
@@ -63,8 +64,11 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { music ->
             if (music != null) {
                 songList.clear()
+                Timber.e("ltnghia"+music.size)
                 songList.addAll(music)
                 musicAdapter?.listMusic = (music)
+                App.instance.listMusic = songList
+
                 binding.loading.visibility = View.GONE
             }
         }
@@ -73,14 +77,14 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
     private fun initListener() {
         binding.imSortSong.setOnClickListener { v ->
             val bottomSheetSortFragment = BottomSheetSortFragment()
-            bottomSheetSortFragment.musicList=(songList)
+            bottomSheetSortFragment.musicList = (songList)
             bottomSheetSortFragment.show(childFragmentManager, null)
             musicAdapter?.listMusic = songList
 
         }
         binding.imPlay.setOnClickListener {
             randomListMusic(songList)
-            App.instance.listMusic = songList
+            Timber.e("ltnghia"+songList.size)
             App.instance.musicCurrent = (songList[1])
             Bundle().apply {
                 putBoolean(Constant.RUN_NEW_MUSIC, true)
@@ -118,8 +122,8 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             }
 
             override fun clickMenu(position: Int, itemMusic: Music) {
-                val bottomSheetFragment = BottomSheetListFuntionFrag()
-                bottomSheetFragment.music=(songList[position])
+                val bottomSheetFragment = BottomSheetOptionsFragment()
+                bottomSheetFragment.music = (songList[position])
                 bottomSheetFragment.show(childFragmentManager, null)
             }
         })

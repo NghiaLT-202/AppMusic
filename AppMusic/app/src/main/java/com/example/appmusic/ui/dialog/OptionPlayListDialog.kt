@@ -26,7 +26,7 @@ class OptionPlayListDialog :
         initListener()
     }
 
-    fun preventTwoClick(view: View, time: Int) {
+    private fun preventTwoClick(view: View, time: Int) {
         if (view.isAttachedToWindow) {
             view.isEnabled = false
             view.postDelayed({ view.isEnabled = true }, time.toLong())

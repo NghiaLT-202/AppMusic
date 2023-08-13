@@ -21,7 +21,7 @@ class SingerAdapter : BaseBindingAdapter<ItemSingerBinding>() {
             tvTotalSong.setText(lisSing.size + R.string.music)
         }
         holder.itemView.setOnClickListener {
-            iBaseClickAdapter?.clickItem(holder.adapterPosition)
+            clickItem(holder.adapterPosition)
         }
     }
 

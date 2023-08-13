@@ -9,7 +9,6 @@ import com.example.appmusic.R
 import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.FragmentResearchBinding
 import com.example.appmusic.ui.adapter.ResearchAdapter
-import com.example.appmusic.ui.base.BaseBindingAdapter.IBaseClickAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
 import java.util.Locale
@@ -38,7 +37,7 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
                 val research = binding.edtSearch.text.toString()
                 val listSearch = ArrayList<Music>()
                 for (i in musicList.indices) {
-                    if (musicList[i].musicName!!.lowercase(Locale.getDefault()).trim { it <= ' ' }
+                    if (musicList[i].musicName.lowercase(Locale.getDefault()).trim { it <= ' ' }
                             .contains(research.lowercase(Locale.getDefault()).trim { it <= ' ' })) {
                         listSearch.add(musicList[i])
                     }
@@ -53,12 +52,11 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
     private fun initAdapter() {
         researchAdapter = ResearchAdapter()
         binding.rcListResearch.adapter = researchAdapter
-        researchAdapter?.setiBaseClickAdapter(object : IBaseClickAdapter {
-            override fun clickItem(position: Int) {
-                App.instance.musicCurrent = (musicList[position])
-                navigateFragment(R.id.fragment_detail_music)
-            }
-        })
+        researchAdapter?.itemCount?.let {
+            App.instance.musicCurrent = (musicList[it])
+            navigateFragment(R.id.fragment_detail_music)
+        }
+
     }
 
     private fun initData() {

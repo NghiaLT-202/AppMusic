@@ -8,7 +8,6 @@ import com.example.appmusic.R
 import com.example.appmusic.databinding.FragmentHomeBinding
 import com.example.appmusic.ui.adapter.FragmentTabLayoutAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
-import com.example.appmusic.ui.main.MainActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 

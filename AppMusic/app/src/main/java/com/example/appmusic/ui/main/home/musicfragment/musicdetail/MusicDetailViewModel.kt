@@ -1,7 +1,6 @@
 package com.example.appmusic.ui.main.home.musicfragment.musicdetail
 
 import android.content.Context
-import androidx.annotation.NonNull
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.appmusic.data.MusicRepository
@@ -12,7 +11,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.Random
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -23,12 +21,16 @@ class MusicDetailViewModel @Inject constructor(val musicRepository: MusicReposit
     var listFavourite = MutableLiveData<MutableList<Music>>()
     fun initData(context: Context) {
         listMusic.postValue(musicRepository.getMusicDevice(context))
-    }    fun insertFavorite(music: Music) {
+    }
+
+    fun insertFavorite(music: Music) {
         musicRepository.insert(music)
     }
+
     fun deleteFavourite(path: String) {
         musicRepository.deleteFavourite(path)
     }
+
     fun getAllFavourite(checkFavorite: Boolean) {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
             _: CoroutineContext, throwable: Throwable

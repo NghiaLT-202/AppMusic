@@ -25,7 +25,7 @@ import org.greenrobot.eventbus.EventBus
 import timber.log.Timber
 import java.util.Objects
 
-class MusicService : Service() {
+open class MusicService : Service() {
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -78,9 +78,9 @@ class MusicService : Service() {
                 mediaPlayer.currentPosition
             )
         )
-        mediaPlayer.setOnCompletionListener(OnCompletionListener {
+        mediaPlayer.setOnCompletionListener {
             EventBus.getDefault().post(MessageEvent(Constant.COMPLETE_PLAY_MUSIC))
-        })
+        }
         mediaPlayer.start()
     }
 
@@ -140,11 +140,13 @@ class MusicService : Service() {
 
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val notificationBuilder = NotificationCompat.Builder(
-            this, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) getNotificationChannel(
-                Objects.requireNonNull<NotificationManager>(notificationManager)
-            ) else ""
-        )
+        val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getNotificationChannel(notificationManager)
+        } else {
+            ""
+        }
+
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
         notificationBuilder.setContent(contentView)
         val notification = notificationBuilder.setOngoing(true)
             .setSmallIcon(R.drawable.ic_launcher_background)
@@ -170,7 +172,7 @@ class MusicService : Service() {
         return channelId
     }
 
-    protected fun getPendingSelfIntent(context: Context, action: String): PendingIntent? {
+    private fun getPendingSelfIntent(context: Context, action: String): PendingIntent? {
         val intent = Intent(context, Broadcast::class.java)
         intent.action = action
         return PendingIntent.getBroadcast(

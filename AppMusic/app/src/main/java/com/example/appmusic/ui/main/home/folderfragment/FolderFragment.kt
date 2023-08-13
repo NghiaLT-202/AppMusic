@@ -3,7 +3,6 @@ package com.example.appmusic.ui.main.home.folderfragment
 import android.os.Bundle
 import android.view.View
 import com.example.appmusic.R
-import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.FragmentFolderBinding
 import com.example.appmusic.ui.adapter.FolderAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment

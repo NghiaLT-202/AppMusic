@@ -17,7 +17,7 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
-class MainViewModel @Inject constructor(var musicRepository: MusicRepository): BaseViewModel() {
+class MainViewModel @Inject constructor(var musicRepository: MusicRepository) : BaseViewModel() {
     var listAllMusicDevice = MutableLiveData<MutableList<Music>>()
     var listRecentLiveData = MutableLiveData<MutableList<ItemRecent>>()
     var listPlaylist = MutableLiveData<MutableList<PlayList>>()
@@ -27,10 +27,11 @@ class MainViewModel @Inject constructor(var musicRepository: MusicRepository): B
 
     fun getAllMusicDetail(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            listAllMusicDevice.postValue( musicRepository.getMusicDevice(context))
+            listAllMusicDevice.postValue(musicRepository.getMusicDevice(context))
         }
     }
-    fun getAllReccentMusic() {
+
+    fun getAllRecentMusic() {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
             _: CoroutineContext, throwable: Throwable
         ) {
@@ -38,15 +39,16 @@ class MainViewModel @Inject constructor(var musicRepository: MusicRepository): B
                 Timber.e(throwable)
             }
         })) {
-            listRecentLiveData.postValue(  musicRepository.getAllRecentMusic())
+            listRecentLiveData.postValue(musicRepository.getAllRecentMusic())
 
 
         }
     }
-    fun insertReccentMusic(itemRecent: ItemRecent) {
-        Timber.e("ltnghia"+itemRecent.musicName)
+
+    fun insertRecentMusic(itemRecent: ItemRecent) {
         musicRepository.insertRecentMusic(itemRecent)
     }
+
     fun getAllPlayList() {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
             _: CoroutineContext, throwable: Throwable
@@ -55,7 +57,7 @@ class MainViewModel @Inject constructor(var musicRepository: MusicRepository): B
                 Timber.e(throwable)
             }
         })) {
-            listPlaylist.postValue( musicRepository.getAllPlayList())
+            listPlaylist.postValue(musicRepository.getAllPlayList())
         }
     }
 

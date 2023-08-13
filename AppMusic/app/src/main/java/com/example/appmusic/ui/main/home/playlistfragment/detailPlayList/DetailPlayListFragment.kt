@@ -14,14 +14,14 @@ import com.example.appmusic.ui.main.MainActivity
 class DetailPlayListFragment :
     BaseBindingFragment<FragmentDetailPlayListBinding, DetailPlayListViewModel>() {
     private val listMusic: MutableList<Music> = ArrayList()
-    var musicAdapter: MusicAdapter? = null
+    private var musicAdapter: MusicAdapter? = null
     private var nameCurrentPlayList: String? = null
     override fun getViewModel(): Class<DetailPlayListViewModel> {
         return DetailPlayListViewModel::class.java
     }
 
     override val layoutId: Int
-        protected get() = R.layout.fragment_detail_play_list
+        get() = R.layout.fragment_detail_play_list
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         if (arguments != null) {
@@ -34,7 +34,7 @@ class DetailPlayListFragment :
 
     private fun initListener() {
         binding.tvNamePlaylist.text = nameCurrentPlayList
-        binding.imBack.setOnClickListener { v: View? -> (requireActivity() as MainActivity).navController!!.popBackStack() }
+        binding.imBack.setOnClickListener { (requireActivity() as MainActivity).navController!!.popBackStack() }
     }
 
     private fun initAdapter() {

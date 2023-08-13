@@ -7,14 +7,13 @@ import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.BottomSheetListFuntionBinding
 import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
 import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.dialog.BottomSheetAddPlayListFrag
-import timber.log.Timber
 
-class BottomSheetListFuntionFrag :
-    BaseBottomSheetDialogFragment<BottomSheetListFuntionBinding, BottomSheetListFuntionVM>() {
+class BottomSheetOptionsFragment :
+    BaseBottomSheetDialogFragment<BottomSheetListFuntionBinding, BottomSheetOptionsViewmodel>() {
     var music: Music? = null
     var namePlayList: String? = null
-    override fun getViewModel(): Class<BottomSheetListFuntionVM> {
-        return BottomSheetListFuntionVM::class.java
+    override fun getViewModel(): Class<BottomSheetOptionsViewmodel> {
+        return BottomSheetOptionsViewmodel::class.java
     }
 
     override val layoutId: Int
@@ -26,14 +25,11 @@ class BottomSheetListFuntionFrag :
     }
 
     private fun initListener() {
-        binding.framelayout.setOnClickListener {  dismiss() }
+        binding.framelayout.setOnClickListener { dismiss() }
         binding.addToPlayList.setOnClickListener {
             val bottomSheetAddPlayListFrag = BottomSheetAddPlayListFrag()
-            Timber.e("ltnghia"+music?.musicName)
-            bottomSheetAddPlayListFrag.musicCurent=(music)
+            bottomSheetAddPlayListFrag.musicCurent = (music)
             bottomSheetAddPlayListFrag.show(childFragmentManager, null)
-            Timber.e("ltnghia"+music?.musicName)
-
         }
     }
 

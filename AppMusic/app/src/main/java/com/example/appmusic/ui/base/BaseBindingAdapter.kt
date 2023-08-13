@@ -9,11 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appmusic.ui.base.BaseBindingAdapter.BaseHolder
 
 abstract class BaseBindingAdapter<B : ViewDataBinding> : RecyclerView.Adapter<BaseHolder<B>>() {
-    @JvmField
-    protected var iBaseClickAdapter: IBaseClickAdapter? = null
-    fun setiBaseClickAdapter(iBaseClickAdapter: IBaseClickAdapter?) {
-        this.iBaseClickAdapter = iBaseClickAdapter
-    }
+var clickItem : (position: Int) -> Unit={}
 
     protected abstract fun onBindViewHolderBase(holder: BaseHolder<B>, position: Int)
     protected abstract val layoutIdItem: Int
@@ -24,7 +20,7 @@ abstract class BaseBindingAdapter<B : ViewDataBinding> : RecyclerView.Adapter<Ba
     }
 
     override fun onBindViewHolder(holder: BaseHolder<B>, position: Int) {
-        holder.itemView.setOnClickListener { view: View? -> iBaseClickAdapter!!.clickItem(holder.adapterPosition) }
+        holder.itemView.setOnClickListener { view: View? -> clickItem(holder.adapterPosition) }
         onBindViewHolderBase(holder, holder.adapterPosition)
     }
 
@@ -36,7 +32,5 @@ abstract class BaseBindingAdapter<B : ViewDataBinding> : RecyclerView.Adapter<Ba
         binding.root
     )
 
-    interface IBaseClickAdapter {
-        fun clickItem(position: Int)
-    }
+
 }

@@ -6,16 +6,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ReccentMyMusicVM //    public void deleteReccentMusic() {
+class RecentMyMusicVM
 @Inject constructor(var musicRepository: MusicRepository) : BaseViewModel() {
 
     @Inject
-    fun ReccentMyMusicVM(musicRepository: MusicRepository) {
+    fun recentMyMusicVM(musicRepository: MusicRepository) {
         this.musicRepository = musicRepository
     }
 
 
-    fun deleteReccentMusic() {
+    fun deleteRecentMusic() {
         musicRepository.deleteRecentMusic()
     }
 }

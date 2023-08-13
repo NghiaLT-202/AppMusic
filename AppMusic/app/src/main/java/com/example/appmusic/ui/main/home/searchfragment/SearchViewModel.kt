@@ -12,7 +12,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(private val musicRepository: MusicRepository) :
     BaseViewModel() {
     var listMusic = MutableLiveData<MutableList<Music>>()
-    fun getAllMusicSearch(context: Context?) {
-        listMusic.postValue(musicRepository.getMusicDevice(context!!))
-    }
+//    fun getAllMusicSearch(context: Context?) {
+//        listMusic.postValue(musicRepository.getMusicDevice(context!!))
+//    }
 }

@@ -16,7 +16,7 @@ class DialogAddPlayListVM @Inject constructor(private val musicRepository: Music
             listPlayList.postValue(musicRepository.getAllPlayList())
         }
 
-    fun insertPlayList(playList: PlayList) {
-        musicRepository.insertPlayList(playList)
-    }
+//    fun insertPlayList(playList: PlayList) {
+//        musicRepository.insertPlayList(playList)
+//    }
 }

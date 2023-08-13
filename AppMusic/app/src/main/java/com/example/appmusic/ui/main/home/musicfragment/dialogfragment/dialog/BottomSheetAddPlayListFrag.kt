@@ -8,7 +8,6 @@ import com.example.appmusic.data.model.Music
 import com.example.appmusic.data.model.PlayList
 import com.example.appmusic.databinding.BottomSheetAddPlaylistBinding
 import com.example.appmusic.ui.adapter.ListPlayListAdapter
-import com.example.appmusic.ui.base.BaseBindingAdapter.IBaseClickAdapter
 import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
 import com.example.appmusic.ui.main.MainActivity
 import timber.log.Timber
@@ -28,8 +27,6 @@ class BottomSheetAddPlayListFrag :
         get() = R.layout.bottom_sheet_add_playlist
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        Timber.e("ltnghia")
-
         initAdapter()
         initListener()
         initData()
@@ -38,12 +35,16 @@ class BottomSheetAddPlayListFrag :
     private fun initAdapter() {
         listPlayListAdapter = ListPlayListAdapter()
         binding.rcListCollection.adapter = listPlayListAdapter
-        listPlayListAdapter!!.setiBaseClickAdapter(object : IBaseClickAdapter {
-            override fun clickItem(position: Int) {
-                positionPlayList = position
-                viewModel.getAllMusicPlayList(listPlayList[position].namePlayList)
-            }
-        })
+        listPlayListAdapter?.clickItem = {
+            positionPlayList = it
+            viewModel.getAllMusicPlayList(listPlayList[it].namePlayList)
+        }
+//        listPlayListAdapter?.clickItem(object : IBaseClickAdapter {
+//            override fun clickItem(position: Int) {
+//                positionPlayList = position
+//                viewModel.getAllMusicPlayList(listPlayList[position].namePlayList)
+//            }
+//        })
     }
 
     private fun initListener() {
@@ -68,7 +69,7 @@ class BottomSheetAddPlayListFrag :
             listMusicPlayList.addAll(music)
             var check = false
             for (i in listMusicPlayList.indices) {
-                if (musicCurent!!.musicName == listMusicPlayList[i].musicName) {
+                if (musicCurent?.musicName == listMusicPlayList[i].musicName) {
                     check = true
                     break
                 }
@@ -76,9 +77,9 @@ class BottomSheetAddPlayListFrag :
             if (!check) {
                 musicCurent!!.namePlayList = listPlayList[positionPlayList].namePlayList
                 viewModel.inSertMusicofPlayList(musicCurent!!)
-                Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.success), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, "No add", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.no_add), Toast.LENGTH_SHORT).show()
             }
             dismiss()
         }

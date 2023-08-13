@@ -12,18 +12,17 @@ import com.example.appmusic.databinding.FragmentRecentlyBinding
 import com.example.appmusic.ui.adapter.RecentlyAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
-import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetListFuntionFrag
-import timber.log.Timber
+import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetOptionsFragment
 
-class ReccentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, ReccentMyMusicVM>() {
+class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, RecentMyMusicVM>() {
     var recentlyAdapter: RecentlyAdapter? = null
     private val recentList: MutableList<ItemRecent> = mutableListOf()
-    override fun getViewModel(): Class<ReccentMyMusicVM> {
-        return ReccentMyMusicVM::class.java
+    override fun getViewModel(): Class<RecentMyMusicVM> {
+        return RecentMyMusicVM::class.java
     }
 
     override val layoutId: Int
-        protected get() = R.layout.fragment_recently
+        get() = R.layout.fragment_recently
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initAdapter()
@@ -38,7 +37,7 @@ class ReccentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recc
             alert.setTitle("Delete recent playlist")
             alert.setMessage("Do you want to delete recently played song")
             alert.setPositiveButton(android.R.string.yes) { dialog: DialogInterface?, which: Int ->
-                viewModel.deleteReccentMusic()
+                viewModel.deleteRecentMusic()
                 recentList.clear()
                 recentlyAdapter?.list = (recentList)
                 binding.tvNoDataReccent.visibility = View.VISIBLE
@@ -55,14 +54,15 @@ class ReccentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recc
             override fun clickItem(position: Int) {
                 val itemRecent = recentList[position]
                 Music().apply {
-                    itemRecent.musicFile
-                    itemRecent.musicName
-                    itemRecent.nameSinger
-                    itemRecent.nameAlbum
-                    false
-                    itemRecent.namePlayList
-                    null
+                    musicFile = itemRecent.musicFile
+                    musicName = itemRecent.musicName
+                    nameSinger = itemRecent.nameSinger
+                    nameAlbum = itemRecent.nameAlbum
                     imageSong = itemRecent.imageSong
+
+                    checkFavorite = false
+                    namePlayList = itemRecent.namePlayList
+                    date = null.toString()
                     App.instance.musicCurrent = (this)
 
                 }
@@ -76,12 +76,12 @@ class ReccentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recc
     }
 
     fun showBottomSheetDialog() {
-        val bottomSheetFragment = BottomSheetListFuntionFrag()
+        val bottomSheetFragment = BottomSheetOptionsFragment()
         bottomSheetFragment.show(childFragmentManager, null)
     }
 
     private fun initData() {
-        mainViewModel.getAllReccentMusic()
+        mainViewModel.getAllRecentMusic()
         mainViewModel.listRecentLiveData.observe(viewLifecycleOwner) { listRecent ->
             if (listRecent != null) {
                 recentList.clear()
@@ -89,7 +89,6 @@ class ReccentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recc
                 if (recentList.size > 0) {
                     binding.tvNoDataReccent.visibility = View.INVISIBLE
                 }
-                Timber.e("ltnghia"+recentList.size)
                 recentlyAdapter?.list = (recentList)
                 mainViewModel.listRecentLiveData.postValue(null)
             }

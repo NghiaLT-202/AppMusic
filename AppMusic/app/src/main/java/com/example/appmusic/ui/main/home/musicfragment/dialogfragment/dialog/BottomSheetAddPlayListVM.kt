@@ -14,12 +14,12 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
-class BottomSheetAddPlayListVM @Inject constructor( var musicRepository: MusicRepository) :
+class BottomSheetAddPlayListVM @Inject constructor(var musicRepository: MusicRepository) :
     BaseViewModel() {
     var listMusicPlaylist = MutableLiveData<MutableList<Music>>()
-    fun updateNamePlayList(name: String, id: Int) {
-        musicRepository.updateNameMusic(name, id)
-    }
+//    fun updateNamePlayList(name: String, id: Int) {
+//        musicRepository.updateNameMusic(name, id)
+//    }
 
     fun inSertMusicofPlayList(music: Music) {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
@@ -32,8 +32,6 @@ class BottomSheetAddPlayListVM @Inject constructor( var musicRepository: MusicRe
             musicRepository.insertMusicOfPlayList(music)
         }
     }
-
-
 
 
     fun getAllMusicPlayList(namePlayList: String) {

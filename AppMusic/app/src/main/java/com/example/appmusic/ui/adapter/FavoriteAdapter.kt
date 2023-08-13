@@ -23,6 +23,7 @@ class FavoriteAdapter : BaseBindingAdapter<ItemMusicBinding>() {
         holder: BaseHolder<ItemMusicBinding>,
         position: Int
     ) {
+
         with(holder.binding) {
             list[holder.adapterPosition].apply {
                 if (imageSong != null) {

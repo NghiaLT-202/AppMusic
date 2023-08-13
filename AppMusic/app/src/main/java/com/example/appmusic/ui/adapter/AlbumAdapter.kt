@@ -36,6 +36,6 @@ class AlbumAdapter : BaseBindingAdapter<ItemAlbumBinding>() {
 
         }
 
-        holder.itemView.setOnClickListener { iBaseClickAdapter?.clickItem(holder.adapterPosition) }
+        holder.itemView.setOnClickListener { clickItem(holder.adapterPosition) }
     }
 }

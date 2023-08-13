@@ -34,7 +34,7 @@ class ResearchAdapter : BaseBindingAdapter<ItemMusicBinding>() {
         }
 
 
-        holder.itemView.setOnClickListener {  iBaseClickAdapter!!.clickItem(holder.adapterPosition) }
+        holder.itemView.setOnClickListener {  clickItem(holder.adapterPosition) }
     }
 
     override val layoutIdItem: Int

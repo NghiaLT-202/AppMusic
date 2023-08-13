@@ -2,12 +2,10 @@ package com.example.appmusic.ui.main.home.singerfragment
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import com.example.appmusic.R
 import com.example.appmusic.databinding.FragmentSingerBinding
 import com.example.appmusic.ui.adapter.SingerAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
-import timber.log.Timber
 
 class SingerFragment : BaseBindingFragment<FragmentSingerBinding, SingerViewModel>() {
 
@@ -36,7 +34,7 @@ class SingerFragment : BaseBindingFragment<FragmentSingerBinding, SingerViewMode
     fun initData() {
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) {
 
-            singerAdapter?.lisSing=it
+            singerAdapter?.lisSing = it
         }
     }
 
