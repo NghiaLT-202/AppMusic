@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import com.example.appmusic.App
 import com.example.appmusic.R
+import com.example.appmusic.common.Constant
 import com.example.appmusic.data.model.ItemRecent
 import com.example.appmusic.data.model.Music
 import com.example.appmusic.databinding.FragmentRecentlyBinding
@@ -31,8 +32,8 @@ class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recen
     }
 
     private fun initListener() {
-        binding.imBack.setOnClickListener { v: View? -> (requireActivity() as MainActivity).navController!!.popBackStack() }
-        binding.imDelete.setOnClickListener { v: View? ->
+        binding.imBack.setOnClickListener {  (requireActivity() as MainActivity).navController!!.popBackStack() }
+        binding.imDelete.setOnClickListener {
             val alert = AlertDialog.Builder(context)
             alert.setTitle("Delete recent playlist")
             alert.setMessage("Do you want to delete recently played song")
@@ -59,14 +60,18 @@ class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recen
                     nameSinger = itemRecent.nameSinger
                     nameAlbum = itemRecent.nameAlbum
                     imageSong = itemRecent.imageSong
-
                     checkFavorite = false
                     namePlayList = itemRecent.namePlayList
                     date = null.toString()
                     App.instance.musicCurrent = (this)
-
                 }
-                (requireActivity() as MainActivity).navController!!.navigate(R.id.fragment_detail_music)
+                Bundle().apply {
+                    putBoolean(Constant.RUN_NEW_MUSIC, true)
+                    (requireActivity() as MainActivity).navController?.navigate(
+                        R.id.fragment_detail_music,
+                        this
+                    )
+                }
             }
 
             override fun clickMenu(position: Int) {

@@ -273,6 +273,8 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                     tvStartTime.text =
                         (TimeUtils.getTimeDurationMusic(messageEvent.intValue2))
                     sbTimeSong.progress = 0
+                    checkFavourite()
+
                 }
 
             }
