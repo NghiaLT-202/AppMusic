@@ -24,6 +24,7 @@ import com.example.appmusic.databinding.FragmentDetailSongBinding
 import com.example.appmusic.service.MusicService
 import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
+import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.dialog.BottomSheetAddPlayListFrag
 import com.example.appmusic.utils.StatusBarUtils
 import com.example.appmusic.utils.TimeUtils
 import jp.wasabeef.blurry.Blurry
@@ -185,20 +186,11 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             }
             startService(Constant.FAVOURITE)
         }
-//        binding.imFastForward.setOnClickListener {
-//            binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-//            with(App.instance.musicCurrent) {
-//                var currentPos = getPosCurrentMusic(this)
-//                currentPos++
-//                if (currentPos > App.instance.listMusic.size - 1) {
-//                    currentPos = 0
-//                }
-//                App.instance.musicCurrent = (App.instance.listMusic[currentPos])
-//                binding.sbTimeSong.progress = 0
-//                setImageSong(musicFile)
-//                startService(Constant.CHANGE_MUSIC_SERVICE)
-//            }
-//        }
+        binding.imListPlay.setOnClickListener {
+            val bottomSheetAddPlayListFrag = BottomSheetAddPlayListFrag()
+            bottomSheetAddPlayListFrag.musicCurent=(App.instance.musicCurrent)
+            bottomSheetAddPlayListFrag.show(childFragmentManager, null)
+        }
         binding.imFastForward.setOnClickListener {
             binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
             var currentPos = getPosCurrentMusic(App.instance.musicCurrent)
@@ -231,6 +223,15 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
         binding.imDown.setOnClickListener {
             (requireActivity() as MainActivity).navController?.popBackStack()
 
+        }
+        binding.imPlayAgain.setOnClickListener {
+            if (!App.isLoop) {
+                App.isLoop = true
+                binding.imPlayAgain.setColorFilter(R.color.black)
+            } else {
+                binding.imPlayAgain.colorFilter = null
+                App.isLoop = false
+            }
         }
 
 

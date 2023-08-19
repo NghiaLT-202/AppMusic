@@ -32,6 +32,8 @@ class SingerFragment : BaseBindingFragment<FragmentSingerBinding, SingerViewMode
     }
 
     fun initData() {
+        mainViewModel.getAllMusicDetail(requireContext())
+
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) {
 
             singerAdapter?.lisSing = it

@@ -84,7 +84,6 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
         }
         binding.imPlay.setOnClickListener {
             randomListMusic(songList)
-            Timber.e("ltnghia"+songList.size)
             App.instance.musicCurrent = (songList[1])
             Bundle().apply {
                 putBoolean(Constant.RUN_NEW_MUSIC, true)
@@ -96,7 +95,7 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
         }
     }
 
-    fun randomListMusic(musicList: MutableList<Music>): MutableList<Music> {
+    private fun randomListMusic(musicList: MutableList<Music>): MutableList<Music> {
         val rand = Random()
         for (i in musicList.indices) {
             val randomNum = rand.nextInt(musicList.size - 1)

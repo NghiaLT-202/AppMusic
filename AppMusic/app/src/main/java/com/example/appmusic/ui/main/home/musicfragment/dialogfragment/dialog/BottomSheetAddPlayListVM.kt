@@ -44,6 +44,5 @@ class BottomSheetAddPlayListVM @Inject constructor(var musicRepository: MusicRep
         })) {
             listMusicPlaylist.postValue(musicRepository.getAllMusicPlayList(namePlayList))
         }
-
     }
 }

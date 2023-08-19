@@ -29,6 +29,8 @@ class FolderFragment : BaseBindingFragment<FragmentFolderBinding, FolderViewMode
     }
 
     private fun initData() {
+        mainViewModel.getAllMusicDetail(requireContext())
+
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { list ->
             folderAdapter?.listFolder = (list)
         }

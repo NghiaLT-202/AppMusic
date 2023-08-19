@@ -31,6 +31,8 @@ class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding, AlbumViewModel>(
     }
 
     private fun initData() {
+        mainViewModel.getAllMusicDetail(requireContext())
+
         mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { songs ->
             if (songs != null) {
                 albumAdapter?.list = (songs)
