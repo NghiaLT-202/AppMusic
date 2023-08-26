@@ -2,12 +2,12 @@ package com.example.appmusic.ui.adapter
 
 import android.annotation.SuppressLint
 import com.example.appmusic.R
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.ItemSingerBinding
 import com.example.appmusic.ui.base.BaseBindingAdapter
 
 class SingerAdapter : BaseBindingAdapter<ItemSingerBinding>() {
-    var lisSing: MutableList<Music> = mutableListOf()
+    var listSing: MutableList<DataMusic> = mutableListOf()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
@@ -16,18 +16,22 @@ class SingerAdapter : BaseBindingAdapter<ItemSingerBinding>() {
 
 
     override fun onBindViewHolderBase(holder: BaseHolder<ItemSingerBinding>, position: Int) {
-        with(holder.binding) {
-            tvNameSinger.text = lisSing[position].nameSinger
-            tvTotalSong.setText(lisSing.size + R.string.music)
+        listSing[position].apply {
+            with(holder.binding) {
+                tvNameSinger.text = nameSinger
+                tvTotalSong.setText(listSing.size + R.string.music)
+                holder.itemView.setOnClickListener {
+                    clickItem(holder.adapterPosition,this@apply)
+                }
+            }
         }
-        holder.itemView.setOnClickListener {
-            clickItem(holder.adapterPosition)
-        }
+
+
     }
 
 
     override val layoutIdItem: Int
          get() = R.layout.item_singer
     override val sizeItem: Int
-         get() = lisSing.size
+         get() = listSing.size
 }

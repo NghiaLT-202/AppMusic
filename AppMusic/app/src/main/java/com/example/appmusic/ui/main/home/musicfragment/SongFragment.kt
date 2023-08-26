@@ -12,7 +12,7 @@ import com.example.appmusic.App
 import com.example.appmusic.R
 import com.example.appmusic.common.Constant
 import com.example.appmusic.common.MessageEvent
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.FragmentSongBinding
 import com.example.appmusic.ui.adapter.MusicAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
@@ -27,7 +27,7 @@ import java.util.Random
 
 class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
     var musicAdapter: MusicAdapter? = null
-    private val songList: MutableList<Music> = mutableListOf()
+    private val songList: MutableList<DataMusic> = mutableListOf()
 
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -61,13 +61,12 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
 
     private fun initData() {
 
-        mainViewModel.listAllMusicDevice.observe(viewLifecycleOwner) { music ->
+        mainViewModel.listAllDataMusicDevice.observe(viewLifecycleOwner) { music ->
             if (music != null) {
                 songList.clear()
-                Timber.e("ltnghia"+music.size)
                 songList.addAll(music)
-                musicAdapter?.listMusic = (music)
-                App.instance.listMusic = songList
+                musicAdapter?.listDataMusic = (music)
+                App.instance.listDataMusic = songList
 
                 binding.loading.visibility = View.GONE
             }
@@ -77,9 +76,9 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
     private fun initListener() {
         binding.imSortSong.setOnClickListener { v ->
             val bottomSheetSortFragment = BottomSheetSortFragment()
-            bottomSheetSortFragment.musicList = (songList)
+            bottomSheetSortFragment.dataMusicList = (songList)
             bottomSheetSortFragment.show(childFragmentManager, null)
-            musicAdapter?.listMusic = songList
+            musicAdapter?.listDataMusic = songList
 
         }
         binding.imPlay.setOnClickListener {
@@ -95,39 +94,35 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
         }
     }
 
-    private fun randomListMusic(musicList: MutableList<Music>): MutableList<Music> {
+    private fun randomListMusic(dataMusicList: MutableList<DataMusic>): MutableList<DataMusic> {
         val rand = Random()
-        for (i in musicList.indices) {
-            val randomNum = rand.nextInt(musicList.size - 1)
-            musicList[i] = musicList[randomNum]
+        for (i in dataMusicList.indices) {
+            val randomNum = rand.nextInt(dataMusicList.size - 1)
+            dataMusicList[i] = dataMusicList[randomNum]
         }
-        return musicList
+        return dataMusicList
     }
 
     private fun initAdapter() {
         musicAdapter = MusicAdapter()
         binding.rcMusic.adapter = musicAdapter
-        musicAdapter?.setIClickMusic(object : MusicAdapter.IclickMusic {
-
-            override fun clickItem(position: Int, music: Music) {
-                App.instance.musicCurrent = (music)
-                Bundle().apply {
-                    putBoolean(Constant.RUN_NEW_MUSIC, true)
-                    (requireActivity() as MainActivity).navController?.navigate(
-                        R.id.fragment_detail_music,
-                        this
-                    )
-                }
+        musicAdapter?.clickItem={ _, dataMusic ->
+            App.instance.musicCurrent = (dataMusic)
+            Bundle().apply {
+                putBoolean(Constant.RUN_NEW_MUSIC, true)
+                (requireActivity() as MainActivity).navController?.navigate(
+                    R.id.fragment_detail_music,
+                    this
+                )
             }
+        }
+        musicAdapter?.clickMenu={position, _ ->
 
-            override fun clickMenu(position: Int, itemMusic: Music) {
-                val bottomSheetFragment = BottomSheetOptionsFragment()
-                bottomSheetFragment.music = (songList[position])
-                bottomSheetFragment.show(childFragmentManager, null)
-            }
-        })
+            val bottomSheetFragment = BottomSheetOptionsFragment()
 
-
+            bottomSheetFragment.dataMusic = (songList[position])
+            bottomSheetFragment.show(childFragmentManager, null)
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -140,7 +135,7 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             songList.sortWith { o1, o2 -> o1.date.compareTo(o2.date) }
 
         }
-        musicAdapter?.listMusic = (songList)
+        musicAdapter?.listDataMusic = (songList)
     }
 
     override fun onDetach() {

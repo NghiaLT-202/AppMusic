@@ -3,7 +3,7 @@ package com.example.appmusic.ui.main.home.musicfragment.dialogfragment.dialog
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.appmusic.data.MusicRepository
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -16,12 +16,9 @@ import kotlin.coroutines.CoroutineContext
 @HiltViewModel
 class BottomSheetAddPlayListVM @Inject constructor(var musicRepository: MusicRepository) :
     BaseViewModel() {
-    var listMusicPlaylist = MutableLiveData<MutableList<Music>>()
-//    fun updateNamePlayList(name: String, id: Int) {
-//        musicRepository.updateNameMusic(name, id)
-//    }
+    var listDataMusicPlaylist = MutableLiveData<MutableList<DataMusic>>()
 
-    fun inSertMusicofPlayList(music: Music) {
+    fun inSertMusicofPlayList(dataMusic: DataMusic) {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
             _: CoroutineContext, throwable: Throwable
         ) {
@@ -29,7 +26,7 @@ class BottomSheetAddPlayListVM @Inject constructor(var musicRepository: MusicRep
                 Timber.e(throwable)
             }
         })) {
-            musicRepository.insertMusicOfPlayList(music)
+            musicRepository.insertMusicOfPlayList(dataMusic)
         }
     }
 
@@ -42,7 +39,7 @@ class BottomSheetAddPlayListVM @Inject constructor(var musicRepository: MusicRep
                 Timber.e(throwable)
             }
         })) {
-            listMusicPlaylist.postValue(musicRepository.getAllMusicPlayList(namePlayList))
+            listDataMusicPlaylist.postValue(musicRepository.getAllMusicPlayList(namePlayList))
         }
     }
 }

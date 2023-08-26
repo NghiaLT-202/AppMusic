@@ -6,7 +6,7 @@ import android.text.TextWatcher
 import android.view.View
 import com.example.appmusic.App
 import com.example.appmusic.R
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.FragmentResearchBinding
 import com.example.appmusic.ui.adapter.ResearchAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
@@ -14,7 +14,7 @@ import com.example.appmusic.ui.main.MainActivity
 import java.util.Locale
 
 class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewModel>() {
-    private val musicList: MutableList<Music> = mutableListOf()
+    private val dataMusicList: MutableList<DataMusic> = mutableListOf()
     var researchAdapter: ResearchAdapter? = null
     override val layoutId: Int
         get() = R.layout.fragment_research
@@ -35,14 +35,14 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 val research = binding.edtSearch.text.toString()
-                val listSearch = ArrayList<Music>()
-                for (i in musicList.indices) {
-                    if (musicList[i].musicName.lowercase(Locale.getDefault()).trim { it <= ' ' }
+                val listSearch = ArrayList<DataMusic>()
+                for (i in dataMusicList.indices) {
+                    if (dataMusicList[i].musicName.lowercase(Locale.getDefault()).trim { it <= ' ' }
                             .contains(research.lowercase(Locale.getDefault()).trim { it <= ' ' })) {
-                        listSearch.add(musicList[i])
+                        listSearch.add(dataMusicList[i])
                     }
                 }
-                researchAdapter?.listMusic = listSearch
+                researchAdapter?.listDataMusic = listSearch
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -53,7 +53,7 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
         researchAdapter = ResearchAdapter()
         binding.rcListResearch.adapter = researchAdapter
         researchAdapter?.itemCount?.let {
-            App.instance.musicCurrent = (musicList[it])
+            App.instance.musicCurrent = (dataMusicList[it])
             navigateFragment(R.id.fragment_detail_music)
         }
 
@@ -61,10 +61,10 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
 
     private fun initData() {
 //        viewModel.getAllMusicSearch(context)
-        viewModel.listMusic.observe(viewLifecycleOwner) {
-            musicList.clear()
-            musicList.addAll(it)
-            researchAdapter?.listMusic = it
+        viewModel.listDataMusic.observe(viewLifecycleOwner) {
+            dataMusicList.clear()
+            dataMusicList.addAll(it)
+            researchAdapter?.listDataMusic = it
         }
     }
 }

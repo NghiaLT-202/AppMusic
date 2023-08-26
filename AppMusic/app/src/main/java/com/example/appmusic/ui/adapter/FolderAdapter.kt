@@ -2,12 +2,12 @@ package com.example.appmusic.ui.adapter
 
 import android.annotation.SuppressLint
 import com.example.appmusic.R
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.ItemFolderBinding
 import com.example.appmusic.ui.base.BaseBindingAdapter
 
 class FolderAdapter : BaseBindingAdapter<ItemFolderBinding>() {
-     var listFolder: MutableList<Music> = mutableListOf()
+     var listFolder: MutableList<DataMusic> = mutableListOf()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field=value
@@ -18,12 +18,15 @@ class FolderAdapter : BaseBindingAdapter<ItemFolderBinding>() {
         holder: BaseHolder<ItemFolderBinding>,
         position: Int
     ) {
-        with(holder.binding){
-            tvNamefolder.text = listFolder[position].musicFile
-            tvTotalSong.text = "5"
-        }
+         listFolder[position].apply {
+             with(holder.binding){
+                 tvNamefolder.text = musicFile
+                 tvTotalSong.text = "5"
+             }
 
-        holder.itemView.setOnClickListener { clickItem(holder.adapterPosition) }
+             holder.itemView.setOnClickListener { clickItem(holder.adapterPosition,this) }
+         }
+
     }
 
     override val layoutIdItem: Int

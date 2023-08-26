@@ -1,19 +1,26 @@
 package com.example.appmusic.ui.main.home.playlistfragment
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.appmusic.data.MusicRepository
-import com.example.appmusic.data.model.Music
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataMusic
+import com.example.appmusic.data.model.DataPlayList
 import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
+
 @HiltViewModel
 class PlaylistViewModel  @Inject constructor(private val musicRepository: MusicRepository) : BaseViewModel(){
-    var listMusicPlaylist = MutableLiveData<MutableList<Music>>()
+    var listDataMusicPlaylist = MutableLiveData<MutableList<DataMusic>>()
 
 
-    fun insertPlayList(playList: PlayList) {
-        musicRepository.insertPlayList(playList)
+    fun insertPlayList(dataPlayList: DataPlayList) {
+        musicRepository.insertPlayList(dataPlayList)
     }
 
     fun deletePlayList(name: String) {
@@ -25,7 +32,15 @@ class PlaylistViewModel  @Inject constructor(private val musicRepository: MusicR
     }
 
     fun getAllMusicPlayList(namePlayList: String) {
-        listMusicPlaylist.postValue( musicRepository.getAllMusicPlayList(namePlayList))
+        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
+            _: CoroutineContext, throwable: Throwable
+        ) {
+            run {
+                Timber.e(throwable)
+            }
+        })) {
+            listDataMusicPlaylist.postValue( musicRepository.getAllMusicPlayList(namePlayList))
+        }
 
 
     }

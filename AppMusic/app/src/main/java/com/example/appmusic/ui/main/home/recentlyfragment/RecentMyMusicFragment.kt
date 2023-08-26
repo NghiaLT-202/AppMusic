@@ -7,8 +7,8 @@ import android.view.View
 import com.example.appmusic.App
 import com.example.appmusic.R
 import com.example.appmusic.common.Constant
-import com.example.appmusic.data.model.ItemRecent
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataItemRecent
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.FragmentRecentlyBinding
 import com.example.appmusic.ui.adapter.RecentlyAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
@@ -17,7 +17,7 @@ import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomShee
 
 class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, RecentMyMusicVM>() {
     var recentlyAdapter: RecentlyAdapter? = null
-    private val recentList: MutableList<ItemRecent> = mutableListOf()
+    private val recentList: MutableList<DataItemRecent> = mutableListOf()
     override fun getViewModel(): Class<RecentMyMusicVM> {
         return RecentMyMusicVM::class.java
     }
@@ -54,7 +54,7 @@ class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recen
         recentlyAdapter!!.setIclickMusic(object : RecentlyAdapter.IclickMusic {
             override fun clickItem(position: Int) {
                 val itemRecent = recentList[position]
-                Music().apply {
+                DataMusic().apply {
                     musicFile = itemRecent.musicFile
                     musicName = itemRecent.musicName
                     nameSinger = itemRecent.nameSinger

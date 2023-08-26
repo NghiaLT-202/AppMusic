@@ -6,7 +6,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity
-class Music {
+class DataMusic {
     @PrimaryKey(autoGenerate = true)
     var id = 0
     var musicFile: String = ""

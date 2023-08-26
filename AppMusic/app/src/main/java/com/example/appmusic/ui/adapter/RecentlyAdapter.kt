@@ -2,12 +2,12 @@ package com.example.appmusic.ui.adapter
 
 import android.annotation.SuppressLint
 import com.example.appmusic.R
-import com.example.appmusic.data.model.ItemRecent
+import com.example.appmusic.data.model.DataItemRecent
 import com.example.appmusic.databinding.ItemMusicBinding
 import com.example.appmusic.ui.base.BaseBindingAdapter
 
 class RecentlyAdapter : BaseBindingAdapter<ItemMusicBinding>() {
-    var list: MutableList<ItemRecent> = mutableListOf()
+    var list: MutableList<DataItemRecent> = mutableListOf()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value

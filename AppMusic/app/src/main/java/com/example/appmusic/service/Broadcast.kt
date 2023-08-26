@@ -8,8 +8,10 @@ import com.example.appmusic.App
 import com.example.appmusic.R
 import com.example.appmusic.common.Constant
 import com.example.appmusic.common.MessageEvent
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.common.startService
+import com.example.appmusic.data.model.DataMusic
 import org.greenrobot.eventbus.EventBus
+import java.security.cert.Extension
 
 class Broadcast : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -23,10 +25,10 @@ class Broadcast : BroadcastReceiver() {
             Constant.NEXT_SONG -> {
                 var currentPos = getPosCurrentMusic(App.instance.musicCurrent)
                 currentPos++
-                if (currentPos > App.instance.listMusic.size - 1) {
+                if (currentPos > App.instance.listDataMusic.size - 1) {
                     currentPos = 0
                 }
-                App.instance.musicCurrent = App.instance.listMusic[currentPos]
+                App.instance.musicCurrent = App.instance.listDataMusic[currentPos]
                 startService(Constant.CHANGE_MUSIC_SERVICE)
             }
 
@@ -34,28 +36,29 @@ class Broadcast : BroadcastReceiver() {
                 var currentPosback = getPosCurrentMusic(App.instance.musicCurrent)
                 currentPosback--
                 if (currentPosback < 0) {
-                    currentPosback = App.instance.listMusic.size - 1
+                    currentPosback = App.instance.listDataMusic.size - 1
                 }
-                App.instance.musicCurrent = App.instance.listMusic[currentPosback]
+                App.instance.musicCurrent = App.instance.listDataMusic[currentPosback]
                 startService(Constant.CHANGE_MUSIC_SERVICE)
+
             }
         }
     }
 
-    private fun startService(action: String) {
-        val intentBroadCast = Intent(App.instance, MusicService::class.java)
-        intentBroadCast.action = action
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            App.instance.startForegroundService(intentBroadCast)
-        } else {
-            App.instance.startService(intentBroadCast)
-        }
-    }
+//    private fun startService(action: String) {
+//        val intentBroadCast = Intent(App.instance, MusicService::class.java)
+//        intentBroadCast.action = action
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            App.instance.startForegroundService(intentBroadCast)
+//        } else {
+//            App.instance.startService(intentBroadCast)
+//        }
+//    }
 
-    private fun getPosCurrentMusic(music: Music): Int {
-        val musicFile=music.musicFile
-        for (i in App.instance.listMusic.indices) {
-            if (App.instance.listMusic[i].musicFile == musicFile) {
+    private fun getPosCurrentMusic(dataMusic: DataMusic): Int {
+        val musicFile=dataMusic.musicFile
+        for (i in App.instance.listDataMusic.indices) {
+            if (App.instance.listDataMusic[i].musicFile == musicFile) {
                 return i
             }
         }

@@ -3,12 +3,12 @@ package com.example.appmusic.ui.adapter
 import android.annotation.SuppressLint
 import android.view.View
 import com.example.appmusic.R
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataPlayList
 import com.example.appmusic.databinding.ItemPlayListBinding
 import com.example.appmusic.ui.base.BaseBindingAdapter
 
 class PlaylistAdapter : BaseBindingAdapter<ItemPlayListBinding>() {
-    var listPlayList: MutableList<PlayList> = mutableListOf()
+    var listDataPlayList: MutableList<DataPlayList> = mutableListOf()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
@@ -23,7 +23,7 @@ class PlaylistAdapter : BaseBindingAdapter<ItemPlayListBinding>() {
 
 
     override fun onBindViewHolderBase(holder: BaseHolder<ItemPlayListBinding>, position: Int) {
-        listPlayList[position].apply {
+        listDataPlayList[position].apply {
             with(holder.binding) {
                 imImagePlaylist.setImageResource(R.drawable.buoc_qua_nhau)
                 tvNamePlayList.text = namePlayList
@@ -44,10 +44,10 @@ class PlaylistAdapter : BaseBindingAdapter<ItemPlayListBinding>() {
     override val layoutIdItem: Int
         get() = R.layout.item_play_list
     override val sizeItem: Int
-        get() = listPlayList.size
+        get() = listDataPlayList.size
 
     interface IclickMenu {
-        fun clickMenu(location: IntArray, view: View, playList: PlayList, position: Int)
+        fun clickMenu(location: IntArray, view: View, dataPlayList: DataPlayList, position: Int)
         fun clickItem(position: Int)
     }
 }

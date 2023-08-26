@@ -3,14 +3,15 @@ package com.example.appmusic.ui.main.home.musicfragment.dialogfragment
 import android.os.Bundle
 import android.view.View
 import com.example.appmusic.R
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.BottomSheetListFuntionBinding
 import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
 import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.dialog.BottomSheetAddPlayListFrag
+import timber.log.Timber
 
 class BottomSheetOptionsFragment :
     BaseBottomSheetDialogFragment<BottomSheetListFuntionBinding, BottomSheetOptionsViewmodel>() {
-    var music: Music? = null
+    var dataMusic: DataMusic? = null
     var namePlayList: String? = null
     override fun getViewModel(): Class<BottomSheetOptionsViewmodel> {
         return BottomSheetOptionsViewmodel::class.java
@@ -28,7 +29,8 @@ class BottomSheetOptionsFragment :
         binding.framelayout.setOnClickListener { dismiss() }
         binding.addToPlayList.setOnClickListener {
             val bottomSheetAddPlayListFrag = BottomSheetAddPlayListFrag()
-            bottomSheetAddPlayListFrag.musicCurent = (music)
+            bottomSheetAddPlayListFrag.dataMusicCurent = (dataMusic)
+
             bottomSheetAddPlayListFrag.show(childFragmentManager, null)
         }
     }

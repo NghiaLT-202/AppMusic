@@ -5,7 +5,7 @@ import android.view.View
 import com.example.appmusic.App
 import com.example.appmusic.R
 import com.example.appmusic.common.Constant
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.FragmentDetailPlayListBinding
 import com.example.appmusic.ui.adapter.MusicAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
@@ -13,7 +13,7 @@ import com.example.appmusic.ui.main.MainActivity
 
 class DetailPlayListFragment :
     BaseBindingFragment<FragmentDetailPlayListBinding, DetailPlayListViewModel>() {
-    private val listMusic: MutableList<Music> = ArrayList()
+    private val listDataMusic: MutableList<DataMusic> = ArrayList()
     private var musicAdapter: MusicAdapter? = null
     private var nameCurrentPlayList: String? = null
     override fun getViewModel(): Class<DetailPlayListViewModel> {
@@ -40,33 +40,25 @@ class DetailPlayListFragment :
     private fun initAdapter() {
         musicAdapter = MusicAdapter()
         binding.rcListPlayList.adapter = musicAdapter
-        musicAdapter?.setIClickMusic(object : MusicAdapter.IclickMusic {
-
-            override fun clickItem(position: Int, music: Music) {
-                App.instance.musicCurrent = (listMusic[position])
-                Bundle().apply {
-                    putBoolean(Constant.RUN_NEW_MUSIC, true)
-                    (requireActivity() as MainActivity).navController?.navigate(
-                        R.id.fragment_detail_music,
-                        this
-                    )
-                }
+        musicAdapter?.clickItem={ position, _ ->
+            App.instance.musicCurrent = (listDataMusic[position])
+            Bundle().apply {
+                putBoolean(Constant.RUN_NEW_MUSIC, true)
+                (requireActivity() as MainActivity).navController?.navigate(
+                    R.id.fragment_detail_music,
+                    this
+                )
             }
+        }
 
-            override fun clickMenu(position: Int, music: Music) {
-
-            }
-
-
-        })
     }
 
     private fun initData() {
         nameCurrentPlayList?.let { viewModel.getAllMusicPlayList(it) }
         viewModel.listSong.observe(viewLifecycleOwner) { list ->
-            listMusic.clear()
-            listMusic.addAll(list)
-            musicAdapter?.listMusic = listMusic
+            listDataMusic.clear()
+            listDataMusic.addAll(list)
+            musicAdapter?.listDataMusic = listDataMusic
         }
     }
 }

@@ -1,15 +1,15 @@
 package com.example.appmusic
 
 import android.app.Application
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.utils.MyDebugTree
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
 @HiltAndroidApp
 class App : Application() {
-    lateinit var musicCurrent: Music
-    var listMusic: MutableList<Music> = mutableListOf()
+    lateinit var musicCurrent: DataMusic
+    var listDataMusic: MutableList<DataMusic> = mutableListOf()
 
 
     init {

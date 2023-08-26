@@ -4,12 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.appmusic.data.model.ItemRecent
-import com.example.appmusic.data.model.Music
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataItemRecent
+import com.example.appmusic.data.model.DataMusic
+import com.example.appmusic.data.model.DataPlayList
 
 @Database(
-    entities = [Music::class, PlayList::class, ItemRecent::class],
+    entities = [DataMusic::class, DataPlayList::class, DataItemRecent::class],
     version = 1,
     exportSchema = false
 )

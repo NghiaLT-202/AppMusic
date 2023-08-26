@@ -6,10 +6,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.ui.base.BaseBindingAdapter.BaseHolder
 
 abstract class BaseBindingAdapter<B : ViewDataBinding> : RecyclerView.Adapter<BaseHolder<B>>() {
-var clickItem : (position: Int) -> Unit={}
+var clickItem : (position: Int, music: DataMusic) -> Unit = { _, _ -> }
+var clickItemView : (position: Int) -> Unit = {  }
+    var clickMenu: (position: Int, music: DataMusic) -> Unit = { _, _ -> }
 
     protected abstract fun onBindViewHolderBase(holder: BaseHolder<B>, position: Int)
     protected abstract val layoutIdItem: Int
@@ -20,7 +23,6 @@ var clickItem : (position: Int) -> Unit={}
     }
 
     override fun onBindViewHolder(holder: BaseHolder<B>, position: Int) {
-        holder.itemView.setOnClickListener { view: View? -> clickItem(holder.adapterPosition) }
         onBindViewHolderBase(holder, holder.adapterPosition)
     }
 

@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.appmusic.R
-import com.example.appmusic.data.model.Music
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataMusic
+import com.example.appmusic.data.model.DataPlayList
 import com.example.appmusic.databinding.BottomSheetAddPlaylistBinding
 import com.example.appmusic.ui.adapter.ListPlayListAdapter
 import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
@@ -15,10 +15,10 @@ import timber.log.Timber
 class BottomSheetAddPlayListFrag :
     BaseBottomSheetDialogFragment<BottomSheetAddPlaylistBinding, BottomSheetAddPlayListVM>() {
     private var listPlayListAdapter: ListPlayListAdapter? = null
-    private val listPlayList: MutableList<PlayList> = mutableListOf()
-    private val listMusicPlayList: MutableList<Music> = mutableListOf()
+    private val listDataPlayList: MutableList<DataPlayList> = mutableListOf()
+    private val listDataMusicPlayList: MutableList<DataMusic> = mutableListOf()
     private var positionPlayList = 0
-    var musicCurent: Music? = null
+    var dataMusicCurent: DataMusic? = null
     override fun getViewModel(): Class<BottomSheetAddPlayListVM> {
         return BottomSheetAddPlayListVM::class.java
     }
@@ -35,16 +35,13 @@ class BottomSheetAddPlayListFrag :
     private fun initAdapter() {
         listPlayListAdapter = ListPlayListAdapter()
         binding.rcListCollection.adapter = listPlayListAdapter
-        listPlayListAdapter?.clickItem = {
-            positionPlayList = it
-            viewModel.getAllMusicPlayList(listPlayList[it].namePlayList)
+        listPlayListAdapter?.clickItemView = {position->
+            positionPlayList = position
+            viewModel.getAllMusicPlayList(listDataPlayList[position].namePlayList)
+            Timber.e("ltnghia")
         }
-//        listPlayListAdapter?.clickItem(object : IBaseClickAdapter {
-//            override fun clickItem(position: Int) {
-//                positionPlayList = position
-//                viewModel.getAllMusicPlayList(listPlayList[position].namePlayList)
-//            }
-//        })
+
+
     }
 
     private fun initListener() {
@@ -59,28 +56,27 @@ class BottomSheetAddPlayListFrag :
 
     private fun initData() {
         mainViewModel.getAllPlayList()
-        mainViewModel.listPlaylist.observe(viewLifecycleOwner) { playLists ->
-            listPlayList.clear()
-            listPlayList.addAll(playLists)
-            listPlayListAdapter!!.listPlay = (listPlayList)
+        mainViewModel.listPlaylistData.observe(viewLifecycleOwner) { playLists ->
+            listDataPlayList.clear()
+            listDataPlayList.addAll(playLists)
+            listPlayListAdapter!!.listPlay = (listDataPlayList)
         }
-        viewModel.listMusicPlaylist.observe(viewLifecycleOwner) { music: MutableList<Music> ->
-            listMusicPlayList.clear()
-            listMusicPlayList.addAll(music)
-            var check = false
-            for (i in listMusicPlayList.indices) {
-                if (musicCurent?.musicName == listMusicPlayList[i].musicName) {
-                    check = true
-                    break
-                }
-            }
-            if (!check) {
-                musicCurent!!.namePlayList = listPlayList[positionPlayList].namePlayList
-                viewModel.inSertMusicofPlayList(musicCurent!!)
+        viewModel.listDataMusicPlaylist.observe(viewLifecycleOwner) { dataMusics: MutableList<DataMusic> ->
+            val dataMusicCurrentName = dataMusicCurent?.musicName
+            val isMusicInPlaylist = dataMusics.any { it.musicName == dataMusicCurrentName }
+
+            if (!isMusicInPlaylist) {
+                Timber.e("ltnghia"+isMusicInPlaylist)
+
+                dataMusicCurent?.namePlayList = listDataPlayList[positionPlayList].namePlayList
+                viewModel.inSertMusicofPlayList(dataMusicCurent!!)
                 Toast.makeText(context, getString(R.string.success), Toast.LENGTH_SHORT).show()
             } else {
+                Timber.e("ltnghia")
+
                 Toast.makeText(context, getString(R.string.no_add), Toast.LENGTH_SHORT).show()
             }
+
             dismiss()
         }
     }

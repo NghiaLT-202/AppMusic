@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.appmusic.data.MusicRepository
-import com.example.appmusic.data.model.ItemRecent
-import com.example.appmusic.data.model.Music
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataItemRecent
+import com.example.appmusic.data.model.DataMusic
+import com.example.appmusic.data.model.DataPlayList
 import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -18,16 +18,16 @@ import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class MainViewModel @Inject constructor(var musicRepository: MusicRepository) : BaseViewModel() {
-    var listAllMusicDevice = MutableLiveData<MutableList<Music>>()
-    var listRecentLiveData = MutableLiveData<MutableList<ItemRecent>>()
-    var listPlaylist = MutableLiveData<MutableList<PlayList>>()
+    var listAllDataMusicDevice = MutableLiveData<MutableList<DataMusic>>()
+    var listRecentLiveData = MutableLiveData<MutableList<DataItemRecent>>()
+    var listPlaylistData = MutableLiveData<MutableList<DataPlayList>>()
 
     var isStartMedia = MutableLiveData<Boolean>()
 
 
     fun getAllMusicDetail(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            listAllMusicDevice.postValue(musicRepository.getMusicDevice(context))
+            listAllDataMusicDevice.postValue(musicRepository.getMusicDevice(context))
         }
     }
 
@@ -45,8 +45,8 @@ class MainViewModel @Inject constructor(var musicRepository: MusicRepository) : 
         }
     }
 
-    fun insertRecentMusic(itemRecent: ItemRecent) {
-        musicRepository.insertRecentMusic(itemRecent)
+    fun insertRecentMusic(dataItemRecent: DataItemRecent) {
+        musicRepository.insertRecentMusic(dataItemRecent)
     }
 
     fun getAllPlayList() {
@@ -57,7 +57,7 @@ class MainViewModel @Inject constructor(var musicRepository: MusicRepository) : 
                 Timber.e(throwable)
             }
         })) {
-            listPlaylist.postValue(musicRepository.getAllPlayList())
+            listPlaylistData.postValue(musicRepository.getAllPlayList())
         }
     }
 

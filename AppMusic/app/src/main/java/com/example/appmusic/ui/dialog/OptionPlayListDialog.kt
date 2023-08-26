@@ -13,10 +13,7 @@ class OptionPlayListDialog :
     BaseBindingDialogFragment<CustomDialogOptionPlaylistBinding, MainViewModel>() {
     private var posX = 0f
     private var posY = 0f
-    private var iOptionCollectionDialog: IOptionCollectionDialog? = null
-    fun setiOptionCollectionDialog(iOptionCollectionDialog: IOptionCollectionDialog?) {
-        this.iOptionCollectionDialog = iOptionCollectionDialog
-    }
+
 
     override val layoutId: Int
         get() = R.layout.custom_dialog_option_playlist
@@ -36,12 +33,12 @@ class OptionPlayListDialog :
     private fun initListener() {
         binding.tvEdit.setOnClickListener { v ->
             preventTwoClick(v, 500)
-            iOptionCollectionDialog!!.edit()
+            edit()
             dismiss()
         }
         binding.tvDelete.setOnClickListener { v ->
             preventTwoClick(v, 500)
-            iOptionCollectionDialog!!.delete()
+            delete()
             dismiss()
         }
         binding.view.setOnClickListener { Objects.requireNonNull(dialog)?.dismiss() }
@@ -62,20 +59,18 @@ class OptionPlayListDialog :
         show(fragmentManager, null)
     }
     private fun initLayoutParam() {
-        Objects.requireNonNull(dialog)?.setCancelable(true)
-        dialog!!.window!!.decorView.post {
-            if (isAdded) {
-                binding.rootContainer.x = posX - binding.rootContainer.width
-                if (binding.rootContainer.x < 0) {
-                    binding.rootContainer.x = 0f
+        dialog?.let { safeDialog ->
+            safeDialog.window?.decorView?.post {
+                if (isAdded) {
+                    binding.rootContainer.x = posX - binding.rootContainer.width
+                    if (binding.rootContainer.x < 0) {
+                        binding.rootContainer.x = 0f
+                    }
+                    binding.rootContainer.y = posY
                 }
-                binding.rootContainer.y = posY
             }
         }
     }
 
-    interface IOptionCollectionDialog {
-        fun delete()
-        fun edit()
-    }
+
 }

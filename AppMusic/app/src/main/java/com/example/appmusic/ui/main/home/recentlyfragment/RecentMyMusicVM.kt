@@ -8,13 +8,6 @@ import javax.inject.Inject
 @HiltViewModel
 class RecentMyMusicVM
 @Inject constructor(var musicRepository: MusicRepository) : BaseViewModel() {
-
-    @Inject
-    fun recentMyMusicVM(musicRepository: MusicRepository) {
-        this.musicRepository = musicRepository
-    }
-
-
     fun deleteRecentMusic() {
         musicRepository.deleteRecentMusic()
     }

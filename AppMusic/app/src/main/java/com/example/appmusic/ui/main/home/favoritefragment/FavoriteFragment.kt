@@ -5,7 +5,7 @@ import android.view.View
 import com.example.appmusic.App
 import com.example.appmusic.R
 import com.example.appmusic.common.Constant
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.FragmentFavoriteBinding
 import com.example.appmusic.ui.adapter.FavoriteAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
@@ -13,7 +13,7 @@ import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetOptionsFragment
 
 class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteViewModel>() {
-    private val listFavourite: MutableList<Music> = mutableListOf()
+    private val listFavourite: MutableList<DataMusic> = mutableListOf()
     private var favoriteAdapter: FavoriteAdapter? = null
     override val layoutId: Int
         get() = R.layout.fragment_favorite
@@ -39,26 +39,24 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteVi
     private fun initAdapter() {
         favoriteAdapter = FavoriteAdapter()
         binding.rcFavorite.adapter = favoriteAdapter
-
-        favoriteAdapter?.setIClickMusic(object : FavoriteAdapter.IclickMusic {
-            override fun clickItem(position: Int) {
-                App.instance.musicCurrent = (listFavourite[position])
-                Bundle().apply {
-                    putBoolean(Constant.RUN_NEW_MUSIC, true)
-                    (requireActivity() as MainActivity).navController?.navigate(
-                        R.id.fragment_detail_music,
-                        this
-                    )
-                }
+        favoriteAdapter?.clickItem={position,_ ->
+            App.instance.musicCurrent = (listFavourite[position])
+            Bundle().apply {
+                putBoolean(Constant.RUN_NEW_MUSIC, true)
+                (requireActivity() as MainActivity).navController?.navigate(
+                    R.id.fragment_detail_music,
+                    this
+                )
             }
+        }
+        favoriteAdapter?.clickMenu={_,_ ->
+            showBottomSheetDialog()
 
-            override fun clickMenu(position: Int) {
-                showBottomSheetDialog()
-            }
-        })
+        }
+
     }
 
-    fun showBottomSheetDialog() {
+    private fun showBottomSheetDialog() {
         val bottomSheetFragment = BottomSheetOptionsFragment()
         bottomSheetFragment.show(childFragmentManager, null)
     }

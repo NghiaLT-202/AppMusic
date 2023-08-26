@@ -5,8 +5,8 @@ import android.text.TextUtils
 import android.view.View
 import com.example.appmusic.R
 import com.example.appmusic.common.Constant
-import com.example.appmusic.data.model.Music
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataMusic
+import com.example.appmusic.data.model.DataPlayList
 import com.example.appmusic.databinding.FragmentPlayListMusicBinding
 import com.example.appmusic.ui.adapter.PlaylistAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
@@ -15,8 +15,8 @@ import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.ui.main.home.playlistfragment.dialogFragmentAddPlayList.DialogAddPlayListFragment
 
 class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, PlaylistViewModel>() {
-    private val listPlayList: MutableList<PlayList> = mutableListOf()
-    private val listMusicPlaylist: MutableList<Music> = mutableListOf()
+    private val listDataPlayList: MutableList<DataPlayList> = mutableListOf()
+    private val listDataMusicPlaylist: MutableList<DataMusic> = mutableListOf()
     private var playlistAdapter: PlaylistAdapter? = null
     private var dialogAddPlayListFragment: DialogAddPlayListFragment? = null
     override val layoutId: Int
@@ -42,27 +42,26 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
                 override fun clickMenu(
                     location: IntArray,
                     view: View,
-                    playList: PlayList,
+                    dataPlayList: DataPlayList,
                     position: Int
                 ) {
                     val optionPlayListDialog = OptionPlayListDialog()
-                    optionPlayListDialog.setiOptionCollectionDialog(object :
-                        OptionPlayListDialog.IOptionCollectionDialog {
-                        override fun delete() {
-                            playList.namePlayList.let { viewModel.deletePlayList(it) }
-                            listPlayList.remove(playList)
-                            if (listPlayList.size < 1) {
-                                tvAddPlayList.visibility = View.VISIBLE
-                                tvPlayRandom.visibility = View.INVISIBLE
-                                imAddPlayList.visibility = View.INVISIBLE
-                            }
-                            playlistAdapter?.listPlayList = (listPlayList)
-                        }
 
-                        override fun edit() {
-                            showDialogEditPlayList(position)
+                    optionPlayListDialog.delete = {
+                        dataPlayList.namePlayList.let { viewModel.deletePlayList(it) }
+                        listDataPlayList.remove(dataPlayList)
+                        if (listDataPlayList.size < 1) {
+                            tvAddPlayList.visibility = View.VISIBLE
+                            tvPlayRandom.visibility = View.INVISIBLE
+                            imAddPlayList.visibility = View.INVISIBLE
                         }
-                    })
+                        playlistAdapter?.listDataPlayList = (listDataPlayList)
+                    }
+                    optionPlayListDialog.edit = {
+                        showDialogEditPlayList(position)
+
+                    }
+
                     optionPlayListDialog.showDialog(
                         location[0].toFloat(),
                         location[1].toFloat(), childFragmentManager
@@ -71,7 +70,10 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
 
                 override fun clickItem(position: Int) {
                     val bundle = Bundle()
-                    bundle.putString(Constant.NAME_PLAYLIST, listPlayList[position].namePlayList)
+                    bundle.putString(
+                        Constant.NAME_PLAYLIST,
+                        listDataPlayList[position].namePlayList
+                    )
                     (requireActivity() as MainActivity).navController?.navigate(
                         R.id.fragment_detail_playlist,
                         bundle
@@ -84,15 +86,15 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
 
     private fun initData() {
         mainViewModel.getAllPlayList()
-        mainViewModel.listPlaylist.observe(viewLifecycleOwner) { playLists ->
+        mainViewModel.listPlaylistData.observe(viewLifecycleOwner) { playLists ->
             if (playLists != null) {
-                listPlayList.clear()
-                listPlayList.addAll(playLists)
-                for (i in listPlayList.indices) {
-                    viewModel.getAllMusicPlayList(listPlayList[i].namePlayList)
+                listDataPlayList.clear()
+                listDataPlayList.addAll(playLists)
+                for (i in listDataPlayList.indices) {
+                    viewModel.getAllMusicPlayList(listDataPlayList[i].namePlayList)
                 }
-                playlistAdapter?.listPlayList = (listPlayList)
-                if (listPlayList.size > 0) {
+                playlistAdapter?.listDataPlayList = (listDataPlayList)
+                if (listDataPlayList.size > 0) {
                     with(binding) {
                         tvAddPlayList.visibility = View.INVISIBLE
                         tvPlayRandom.visibility = View.VISIBLE
@@ -102,16 +104,18 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
                 }
             }
         }
-        viewModel.listMusicPlaylist.observe(viewLifecycleOwner) { music ->
-            listMusicPlaylist.clear()
-            listMusicPlaylist.addAll(music)
-            playlistAdapter?.totalSong = listMusicPlaylist.size
+        viewModel.listDataMusicPlaylist.observe(viewLifecycleOwner) { music ->
+            listDataMusicPlaylist.clear()
+            listDataMusicPlaylist.addAll(music)
+            playlistAdapter?.totalSong = listDataMusicPlaylist.size
         }
     }
 
     private fun initListener() {
         with(binding) {
-            imBack.setOnClickListener { (requireActivity() as MainActivity).navController?.popBackStack() }
+            imBack.setOnClickListener {
+                (requireActivity() as MainActivity).navController?.popBackStack()
+            }
             tvAddPlayList.setOnClickListener { showDialogAddPlayList() }
             imAddPlayList.setOnClickListener { showDialogAddPlayList() }
         }
@@ -121,7 +125,7 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
     fun showDialogEditPlayList(position: Int) {
         dialogAddPlayListFragment = DialogAddPlayListFragment()
         dialogAddPlayListFragment?.text = (getString(R.string.edit))
-        dialogAddPlayListFragment?.textEdit = (listPlayList[position].namePlayList)
+        dialogAddPlayListFragment?.textEdit = (listDataPlayList[position].namePlayList)
         dialogAddPlayListFragment?.isCancelable = true
         dialogAddPlayListFragment?.setDialogAdd(object : DialogAddPlayListFragment.IDialogAdd {
             override fun candle(position: Int) {
@@ -134,13 +138,13 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
                     if (!checkNamePlayList(inputName)) {
                         viewModel.updateNamePlayList(
                             inputName,
-                            listPlayList[position].idPlayList
+                            listDataPlayList[position].idPlayList
                         )
-                        listPlayList[position].namePlayList = (inputName)
-                        if (listPlayList.size > 0) {
+                        listDataPlayList[position].namePlayList = (inputName)
+                        if (listDataPlayList.size > 0) {
                             binding.tvAddPlayList.visibility = View.INVISIBLE
                         }
-                        playlistAdapter?.listPlayList = (listPlayList)
+                        playlistAdapter?.listDataPlayList = (listDataPlayList)
                         dialogAddPlayListFragment?.dismiss()
                     } else {
                         toast(getString(R.string.listNameAlreadyExists))
@@ -164,21 +168,21 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
 
             override fun ok(inputName: String) {
                 if (!TextUtils.isEmpty(inputName)) {
-                    PlayList().apply {
+                    DataPlayList().apply {
                         namePlayList = inputName
                         pathPlayList = ""
                         totalSong = 0
                         if (!checkNamePlayList(inputName)) {
                             viewModel.insertPlayList(this)
-                            mainViewModel.listPlaylist.value?.add(this)
-                            mainViewModel.listPlaylist.postValue(mainViewModel.listPlaylist.value)
+                            mainViewModel.listPlaylistData.value?.add(this)
+                            mainViewModel.listPlaylistData.postValue(mainViewModel.listPlaylistData.value)
                             dialogAddPlayListFragment?.dismiss()
-                            listPlayList.add(this)
-                            listPlayList.size
+                            listDataPlayList.add(this)
+                            listDataPlayList.size
                             binding.tvAddPlayList.visibility = View.INVISIBLE
                             binding.tvPlayRandom.visibility = View.VISIBLE
                             binding.imAddPlayList.visibility = View.VISIBLE
-                            playlistAdapter?.listPlayList = (listPlayList)
+                            playlistAdapter?.listDataPlayList = (listDataPlayList)
                         } else {
                             toast(getString(R.string.listNameAlreadyExists))
                         }
@@ -194,8 +198,8 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
 
 
     fun checkNamePlayList(inputName: String): Boolean {
-        for (i in listPlayList.indices) {
-            if (inputName == listPlayList[i].namePlayList) {
+        for (i in listDataPlayList.indices) {
+            if (inputName == listDataPlayList[i].namePlayList) {
                 return true
             }
         }

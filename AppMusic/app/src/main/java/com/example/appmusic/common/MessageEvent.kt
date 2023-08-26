@@ -1,7 +1,6 @@
 package com.example.appmusic.common
 
-import com.example.appmusic.data.model.Music
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataMusic
 
 class MessageEvent {
     var typeEvent = 0
@@ -19,11 +18,11 @@ class MessageEvent {
 
 
 
-    private var musicList: List<Music>? = null
+    private var dataMusicList: List<DataMusic>? = null
 
-    constructor(stringValue: String, musicList: List<Music>) {
+    constructor(stringValue: String, dataMusicList: List<DataMusic>) {
         this.stringValue = stringValue
-        this.musicList = musicList
+        this.dataMusicList = dataMusicList
     }
 
     var isBooleanValue = false

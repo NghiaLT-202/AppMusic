@@ -2,12 +2,12 @@ package com.example.appmusic.ui.adapter
 
 import android.annotation.SuppressLint
 import com.example.appmusic.R
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataPlayList
 import com.example.appmusic.databinding.ItemListPlayListBinding
 import com.example.appmusic.ui.base.BaseBindingAdapter
 
 class ListPlayListAdapter : BaseBindingAdapter<ItemListPlayListBinding>() {
-     var listPlay: MutableList<PlayList> = mutableListOf()
+     var listPlay: MutableList<DataPlayList> = mutableListOf()
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field=value
@@ -18,8 +18,12 @@ class ListPlayListAdapter : BaseBindingAdapter<ItemListPlayListBinding>() {
         holder: BaseHolder<ItemListPlayListBinding>,
         position: Int
     ) {
-        holder.binding.tvNamePlayList.text = listPlay[position].namePlayList
-        holder.itemView.setOnClickListener { clickItem(holder.adapterPosition) }
+         listPlay[position].apply {
+
+             holder.binding.tvNamePlayList.text = namePlayList
+             holder.itemView.setOnClickListener { clickItemView(holder.adapterPosition) }
+         }
+
     }
 
     override val layoutIdItem: Int

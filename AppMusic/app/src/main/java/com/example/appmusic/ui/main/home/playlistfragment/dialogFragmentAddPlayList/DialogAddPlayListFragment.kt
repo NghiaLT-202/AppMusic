@@ -3,13 +3,13 @@ package com.example.appmusic.ui.main.home.playlistfragment.dialogFragmentAddPlay
 import android.os.Bundle
 import android.view.View
 import com.example.appmusic.R
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataPlayList
 import com.example.appmusic.databinding.DialogAddPlayListBinding
 import com.example.appmusic.ui.base.BaseBindingDialogFragment
 
 class DialogAddPlayListFragment :
     BaseBindingDialogFragment<DialogAddPlayListBinding, DialogAddPlayListVM>() {
-    private var listPlayList: MutableList<PlayList> = mutableListOf()
+    private var listDataPlayList: MutableList<DataPlayList> = mutableListOf()
     private var iDialogAdd: IDialogAdd? = null
     fun setDialogAdd(iDialogAdd: IDialogAdd?) {
         this.iDialogAdd = iDialogAdd
@@ -47,9 +47,9 @@ class DialogAddPlayListFragment :
 
     private fun initData() {
         viewModel.allPlayList
-        viewModel.listPlayList.observe(viewLifecycleOwner) { playLists: MutableList<PlayList> ->
-            listPlayList.clear()
-            listPlayList.addAll(playLists)
+        viewModel.listDataPlayList.observe(viewLifecycleOwner) { dataPlayLists: MutableList<DataPlayList> ->
+            listDataPlayList.clear()
+            listDataPlayList.addAll(dataPlayLists)
         }
     }
 

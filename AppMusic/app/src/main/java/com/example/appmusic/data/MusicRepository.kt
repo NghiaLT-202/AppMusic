@@ -5,20 +5,20 @@ import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
 import com.example.appmusic.data.database.MusicDao
-import com.example.appmusic.data.model.ItemRecent
-import com.example.appmusic.data.model.Music
-import com.example.appmusic.data.model.PlayList
+import com.example.appmusic.data.model.DataItemRecent
+import com.example.appmusic.data.model.DataMusic
+import com.example.appmusic.data.model.DataPlayList
 import timber.log.Timber
 import javax.inject.Inject
 
 class MusicRepository @Inject constructor(var musicDao: MusicDao) {
 
-    fun getMusicDevice(context: Context): MutableList<Music> {
+    fun getMusicDevice(context: Context): MutableList<DataMusic> {
         return getMusicDevices(context)
     }
 
-    private fun getMusicDevices(context: Context): MutableList<Music> {
-        val musicList = mutableListOf<Music>()
+    private fun getMusicDevices(context: Context): MutableList<DataMusic> {
+        val dataMusicList = mutableListOf<DataMusic>()
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
         val projection = arrayOf(
@@ -49,7 +49,7 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
                 if (duration > 0) {
                     try {
                         mmr.setDataSource(cursor.getString(columnData))
-                        val music = Music().apply {
+                        val dataMusic = DataMusic().apply {
                             musicFile = cursor.getString(columnData)
                             musicName = cursor.getString(columnTitle)
                             nameSinger = cursor.getString(columnArtist)
@@ -62,7 +62,7 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
                                 this.imageSong = BitmapFactory.decodeByteArray(it, 0, it.size)
                             }
                         }
-                        musicList.add(0, music) // Add items in reverse order directly
+                        dataMusicList.add(0, dataMusic) // Add items in reverse order directly
                     } catch (e: Exception) {
                         Timber.e(e)
                     }
@@ -70,18 +70,18 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
             }
         }
         mmr.release() // Release MediaMetadataRetriever
-        return musicList
+        return dataMusicList
     }
 
-    fun insert(music: Music) {
-        musicDao.insertMusic(music)
+    fun insert(dataMusic: DataMusic) {
+        musicDao.insertMusic(dataMusic)
     }
 
     fun deleteFavourite(path: String) {
         musicDao.deleteFavourite(path)
     }
 
-    fun getAllMusicFavourite(checkFavorite: Boolean): MutableList<Music> {
+    fun getAllMusicFavourite(checkFavorite: Boolean): MutableList<DataMusic> {
         return musicDao.getAllFavouriteMusic(checkFavorite)
     }
 
@@ -89,28 +89,28 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
         musicDao.deleteRecentMusic()
     }
 
-    fun getAllRecentMusic(): MutableList<ItemRecent> {
+    fun getAllRecentMusic(): MutableList<DataItemRecent> {
         return musicDao.getAllRecentMusic()
     }
 
-    fun insertRecentMusic(itemRecent: ItemRecent) {
-        musicDao.insertRecentMusic(itemRecent)
+    fun insertRecentMusic(dataItemRecent: DataItemRecent) {
+        musicDao.insertRecentMusic(dataItemRecent)
     }
 
-    fun getAllDetailPlayListName(name: String): MutableList<Music> {
+    fun getAllDetailPlayListName(name: String): MutableList<DataMusic> {
         return musicDao.getDetailPlaylist(name)
     }
 
-    fun getAllMusicPlayList(namePlayList: String): MutableList<Music> {
+    fun getAllMusicPlayList(namePlayList: String): MutableList<DataMusic> {
         return musicDao.getAllMusicPlayList(namePlayList)
     }
 
 
-    fun insertPlayList(playList: PlayList) {
-        musicDao.insertPlayListMusic(playList)
+    fun insertPlayList(dataPlayList: DataPlayList) {
+        musicDao.insertPlayListMusic(dataPlayList)
     }
 
-    fun getAllPlayList(): MutableList<PlayList> {
+    fun getAllPlayList(): MutableList<DataPlayList> {
         return musicDao.getAllPlayListMusic()
     }
 
@@ -122,12 +122,9 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
         musicDao.updateNamePlayList(name, id)
     }
 
-    fun updateNameMusic(name: String, id: Int) {
-        musicDao.updateNameMusic(name, id)
-    }
 
-    fun insertMusicOfPlayList(music: Music) {
-        musicDao.insertMusicOfPlayList(music)
+    fun insertMusicOfPlayList(dataMusic: DataMusic) {
+        musicDao.insertMusicOfPlayList(dataMusic)
     }
 }
 

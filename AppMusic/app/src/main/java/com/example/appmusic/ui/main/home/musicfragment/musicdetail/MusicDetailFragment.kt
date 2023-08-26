@@ -18,8 +18,9 @@ import com.example.appmusic.R
 import com.example.appmusic.common.Constant
 import com.example.appmusic.common.Constant.SEEK_TO_MEDIA_SERVICE
 import com.example.appmusic.common.MessageEvent
-import com.example.appmusic.data.model.ItemRecent
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.common.startService
+import com.example.appmusic.data.model.DataItemRecent
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.FragmentDetailSongBinding
 import com.example.appmusic.service.MusicService
 import com.example.appmusic.ui.base.BaseBindingFragment
@@ -39,8 +40,8 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             binding.sbTimeSong.progress = binding.sbTimeSong.progress + 1000
         }
     }
-    private val listFavourite: MutableList<Music> = mutableListOf()
-    private val listRecent: MutableList<ItemRecent> = mutableListOf()
+    private val listFavourite: MutableList<DataMusic> = mutableListOf()
+    private val listRecent: MutableList<DataItemRecent> = mutableListOf()
 
 
     private var isKillApp = false
@@ -126,14 +127,14 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             if (reccentlies != null) {
                 listRecent.clear()
                 listRecent.addAll(reccentlies)
-                val musicCurrent: Music = App.instance.musicCurrent
-                insertRecent(musicCurrent, ItemRecent().apply {
-                    musicFile = musicCurrent.musicFile
-                    musicName = musicCurrent.musicName
-                    nameSinger = musicCurrent.nameSinger
-                    nameAlbum = musicCurrent.nameAlbum
-                    namePlayList = musicCurrent.namePlayList
-                    imageSong = (musicCurrent.imageSong)
+                val dataMusicCurrent: DataMusic = App.instance.musicCurrent
+                insertRecent(dataMusicCurrent, DataItemRecent().apply {
+                    musicFile = dataMusicCurrent.musicFile
+                    musicName = dataMusicCurrent.musicName
+                    nameSinger = dataMusicCurrent.nameSinger
+                    nameAlbum = dataMusicCurrent.nameAlbum
+                    namePlayList = dataMusicCurrent.namePlayList
+                    imageSong = (dataMusicCurrent.imageSong)
                 }
                 )
                 mainViewModel.listRecentLiveData.postValue(null)
@@ -152,13 +153,8 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
 
     }
 
-    private fun getPosCurrentMusic(music: Music): Int {
-        App.instance.listMusic.let {
-            for (i in 0 until it.size) {
-                if (it[i].musicFile == music.musicFile) return i
-            }
-        }
-        return -1
+    private fun getPosCurrentMusic(music: DataMusic): Int {
+        return App.instance.listDataMusic.indexOfFirst { it.musicFile == music.musicFile }
     }
 
     private fun initListener() {
@@ -188,18 +184,18 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
         }
         binding.imListPlay.setOnClickListener {
             val bottomSheetAddPlayListFrag = BottomSheetAddPlayListFrag()
-            bottomSheetAddPlayListFrag.musicCurent=(App.instance.musicCurrent)
+            bottomSheetAddPlayListFrag.dataMusicCurent=(App.instance.musicCurrent)
             bottomSheetAddPlayListFrag.show(childFragmentManager, null)
         }
         binding.imFastForward.setOnClickListener {
             binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
             var currentPos = getPosCurrentMusic(App.instance.musicCurrent)
             currentPos++
-            if (currentPos > App.instance.listMusic.size - 1) {
+            if (currentPos > App.instance.listDataMusic.size - 1) {
                 currentPos = 0
             }
-            Timber.e("ltnghia"+App.instance.listMusic.size)
-            App.instance.musicCurrent = (App.instance.listMusic[currentPos])
+            Timber.e("ltnghia"+App.instance.listDataMusic.size)
+            App.instance.musicCurrent = (App.instance.listDataMusic[currentPos])
             binding.sbTimeSong.progress = 0
             setImageSong(App.instance.musicCurrent.musicFile)
             startService(Constant.CHANGE_MUSIC_SERVICE)
@@ -210,10 +206,10 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                 var currentPos = getPosCurrentMusic(this)
                 currentPos--
                 if (currentPos < 0) {
-                    currentPos = App.instance.listMusic.size - 1
+                    currentPos = App.instance.listDataMusic.size - 1
                 }
                 startService(Constant.STOP_MEDIA_SERVICE)
-                App.instance.musicCurrent = (App.instance.listMusic[currentPos])
+                App.instance.musicCurrent = (App.instance.listDataMusic[currentPos])
                 binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
                 setImageSong(this.musicFile)
             }
@@ -281,29 +277,31 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             }
 
             Constant.COMPLETE_PLAY_MUSIC -> {
-                Timber.e("nghialt: COMPLETE_PLAY_MUSIC")
                 binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_arrow_24)
                 var currentPos: Int
                 currentPos = getPosCurrentMusic(App.instance.musicCurrent)
                 if (!App.isLoop) {
                     currentPos++
-                    if (currentPos > App.instance.listMusic.size - 1) {
+                    if (currentPos > App.instance.listDataMusic.size - 1) {
                         currentPos = 0
                     }
                 }
-                App.instance.musicCurrent = (App.instance.listMusic[currentPos])
+                App.instance.musicCurrent = (App.instance.listDataMusic[currentPos])
                 startService(Constant.CHANGE_MUSIC_SERVICE)
+
             }
 
             Constant.START_MEDIA -> {
-                Timber.e("nghialt: START_MEDIA")
                 binding.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_24)
                 binding.sbTimeSong.progress = binding.sbTimeSong.progress + 1
                 mainViewModel.isStartMedia.postValue(true)
+
             }
 
             Constant.FAVORITE_MEDIA -> {}
             Constant.STOP_MEDIA -> {
+                checkFavourite()
+
                 if (messageEvent.isBooleanValue) {
                     App.instance.musicCurrent.musicFile.let { setImageSong(it) }
                     binding.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_filled_60)
@@ -316,15 +314,15 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
         }
     }
 
-    private fun startService(action: String) {
-        val intent = Intent(requireActivity(), MusicService::class.java)
-        intent.action = action
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            requireActivity().startForegroundService(intent)
-        } else {
-            requireActivity().startService(intent)
-        }
-    }
+//    private fun startService(action: String) {
+//        val intent = Intent(requireActivity(), MusicService::class.java)
+//        intent.action = action
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            requireActivity().startForegroundService(intent)
+//        } else {
+//            requireActivity().startService(intent)
+//        }
+//    }
 
     private fun initSeekBarChangeListener() {
         binding.sbTimeSong.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
@@ -366,18 +364,18 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
         }
     }
 
-    fun insertRecent(music: Music, itemRecent: ItemRecent) {
+    fun insertRecent(dataMusic: DataMusic, dataItemRecent: DataItemRecent) {
 
         var checkExistedRecent = false
         for (recent in listRecent) {
-            if (recent.musicFile == music.musicFile) {
+            if (recent.musicFile == dataMusic.musicFile) {
                 checkExistedRecent = true
                 break
             }
         }
         if (!checkExistedRecent) {
-            mainViewModel.insertRecentMusic(itemRecent)
-            listRecent.add(itemRecent)
+            mainViewModel.insertRecentMusic(dataItemRecent)
+            listRecent.add(dataItemRecent)
         }
     }
 

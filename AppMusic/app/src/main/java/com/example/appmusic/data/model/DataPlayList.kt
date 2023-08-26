@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class PlayList {
+class DataPlayList {
     @PrimaryKey(autoGenerate = true)
      var idPlayList = 0
     @ColumnInfo

@@ -5,14 +5,14 @@ import android.view.View
 import com.example.appmusic.R
 import com.example.appmusic.common.Constant
 import com.example.appmusic.common.MessageEvent
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.BottomsheetSortBinding
 import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
 import org.greenrobot.eventbus.EventBus
 
 class BottomSheetSortFragment :
     BaseBottomSheetDialogFragment<BottomsheetSortBinding, BottomSheetSortViewModel>() {
-    var musicList: MutableList<Music> = mutableListOf()
+    var dataMusicList: MutableList<DataMusic> = mutableListOf()
     override fun getViewModel(): Class<BottomSheetSortViewModel> {
         return BottomSheetSortViewModel::class.java
     }
@@ -27,11 +27,11 @@ class BottomSheetSortFragment :
     private fun initListener() {
         binding.framelayout.setOnClickListener { dismiss() }
         binding.byTheTime.setOnClickListener {
-            EventBus.getDefault().post(MessageEvent(Constant.SORT_TIME, musicList))
+            EventBus.getDefault().post(MessageEvent(Constant.SORT_TIME, dataMusicList))
             dismiss()
         }
         binding.byTheName.setOnClickListener {
-            EventBus.getDefault().post(MessageEvent(Constant.SORT_NAME, musicList))
+            EventBus.getDefault().post(MessageEvent(Constant.SORT_NAME, dataMusicList))
             dismiss()
         }
     }

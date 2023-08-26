@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.appmusic.data.MusicRepository
-import com.example.appmusic.data.model.Music
+import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -17,14 +17,24 @@ import kotlin.coroutines.CoroutineContext
 @HiltViewModel
 class MusicDetailViewModel @Inject constructor(val musicRepository: MusicRepository) :
     BaseViewModel() {
-    var listMusic = MutableLiveData<MutableList<Music>>()
-    var listFavourite = MutableLiveData<MutableList<Music>>()
+    var listDataMusic = MutableLiveData<MutableList<DataMusic>>()
+    var listFavourite = MutableLiveData<MutableList<DataMusic>>()
     fun initData(context: Context) {
-        listMusic.postValue(musicRepository.getMusicDevice(context))
+        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
+            _: CoroutineContext, throwable: Throwable
+        ) {
+            run {
+                Timber.e(throwable)
+            }
+        })) {
+            listDataMusic.postValue(musicRepository.getMusicDevice(context))
+
+
+        }
     }
 
-    fun insertFavorite(music: Music) {
-        musicRepository.insert(music)
+    fun insertFavorite(dataMusic: DataMusic) {
+        musicRepository.insert(dataMusic)
     }
 
     fun deleteFavourite(path: String) {

@@ -8,7 +8,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
-import android.media.MediaPlayer.OnCompletionListener
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
@@ -23,7 +22,6 @@ import com.example.appmusic.common.MessageEvent
 import com.example.appmusic.ui.main.MainActivity
 import org.greenrobot.eventbus.EventBus
 import timber.log.Timber
-import java.util.Objects
 
 open class MusicService : Service() {
     private var mediaPlayer: MediaPlayer = MediaPlayer()

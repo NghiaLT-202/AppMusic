@@ -9,12 +9,16 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
+import com.example.appmusic.data.model.DataMusic
 
 abstract class BaseBindingDialogFragment<B : ViewDataBinding, V : BaseViewModel> :
     BaseDialogFragment() {
     lateinit var binding: B
     lateinit var viewModel: V
     abstract val layoutId: Int
+    var delete : () -> Unit = {  }
+    var edit : () -> Unit = {  }
+
     protected abstract fun onCreatedView(view: View?, savedInstanceState: Bundle?)
     var toast: Toast? = null
     @SuppressLint("Showtoast")
