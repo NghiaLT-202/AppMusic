@@ -19,24 +19,23 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
 
     private fun getMusicDevices(context: Context): MutableList<DataMusic> {
         val dataMusicList = mutableListOf<DataMusic>()
-        val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
         val projection = arrayOf(
-            MediaStore.Audio.AudioColumns.DATA,
-            MediaStore.Audio.AudioColumns.ALBUM,
-            MediaStore.Audio.AudioColumns.ARTIST,
-            MediaStore.Audio.AudioColumns.DURATION,
-            MediaStore.Audio.AudioColumns.TITLE,
-            MediaStore.Audio.AudioColumns.DATE_ADDED
+                MediaStore.Audio.AudioColumns.DATA,
+                MediaStore.Audio.AudioColumns.ALBUM,
+                MediaStore.Audio.AudioColumns.ARTIST,
+                MediaStore.Audio.AudioColumns.DURATION,
+                MediaStore.Audio.AudioColumns.TITLE,
+                MediaStore.Audio.AudioColumns.DATE_ADDED
         )
 
         val mmr = MediaMetadataRetriever() // Create one instance of MediaMetadataRetriever
         context.contentResolver.query(
-            uri,
-            projection,
-            "${MediaStore.Audio.AudioColumns.DATA} like ?",
-            arrayOf("%mp3"),
-            null
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                "${MediaStore.Audio.AudioColumns.DATA} like ?",
+                arrayOf("%mp3"),
+                null
         )?.use { cursor ->
             val columnDuration = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION)
             val columnData = cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA)
