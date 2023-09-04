@@ -1,6 +1,8 @@
 package com.example.appmusic.ui.adapter
 
 import android.annotation.SuppressLint
+import androidx.recyclerview.widget.DiffUtil
+import com.example.appmusic.App
 import com.example.appmusic.R
 import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.ItemFolderBinding
@@ -14,14 +16,15 @@ class FolderAdapter : BaseBindingAdapter<ItemFolderBinding>() {
         notifyDataSetChanged()
         }
 
-     override fun onBindViewHolderBase(
+
+    override fun onBindViewHolderBase(
         holder: BaseHolder<ItemFolderBinding>,
         position: Int
     ) {
          listFolder[position].apply {
              with(holder.binding){
                  tvNamefolder.text = musicFile
-                 tvTotalSong.text = "5"
+                 tvTotalSong.text = App.context.getString(R.string._5)
              }
 
              holder.itemView.setOnClickListener { clickItem(holder.adapterPosition,this) }

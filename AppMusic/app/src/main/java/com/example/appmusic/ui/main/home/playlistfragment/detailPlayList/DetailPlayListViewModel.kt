@@ -16,7 +16,7 @@ import kotlin.coroutines.CoroutineContext
 @HiltViewModel
 class DetailPlayListViewModel @Inject constructor(private val musicRepository: MusicRepository) :
     BaseViewModel() {
-    var listSong = MutableLiveData<MutableList<DataMusic>>()
+     var listSong = MutableLiveData<MutableList<DataMusic>>()
     fun getAllMusicPlayList(name: String) {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
             _: CoroutineContext, throwable: Throwable

@@ -7,7 +7,6 @@ import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.BottomSheetListFuntionBinding
 import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
 import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.dialog.BottomSheetAddPlayListFrag
-import timber.log.Timber
 
 class BottomSheetOptionsFragment :
     BaseBottomSheetDialogFragment<BottomSheetListFuntionBinding, BottomSheetOptionsViewmodel>() {
@@ -29,7 +28,7 @@ class BottomSheetOptionsFragment :
         binding.framelayout.setOnClickListener { dismiss() }
         binding.addToPlayList.setOnClickListener {
             val bottomSheetAddPlayListFrag = BottomSheetAddPlayListFrag()
-            bottomSheetAddPlayListFrag.dataMusicCurent = (dataMusic)
+            bottomSheetAddPlayListFrag.dataMusicCurrent = (dataMusic)
 
             bottomSheetAddPlayListFrag.show(childFragmentManager, null)
         }

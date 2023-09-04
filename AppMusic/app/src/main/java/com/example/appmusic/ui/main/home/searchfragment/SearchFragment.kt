@@ -30,19 +30,15 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
     }
 
     private fun initListener() {
-        binding.imBack.setOnClickListener { (requireActivity() as MainActivity).navController?.popBackStack() }
+        binding.imBack.setOnClickListener { (requireActivity() as MainActivity).navController.popBackStack() }
         binding.edtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                val research = binding.edtSearch.text.toString()
-                val listSearch = ArrayList<DataMusic>()
-                for (i in dataMusicList.indices) {
-                    if (dataMusicList[i].musicName.lowercase(Locale.getDefault()).trim { it <= ' ' }
-                            .contains(research.lowercase(Locale.getDefault()).trim { it <= ' ' })) {
-                        listSearch.add(dataMusicList[i])
-                    }
+                val research = binding.edtSearch.text.toString().lowercase(Locale.getDefault()).trim()
+                val listSearch = dataMusicList.filter {
+                    it.musicName.lowercase(Locale.getDefault()).trim().contains(research)
                 }
-                researchAdapter?.listDataMusic = listSearch
+                researchAdapter?.listDataMusic = ArrayList(listSearch)
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -60,7 +56,7 @@ class SearchFragment : BaseBindingFragment<FragmentResearchBinding, SearchViewMo
     }
 
     private fun initData() {
-//        viewModel.getAllMusicSearch(context)
+        context?.let { viewModel.getAllMusicSearch(it) }
         viewModel.listDataMusic.observe(viewLifecycleOwner) {
             dataMusicList.clear()
             dataMusicList.addAll(it)

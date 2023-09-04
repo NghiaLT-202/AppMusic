@@ -45,15 +45,6 @@ class Broadcast : BroadcastReceiver() {
         }
     }
 
-//    private fun startService(action: String) {
-//        val intentBroadCast = Intent(App.instance, MusicService::class.java)
-//        intentBroadCast.action = action
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            App.instance.startForegroundService(intentBroadCast)
-//        } else {
-//            App.instance.startService(intentBroadCast)
-//        }
-//    }
 
     private fun getPosCurrentMusic(dataMusic: DataMusic): Int {
         val musicFile=dataMusic.musicFile

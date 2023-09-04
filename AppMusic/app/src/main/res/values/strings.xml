@@ -79,6 +79,9 @@
     <string name="seek_to">SEEK_TO</string>
     <string name="success">Success</string>
     <string name="no_add">No add</string>
+    <string name="_5">5</string>
+    <string name="delete_recent_playlist">Delete recent playlist</string>
+    <string name="do_you_want_to_delete_recently_played_song">Do you want to delete recently played song</string>
 
 
 </resources>

@@ -51,8 +51,8 @@ abstract class BaseBindingFragment<B : ViewDataBinding, T : BaseViewModel> : Bas
         onCreatedView(view, savedInstanceState)
     }
     fun navigateFragment(id:Int){
-        (requireActivity() as MainActivity).navController?.navigate(
-            id
+        (requireActivity() as MainActivity).navController.navigate(
+                id
         )
     }
 }

@@ -38,7 +38,7 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
         playlistAdapter = PlaylistAdapter()
         with(binding) {
             rcPlayList.adapter = playlistAdapter
-            playlistAdapter?.setIclickMenu(object : PlaylistAdapter.IclickMenu {
+            playlistAdapter?.setIClickMenu(object : PlaylistAdapter.IclickMenu {
                 override fun clickMenu(
                     location: IntArray,
                     view: View,
@@ -74,9 +74,9 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
                         Constant.NAME_PLAYLIST,
                         listDataPlayList[position].namePlayList
                     )
-                    (requireActivity() as MainActivity).navController?.navigate(
-                        R.id.fragment_detail_playlist,
-                        bundle
+                    (requireActivity() as MainActivity).navController.navigate(
+                            R.id.fragment_detail_playlist,
+                            bundle
                     )
                 }
             })
@@ -87,20 +87,22 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
     private fun initData() {
         mainViewModel.getAllPlayList()
         mainViewModel.listPlaylistData.observe(viewLifecycleOwner) { playLists ->
-            if (playLists != null) {
+            playLists?.let { playlists ->
                 listDataPlayList.clear()
-                listDataPlayList.addAll(playLists)
-                for (i in listDataPlayList.indices) {
-                    viewModel.getAllMusicPlayList(listDataPlayList[i].namePlayList)
-                }
-                playlistAdapter?.listDataPlayList = (listDataPlayList)
-                if (listDataPlayList.size > 0) {
+                listDataPlayList.addAll(playlists)
+
+                playlistAdapter?.listDataPlayList = listDataPlayList
+
+                if (listDataPlayList.isNotEmpty()) {
                     with(binding) {
                         tvAddPlayList.visibility = View.INVISIBLE
                         tvPlayRandom.visibility = View.VISIBLE
                         imAddPlayList.visibility = View.VISIBLE
                     }
 
+                    listDataPlayList.forEach { playlist ->
+                        viewModel.getAllMusicPlayList(playlist.namePlayList)
+                    }
                 }
             }
         }
@@ -114,7 +116,7 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
     private fun initListener() {
         with(binding) {
             imBack.setOnClickListener {
-                (requireActivity() as MainActivity).navController?.popBackStack()
+                (requireActivity() as MainActivity).navController.popBackStack()
             }
             tvAddPlayList.setOnClickListener { showDialogAddPlayList() }
             imAddPlayList.setOnClickListener { showDialogAddPlayList() }

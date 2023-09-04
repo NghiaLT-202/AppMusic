@@ -12,13 +12,11 @@ import com.example.appmusic.ui.base.BaseBottomSheetDialogFragment
 import com.example.appmusic.ui.main.MainActivity
 import timber.log.Timber
 
-class BottomSheetAddPlayListFrag :
-    BaseBottomSheetDialogFragment<BottomSheetAddPlaylistBinding, BottomSheetAddPlayListVM>() {
-    private var listPlayListAdapter: ListPlayListAdapter? = null
+class BottomSheetAddPlayListFrag : BaseBottomSheetDialogFragment<BottomSheetAddPlaylistBinding, BottomSheetAddPlayListVM>() {
+    private val listPlayListAdapter: ListPlayListAdapter by lazy { ListPlayListAdapter() }
     private val listDataPlayList: MutableList<DataPlayList> = mutableListOf()
-    private val listDataMusicPlayList: MutableList<DataMusic> = mutableListOf()
     private var positionPlayList = 0
-    var dataMusicCurent: DataMusic? = null
+    var dataMusicCurrent: DataMusic? = null
     override fun getViewModel(): Class<BottomSheetAddPlayListVM> {
         return BottomSheetAddPlayListVM::class.java
     }
@@ -33,12 +31,10 @@ class BottomSheetAddPlayListFrag :
     }
 
     private fun initAdapter() {
-        listPlayListAdapter = ListPlayListAdapter()
         binding.rcListCollection.adapter = listPlayListAdapter
-        listPlayListAdapter?.clickItemView = {position->
+        listPlayListAdapter.clickItemView = { position ->
             positionPlayList = position
             viewModel.getAllMusicPlayList(listDataPlayList[position].namePlayList)
-            Timber.e("ltnghia")
         }
 
 
@@ -48,9 +44,7 @@ class BottomSheetAddPlayListFrag :
 
         binding.framelayout.setOnClickListener { dismiss() }
         binding.tvConllectionNew.setOnClickListener {
-            (requireActivity() as MainActivity).navController?.navigate(
-                R.id.fragment_list_music
-            )
+            (requireActivity() as MainActivity).navController.navigate(R.id.fragment_list_music)
         }
     }
 
@@ -59,20 +53,17 @@ class BottomSheetAddPlayListFrag :
         mainViewModel.listPlaylistData.observe(viewLifecycleOwner) { playLists ->
             listDataPlayList.clear()
             listDataPlayList.addAll(playLists)
-            listPlayListAdapter!!.listPlay = (listDataPlayList)
+            listPlayListAdapter.listPlay = (listDataPlayList)
         }
         viewModel.listDataMusicPlaylist.observe(viewLifecycleOwner) { dataMusics: MutableList<DataMusic> ->
-            val dataMusicCurrentName = dataMusicCurent?.musicName
+            val dataMusicCurrentName = dataMusicCurrent?.musicName
             val isMusicInPlaylist = dataMusics.any { it.musicName == dataMusicCurrentName }
 
             if (!isMusicInPlaylist) {
-                Timber.e("ltnghia"+isMusicInPlaylist)
-
-                dataMusicCurent?.namePlayList = listDataPlayList[positionPlayList].namePlayList
-                viewModel.inSertMusicofPlayList(dataMusicCurent!!)
+                dataMusicCurrent?.namePlayList = listDataPlayList[positionPlayList].namePlayList
+                viewModel.insertMusicOfPlayList(dataMusicCurrent!!)
                 Toast.makeText(context, getString(R.string.success), Toast.LENGTH_SHORT).show()
             } else {
-                Timber.e("ltnghia")
 
                 Toast.makeText(context, getString(R.string.no_add), Toast.LENGTH_SHORT).show()
             }

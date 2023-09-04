@@ -18,9 +18,9 @@ import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class MainViewModel @Inject constructor(var musicRepository: MusicRepository) : BaseViewModel() {
-    var listAllDataMusicDevice = MutableLiveData<MutableList<DataMusic>>()
-    var listRecentLiveData = MutableLiveData<MutableList<DataItemRecent>>()
-    var listPlaylistData = MutableLiveData<MutableList<DataPlayList>>()
+     var listAllDataMusicDevice = MutableLiveData<MutableList<DataMusic>>()
+     var listRecentLiveData = MutableLiveData<MutableList<DataItemRecent>>()
+     var listPlaylistData = MutableLiveData<MutableList<DataPlayList>>()
 
     var isStartMedia = MutableLiveData<Boolean>()
 
@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(var musicRepository: MusicRepository) : 
 
     fun getAllRecentMusic() {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
-            _: CoroutineContext, throwable: Throwable
+                _: CoroutineContext, throwable: Throwable
         ) {
             run {
                 Timber.e(throwable)
@@ -46,12 +46,20 @@ class MainViewModel @Inject constructor(var musicRepository: MusicRepository) : 
     }
 
     fun insertRecentMusic(dataItemRecent: DataItemRecent) {
-        musicRepository.insertRecentMusic(dataItemRecent)
+        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
+                _: CoroutineContext, throwable: Throwable
+        ) {
+            run {
+                Timber.e(throwable)
+            }
+        })) {
+            musicRepository.insertRecentMusic(dataItemRecent)
+        }
     }
 
     fun getAllPlayList() {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
-            _: CoroutineContext, throwable: Throwable
+                _: CoroutineContext, throwable: Throwable
         ) {
             run {
                 Timber.e(throwable)

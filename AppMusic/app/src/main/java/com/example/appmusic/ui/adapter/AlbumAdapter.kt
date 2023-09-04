@@ -25,7 +25,7 @@ class AlbumAdapter : BaseBindingAdapter<ItemAlbumBinding>() {
     ) {
         list[holder.adapterPosition].apply {
             with(holder.binding) {
-                imMusicSong.setImageResource(((imageSong ?: R.drawable.ic_apple_music) as Int))
+                imMusicSong.setImageResource((((imageSong ?: R.drawable.ic_apple_music) as Int)))
                 tvNameAlbum.text = nameAlbum
                 tvNameSinger.text = nameSinger
                 root.setOnClickListener { clickItem(holder.adapterPosition, this@apply) }

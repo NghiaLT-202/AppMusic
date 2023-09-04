@@ -11,19 +11,19 @@ import com.example.appmusic.ui.main.home.singerfragment.SingerFragment
 
 class FragmentTabLayoutAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
-    private var songFragment: SongFragment? = null
+    private val songFragment: SongFragment by lazy {  SongFragment()}
+    private val singFragment: SingerFragment by lazy {  SingerFragment()}
+    private val albumFragment: AlbumFragment by lazy {  AlbumFragment()}
+    private val folderFragment: FolderFragment by lazy {  FolderFragment()}
     override fun createFragment(position: Int): Fragment {
         when (position) {
-            0 -> {
-                if (songFragment == null) songFragment = SongFragment()
-                return songFragment as SongFragment
-            }
 
-            1 -> return SingerFragment()
-            2 -> return AlbumFragment()
-            3 -> return FolderFragment()
+
+            1 -> return singFragment
+            2 -> return albumFragment
+            3 -> return folderFragment
         }
-        return SongFragment()
+        return songFragment
     }
 
     override fun getItemCount(): Int {

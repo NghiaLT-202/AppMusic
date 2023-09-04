@@ -16,9 +16,9 @@ import kotlin.coroutines.CoroutineContext
 @HiltViewModel
 class BottomSheetAddPlayListVM @Inject constructor(var musicRepository: MusicRepository) :
     BaseViewModel() {
-    var listDataMusicPlaylist = MutableLiveData<MutableList<DataMusic>>()
+     var listDataMusicPlaylist = MutableLiveData<MutableList<DataMusic>>()
 
-    fun inSertMusicofPlayList(dataMusic: DataMusic) {
+    fun insertMusicOfPlayList(dataMusic: DataMusic) {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
             _: CoroutineContext, throwable: Throwable
         ) {

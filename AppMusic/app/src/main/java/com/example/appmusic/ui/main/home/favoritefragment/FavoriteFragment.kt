@@ -14,7 +14,7 @@ import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomShee
 
 class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteViewModel>() {
     private val listFavourite: MutableList<DataMusic> = mutableListOf()
-    private var favoriteAdapter: FavoriteAdapter? = null
+    private val favoriteAdapter: FavoriteAdapter by lazy { FavoriteAdapter() }
     override val layoutId: Int
         get() = R.layout.fragment_favorite
 
@@ -30,26 +30,25 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteVi
 
     private fun initListener() {
         binding.imBack.setOnClickListener {
-            (requireActivity() as MainActivity).navController!!.navigate(
+            (requireActivity() as MainActivity).navController.navigate(
                 R.id.fragment_home
             )
         }
     }
 
     private fun initAdapter() {
-        favoriteAdapter = FavoriteAdapter()
         binding.rcFavorite.adapter = favoriteAdapter
-        favoriteAdapter?.clickItem={position,_ ->
+        favoriteAdapter.clickItem ={ position, _ ->
             App.instance.musicCurrent = (listFavourite[position])
             Bundle().apply {
                 putBoolean(Constant.RUN_NEW_MUSIC, true)
-                (requireActivity() as MainActivity).navController?.navigate(
-                    R.id.fragment_detail_music,
-                    this
+                (requireActivity() as MainActivity).navController.navigate(
+                        R.id.fragment_detail_music,
+                        this
                 )
             }
         }
-        favoriteAdapter?.clickMenu={_,_ ->
+        favoriteAdapter.clickMenu ={ _, _ ->
             showBottomSheetDialog()
 
         }
@@ -68,7 +67,7 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteVi
             listFavourite.addAll(songs)
             if (listFavourite.size > 0) binding.tvNoDataFavorite.visibility =
                 View.INVISIBLE else binding.tvNoDataFavorite.visibility = View.VISIBLE
-            favoriteAdapter?.list = (songs)
+            favoriteAdapter.list = (songs)
         }
     }
 }

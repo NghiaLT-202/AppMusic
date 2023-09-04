@@ -8,7 +8,7 @@ import com.example.appmusic.ui.adapter.FolderAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 
 class FolderFragment : BaseBindingFragment<FragmentFolderBinding, FolderViewModel>() {
-    private var folderAdapter: FolderAdapter? = null
+    private val folderAdapter: FolderAdapter by lazy { FolderAdapter() }
 
 
     override fun getViewModel(): Class<FolderViewModel> {
@@ -24,15 +24,12 @@ class FolderFragment : BaseBindingFragment<FragmentFolderBinding, FolderViewMode
     }
 
     private fun initAdapter() {
-        folderAdapter = FolderAdapter()
         binding.rcFolder.adapter = folderAdapter
     }
 
     private fun initData() {
-        mainViewModel.getAllMusicDetail(requireContext())
-
         mainViewModel.listAllDataMusicDevice.observe(viewLifecycleOwner) { list ->
-            folderAdapter?.listFolder = (list)
+            folderAdapter.listFolder = (list)
         }
     }
 

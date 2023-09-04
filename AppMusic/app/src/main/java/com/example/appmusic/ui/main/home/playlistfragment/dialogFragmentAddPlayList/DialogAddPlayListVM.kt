@@ -16,7 +16,7 @@ import kotlin.coroutines.CoroutineContext
 @HiltViewModel
 class DialogAddPlayListVM @Inject constructor(private val musicRepository: MusicRepository) :
     BaseViewModel() {
-    var listDataPlayList = MutableLiveData<MutableList<DataPlayList>>()
+     var listDataPlayList = MutableLiveData<MutableList<DataPlayList>>()
     val allPlayList: Unit
         get() {
             viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(

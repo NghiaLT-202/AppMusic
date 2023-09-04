@@ -9,9 +9,7 @@ import com.example.appmusic.ui.base.BaseBindingFragment
 
 class SingerFragment : BaseBindingFragment<FragmentSingerBinding, SingerViewModel>() {
 
-    var singerAdapter: SingerAdapter? = null
-
-
+    private val singerAdapter: SingerAdapter by lazy { SingerAdapter() }
     override fun getViewModel(): Class<SingerViewModel> {
         return SingerViewModel::class.java
     }
@@ -25,18 +23,14 @@ class SingerFragment : BaseBindingFragment<FragmentSingerBinding, SingerViewMode
 
     }
 
-
     private fun initAdapter() {
-        singerAdapter = SingerAdapter()
         binding.rcSinger.adapter = singerAdapter
     }
 
     fun initData() {
-        mainViewModel.getAllMusicDetail(requireContext())
-
         mainViewModel.listAllDataMusicDevice.observe(viewLifecycleOwner) {
 
-            singerAdapter?.listSing = it
+            singerAdapter.listSing = it
         }
     }
 

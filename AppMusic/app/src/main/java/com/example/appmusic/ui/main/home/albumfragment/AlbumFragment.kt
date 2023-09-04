@@ -8,7 +8,7 @@ import com.example.appmusic.ui.adapter.AlbumAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 
 class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding, AlbumViewModel>() {
-    private var albumAdapter: AlbumAdapter? = null
+    private val albumAdapter: AlbumAdapter by lazy { AlbumAdapter() }
 
 
     override fun getViewModel(): Class<AlbumViewModel> {
@@ -31,11 +31,10 @@ class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding, AlbumViewModel>(
     }
 
     private fun initData() {
-        mainViewModel.getAllMusicDetail(requireContext())
 
         mainViewModel.listAllDataMusicDevice.observe(viewLifecycleOwner) { songs ->
             if (songs != null) {
-                albumAdapter?.list = (songs)
+                albumAdapter.list = (songs)
             }
         }
     }

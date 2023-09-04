@@ -15,8 +15,8 @@ class PlaylistAdapter : BaseBindingAdapter<ItemPlayListBinding>() {
             notifyDataSetChanged()
         }
     private var iclickMenu: IclickMenu? = null
-    fun setIclickMenu(iclickMenu: IclickMenu) {
-        this.iclickMenu = iclickMenu
+    fun setIClickMenu(iClickMenu: IclickMenu) {
+        this.iclickMenu = iClickMenu
     }
 
     var totalSong = 0

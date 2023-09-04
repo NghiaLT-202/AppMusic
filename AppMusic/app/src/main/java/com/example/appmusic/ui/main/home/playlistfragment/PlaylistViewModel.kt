@@ -16,19 +16,46 @@ import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class PlaylistViewModel  @Inject constructor(private val musicRepository: MusicRepository) : BaseViewModel(){
-    var listDataMusicPlaylist = MutableLiveData<MutableList<DataMusic>>()
+     var listDataMusicPlaylist = MutableLiveData<MutableList<DataMusic>>()
 
 
     fun insertPlayList(dataPlayList: DataPlayList) {
-        musicRepository.insertPlayList(dataPlayList)
+        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
+                _: CoroutineContext, throwable: Throwable
+        ) {
+            run {
+                Timber.e(throwable)
+            }
+        })) {
+            musicRepository.insertPlayList(dataPlayList)
+
+        }
     }
 
     fun deletePlayList(name: String) {
-        musicRepository.deletePlayList(name)
+        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
+                _: CoroutineContext, throwable: Throwable
+        ) {
+            run {
+                Timber.e(throwable)
+            }
+        })) {
+            musicRepository.deletePlayList(name)
+
+        }
     }
 
     fun updateNamePlayList(name: String, id: Int) {
-        musicRepository.updateNamePlayList(name, id)
+        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
+                _: CoroutineContext, throwable: Throwable
+        ) {
+            run {
+                Timber.e(throwable)
+            }
+        })) {
+            musicRepository.updateNamePlayList(name, id)
+
+        }
     }
 
     fun getAllMusicPlayList(namePlayList: String) {

@@ -15,8 +15,9 @@ import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomSheetOptionsFragment
 
+@Suppress("DEPRECATION")
 class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, RecentMyMusicVM>() {
-    var recentlyAdapter: RecentlyAdapter? = null
+    private val recentlyAdapter: RecentlyAdapter by lazy { RecentlyAdapter() }
     private val recentList: MutableList<DataItemRecent> = mutableListOf()
     override fun getViewModel(): Class<RecentMyMusicVM> {
         return RecentMyMusicVM::class.java
@@ -32,26 +33,25 @@ class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recen
     }
 
     private fun initListener() {
-        binding.imBack.setOnClickListener {  (requireActivity() as MainActivity).navController!!.popBackStack() }
+        binding.imBack.setOnClickListener { (requireActivity() as MainActivity).navController.popBackStack() }
         binding.imDelete.setOnClickListener {
             val alert = AlertDialog.Builder(context)
-            alert.setTitle("Delete recent playlist")
-            alert.setMessage("Do you want to delete recently played song")
-            alert.setPositiveButton(android.R.string.yes) { dialog: DialogInterface?, which: Int ->
+            alert.setTitle(getString(R.string.delete_recent_playlist))
+            alert.setMessage(getString(R.string.do_you_want_to_delete_recently_played_song))
+            alert.setPositiveButton(android.R.string.yes) { _: DialogInterface?, _: Int ->
                 viewModel.deleteRecentMusic()
                 recentList.clear()
-                recentlyAdapter?.list = (recentList)
+                recentlyAdapter.list = (recentList)
                 binding.tvNoDataReccent.visibility = View.VISIBLE
             }
-            alert.setNegativeButton(android.R.string.no) { dialog: DialogInterface, which: Int -> dialog.cancel() }
+            alert.setNegativeButton(android.R.string.no) { dialog: DialogInterface, _: Int -> dialog.cancel() }
             alert.show()
         }
     }
 
     private fun initAdapter() {
-        recentlyAdapter = RecentlyAdapter()
         binding.rcPlayList.adapter = recentlyAdapter
-        recentlyAdapter!!.setIclickMusic(object : RecentlyAdapter.IclickMusic {
+        recentlyAdapter.setIclickMusic(object : RecentlyAdapter.IclickMusic {
             override fun clickItem(position: Int) {
                 val itemRecent = recentList[position]
                 DataMusic().apply {
@@ -67,9 +67,9 @@ class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recen
                 }
                 Bundle().apply {
                     putBoolean(Constant.RUN_NEW_MUSIC, true)
-                    (requireActivity() as MainActivity).navController?.navigate(
-                        R.id.fragment_detail_music,
-                        this
+                    (requireActivity() as MainActivity).navController.navigate(
+                            R.id.fragment_detail_music,
+                            this
                     )
                 }
             }
@@ -94,7 +94,7 @@ class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recen
                 if (recentList.size > 0) {
                     binding.tvNoDataReccent.visibility = View.INVISIBLE
                 }
-                recentlyAdapter?.list = (recentList)
+                recentlyAdapter.list = (recentList)
                 mainViewModel.listRecentLiveData.postValue(null)
             }
         }

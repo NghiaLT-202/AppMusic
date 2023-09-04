@@ -25,26 +25,33 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         initAdapter()
         initListener()
+        mainViewModel.getAllMusicDetail(requireContext())
+
     }
 
     private fun initAdapter() {
-        val list = ArrayList<String>()
-        list.add(getString(R.string.song))
-        list.add(getString(R.string.singer))
-        list.add(getString(R.string.album))
-        list.add(getString(R.string.folder))
+        val list = listOf(
+                getString(R.string.song),
+                getString(R.string.singer),
+                getString(R.string.album),
+                getString(R.string.folder)
+        )
+
         val adapter = FragmentTabLayoutAdapter(
-            childFragmentManager,
-            lifecycle
+                childFragmentManager,
+                lifecycle
         )
+
         binding.tabLayout.setTabTextColors(
-            Color.parseColor("#80000000"),
-            Color.parseColor("#000000")
+                Color.parseColor("#80000000"),
+                Color.parseColor("#000000")
         )
+
         binding.viewpager2.adapter = adapter
+
         TabLayoutMediator(
-            binding.tabLayout, binding.viewpager2
-        ) { tab: TabLayout.Tab, position: Int ->
+                binding.tabLayout, binding.viewpager2
+        ) { tab, position ->
             tab.text = list[position]
         }.attach()
 

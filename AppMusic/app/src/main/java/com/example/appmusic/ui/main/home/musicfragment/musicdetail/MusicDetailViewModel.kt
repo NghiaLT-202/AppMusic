@@ -17,8 +17,8 @@ import kotlin.coroutines.CoroutineContext
 @HiltViewModel
 class MusicDetailViewModel @Inject constructor(val musicRepository: MusicRepository) :
     BaseViewModel() {
-    var listDataMusic = MutableLiveData<MutableList<DataMusic>>()
-    var listFavourite = MutableLiveData<MutableList<DataMusic>>()
+     var listDataMusic = MutableLiveData<MutableList<DataMusic>>()
+     var listFavourite = MutableLiveData<MutableList<DataMusic>>()
     fun initData(context: Context) {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
             _: CoroutineContext, throwable: Throwable
@@ -34,11 +34,29 @@ class MusicDetailViewModel @Inject constructor(val musicRepository: MusicReposit
     }
 
     fun insertFavorite(dataMusic: DataMusic) {
-        musicRepository.insert(dataMusic)
+        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
+                _: CoroutineContext, throwable: Throwable
+        ) {
+            run {
+                Timber.e(throwable)
+            }
+        })) {
+            musicRepository.insert(dataMusic)
+
+        }
     }
 
     fun deleteFavourite(path: String) {
-        musicRepository.deleteFavourite(path)
+        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler(fun(
+                _: CoroutineContext, throwable: Throwable
+        ) {
+            run {
+                Timber.e(throwable)
+            }
+        })) {
+            musicRepository.deleteFavourite(path)
+
+        }
     }
 
     fun getAllFavourite(checkFavorite: Boolean) {

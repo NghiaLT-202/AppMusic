@@ -19,6 +19,7 @@ object Constant {
     const val STOP_MEDIA = 14
     const val FAVORITE_MEDIA = 15
     const val SEEK_TO_MEDIA_SERVICE = "SEEK_TO_MEDIA_SERVICE"
+    const val SEEK_TO = "SEEK_TO"
     const val PLAY_SONG = "PLAY_SONG"
     const val FAVOURITE = "FAVOURITE"
     const val NEXT_SONG = "NEXT_SONG"

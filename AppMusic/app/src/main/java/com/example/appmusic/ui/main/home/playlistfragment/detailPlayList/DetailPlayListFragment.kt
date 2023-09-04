@@ -34,7 +34,7 @@ class DetailPlayListFragment :
 
     private fun initListener() {
         binding.tvNamePlaylist.text = nameCurrentPlayList
-        binding.imBack.setOnClickListener { (requireActivity() as MainActivity).navController!!.popBackStack() }
+        binding.imBack.setOnClickListener { (requireActivity() as MainActivity).navController.popBackStack() }
     }
 
     private fun initAdapter() {
@@ -44,9 +44,9 @@ class DetailPlayListFragment :
             App.instance.musicCurrent = (listDataMusic[position])
             Bundle().apply {
                 putBoolean(Constant.RUN_NEW_MUSIC, true)
-                (requireActivity() as MainActivity).navController?.navigate(
-                    R.id.fragment_detail_music,
-                    this
+                (requireActivity() as MainActivity).navController.navigate(
+                        R.id.fragment_detail_music,
+                        this
                 )
             }
         }
