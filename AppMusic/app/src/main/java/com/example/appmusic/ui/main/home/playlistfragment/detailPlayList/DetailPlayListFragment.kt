@@ -13,9 +13,22 @@ import com.example.appmusic.ui.main.MainActivity
 
 class DetailPlayListFragment :
     BaseBindingFragment<FragmentDetailPlayListBinding, DetailPlayListViewModel>() {
-    private val listDataMusic: MutableList<DataMusic> = ArrayList()
-    private var musicAdapter: MusicAdapter? = null
-    private var nameCurrentPlayList: String? = null
+    private val musicAdapter: MusicAdapter by lazy {
+        MusicAdapter().apply {
+            clickItem = { _, item ->
+                App.instance.musicCurrent = item
+                Bundle().apply {
+                    putBoolean(Constant.RUN_NEW_MUSIC, true)
+                    (requireActivity() as MainActivity).navController.navigate(
+                        R.id.fragment_detail_music,
+                        this
+                    )
+                }
+            }
+            binding.rcListPlayList.adapter = this
+        }
+    }
+
     override fun getViewModel(): Class<DetailPlayListViewModel> {
         return DetailPlayListViewModel::class.java
     }
@@ -24,41 +37,22 @@ class DetailPlayListFragment :
         get() = R.layout.fragment_detail_play_list
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        if (arguments != null) {
-            nameCurrentPlayList = arguments?.getString(Constant.NAME_PLAYLIST, nameCurrentPlayList)
-        }
         initListener()
-        initAdapter()
         initData()
     }
 
     private fun initListener() {
-        binding.tvNamePlaylist.text = nameCurrentPlayList
         binding.imBack.setOnClickListener { (requireActivity() as MainActivity).navController.popBackStack() }
     }
 
-    private fun initAdapter() {
-        musicAdapter = MusicAdapter()
-        binding.rcListPlayList.adapter = musicAdapter
-        musicAdapter?.clickItem={ position, _ ->
-            App.instance.musicCurrent = (listDataMusic[position])
-            Bundle().apply {
-                putBoolean(Constant.RUN_NEW_MUSIC, true)
-                (requireActivity() as MainActivity).navController.navigate(
-                        R.id.fragment_detail_music,
-                        this
-                )
-            }
+    private fun initData() {
+        arguments?.getString(Constant.NAME_PLAYLIST, null)?.let { nameCurrentPlayList ->
+            viewModel.getAllMusicPlayList(nameCurrentPlayList)
+            binding.tvNamePlaylist.text = nameCurrentPlayList
         }
 
-    }
-
-    private fun initData() {
-        nameCurrentPlayList?.let { viewModel.getAllMusicPlayList(it) }
-        viewModel.listSong.observe(viewLifecycleOwner) { list ->
-            listDataMusic.clear()
-            listDataMusic.addAll(list)
-            musicAdapter?.submitList(listDataMusic)
+        viewModel.listSong.observe(viewLifecycleOwner) { listDataMusic ->
+            musicAdapter.submitList(listDataMusic)
         }
     }
 }
