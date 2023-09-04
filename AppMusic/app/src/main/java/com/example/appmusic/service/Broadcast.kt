@@ -16,6 +16,10 @@ import java.security.cert.Extension
 class Broadcast : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == null) return
+
+        val currentPos = getPosCurrentMusic(App.instance.musicCurrent)
+        val totalMusic = App.instance.listDataMusic.size
+
         when (intent.action) {
             Constant.PLAY_SONG -> {
                 EventBus.getDefault().post(MessageEvent(context.getString(R.string.namesong)))
@@ -23,24 +27,15 @@ class Broadcast : BroadcastReceiver() {
             }
 
             Constant.NEXT_SONG -> {
-                var currentPos = getPosCurrentMusic(App.instance.musicCurrent)
-                currentPos++
-                if (currentPos > App.instance.listDataMusic.size - 1) {
-                    currentPos = 0
-                }
-                App.instance.musicCurrent = App.instance.listDataMusic[currentPos]
+                val nextPos = (currentPos + 1) % totalMusic
+                App.instance.musicCurrent = App.instance.listDataMusic[nextPos]
                 startService(Constant.CHANGE_MUSIC_SERVICE)
             }
 
             Constant.BACK_SONG -> {
-                var currentPosback = getPosCurrentMusic(App.instance.musicCurrent)
-                currentPosback--
-                if (currentPosback < 0) {
-                    currentPosback = App.instance.listDataMusic.size - 1
-                }
-                App.instance.musicCurrent = App.instance.listDataMusic[currentPosback]
+                val backPos = if (currentPos > 0) currentPos - 1 else totalMusic - 1
+                App.instance.musicCurrent = App.instance.listDataMusic[backPos]
                 startService(Constant.CHANGE_MUSIC_SERVICE)
-
             }
         }
     }
