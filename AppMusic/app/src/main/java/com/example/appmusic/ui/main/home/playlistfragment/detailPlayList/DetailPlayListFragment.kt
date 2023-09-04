@@ -58,7 +58,7 @@ class DetailPlayListFragment :
         viewModel.listSong.observe(viewLifecycleOwner) { list ->
             listDataMusic.clear()
             listDataMusic.addAll(list)
-            musicAdapter?.listDataMusic = listDataMusic
+            musicAdapter?.submitList(listDataMusic)
         }
     }
 }

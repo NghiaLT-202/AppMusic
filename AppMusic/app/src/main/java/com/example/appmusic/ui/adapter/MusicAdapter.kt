@@ -1,46 +1,68 @@
 package com.example.appmusic.ui.adapter
 
-import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.appmusic.R
 import com.example.appmusic.data.model.DataMusic
 import com.example.appmusic.databinding.ItemMusicBinding
-import com.example.appmusic.ui.base.BaseBindingAdapter
 
-class MusicAdapter : BaseBindingAdapter<ItemMusicBinding>() {
-    var listDataMusic: MutableList<DataMusic> = mutableListOf()
-        @SuppressLint("NotifyDataSetChanged")
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+class MusicAdapter : ListAdapter<DataMusic, MusicAdapter.MusicHolder>(TaskDiffCallback()) {
+    var clickItem: (position: Int, music: DataMusic) -> Unit = { _, _ -> }
+    var clickMenu: (position: Int, music: DataMusic) -> Unit = { _, _ -> }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicHolder {
+        return MusicHolder(
+            ItemMusicBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
+    }
 
-     override fun onBindViewHolderBase(
-        holder: BaseHolder<ItemMusicBinding>,
-        position: Int
+    override fun onBindViewHolder(holder: MusicHolder, position: Int) {
+        holder.bind(getItem(holder.adapterPosition), clickMenu, clickItem)
+    }
+
+    class MusicHolder(val binding: ItemMusicBinding) : RecyclerView.ViewHolder(
+        binding.root
     ) {
-        listDataMusic[holder.adapterPosition].apply {
-            with(holder.binding){
-                if (imageSong != null) {
-                    imMusicSong.setImageBitmap(imageSong)
+        fun bind(
+            dataMusic: DataMusic,
+            clickMenu: (position: Int, music: DataMusic) -> Unit,
+            clickItem: (position: Int, music: DataMusic) -> Unit,
+        ) {
+            with(binding) {
+                if (dataMusic.imageSong != null) {
+                    imMusicSong.setImageBitmap(dataMusic.imageSong)
                 } else {
                     imMusicSong.setImageResource(R.drawable.ic_apple_music)
                 }
-                tvNameSong.text = musicName
-                tvNameSinger.text = nameSinger
-                tvNameAlbum.text = nameAlbum
-                imMore.setOnClickListener {  clickMenu(holder.adapterPosition,this@apply) }
+                tvNameSong.text = dataMusic.musicName
+                tvNameSinger.text = dataMusic.nameSinger
+                tvNameAlbum.text = dataMusic.nameAlbum
+                imMore.setOnClickListener { clickMenu(adapterPosition, dataMusic) }
             }
-            holder.itemView.setOnClickListener { clickItem(position, this@apply) }
+            itemView.setOnClickListener { clickItem(adapterPosition, dataMusic) }
         }
-
-
     }
 
-    override val layoutIdItem: Int
-        get() = R.layout.item_music
-    override val sizeItem: Int
-        get() = listDataMusic.size
+    private class TaskDiffCallback : DiffUtil.ItemCallback<DataMusic>() {
+        override fun areItemsTheSame(oldItem: DataMusic, newItem: DataMusic): Boolean {
+            return oldItem.id == newItem.id
+        }
 
+        override fun areContentsTheSame(oldItem: DataMusic, newItem: DataMusic): Boolean {
+            return oldItem.checkFavorite == newItem.checkFavorite
+                    && oldItem.musicFile == newItem.musicFile
+                    && oldItem.musicName == newItem.musicName
+                    && oldItem.nameSinger == newItem.nameAlbum
+                    && oldItem.namePlayList == newItem.namePlayList
+                    && oldItem.date == newItem.date
+                    && oldItem.imageSong?.equals(newItem.imageSong) == true
+        }
 
-
+    }
 }

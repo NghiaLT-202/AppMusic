@@ -64,9 +64,8 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             if (music != null) {
                 songList.clear()
                 songList.addAll(music)
-                musicAdapter.listDataMusic = (music)
+                musicAdapter.submitList(songList)
                 App.instance.listDataMusic = songList
-
                 binding.loading.visibility = View.GONE
             }
         }
@@ -77,9 +76,10 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             val bottomSheetSortFragment = BottomSheetSortFragment()
             bottomSheetSortFragment.dataMusicList = (songList)
             bottomSheetSortFragment.show(childFragmentManager, null)
-            musicAdapter.listDataMusic = songList
-
+            musicAdapter.submitList(songList)
         }
+
+
         binding.imPlay.setOnClickListener {
             randomListMusic(songList)
             App.instance.musicCurrent = (songList[1])
@@ -133,7 +133,7 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             songList.sortWith { o1, o2 -> o1.date.compareTo(o2.date) }
 
         }
-        musicAdapter.listDataMusic = (songList)
+        musicAdapter.submitList(songList)
     }
 
     override fun onDetach() {
