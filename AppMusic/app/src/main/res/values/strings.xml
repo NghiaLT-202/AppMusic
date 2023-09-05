@@ -82,6 +82,9 @@
     <string name="_5">5</string>
     <string name="delete_recent_playlist">Delete recent playlist</string>
     <string name="do_you_want_to_delete_recently_played_song">Do you want to delete recently played song</string>
+    <string name="app_active">App Active</string>
+    <string name="app_active_channel">app_active_channel</string>
+    <string name="ticker">ticker</string>
 
 
 </resources>

@@ -1,23 +1,29 @@
 package com.example.appmusic.data.model
 
 import android.graphics.Bitmap
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity
-class DataMusic {
-    @PrimaryKey(autoGenerate = true)
-    var id = 0
-    var musicFile: String = ""
-    var musicName: String = ""
-    var nameSinger: String = ""
-    var nameAlbum: String = ""
-
-    @Ignore
-    var imageSong: Bitmap? = null
-
-    var checkFavorite = false
-    var namePlayList: String = ""
-    var date: String = ""
-}
+data class DataMusic(
+        @PrimaryKey(autoGenerate = true)
+        var id: Long = 0,
+        @ColumnInfo
+        var musicFile: String = "",
+        @ColumnInfo
+        var musicName: String = "",
+        @ColumnInfo
+        var nameSinger: String = "",
+        @ColumnInfo
+        var nameAlbum: String = "",
+        @Ignore
+        var imageSong: Bitmap? = null,
+        @ColumnInfo
+        var checkFavorite: Boolean = false,
+        @ColumnInfo
+        var namePlayList: String = "",
+        @ColumnInfo
+        var date: String = ""
+)

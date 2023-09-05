@@ -152,7 +152,7 @@ open class MusicService : Service() {
             .setFullScreenIntent(pendingIntent, true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setContentTitle(getString(R.string.app_name))
-            .setTicker("ticker")
+            .setTicker(getString(R.string.ticker))
             .build()
 
         startForeground(110, notification)
@@ -160,8 +160,8 @@ open class MusicService : Service() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getNotificationChannel(notificationManager: NotificationManager): String {
-        val channelId = "app_active_channel"
-        NotificationChannel(channelId, "App Active", NotificationManager.IMPORTANCE_HIGH).apply {
+        val channelId = getString(R.string.app_active_channel)
+        NotificationChannel(channelId, getString(R.string.app_active), NotificationManager.IMPORTANCE_HIGH).apply {
             importance = NotificationManager.IMPORTANCE_NONE
             lockscreenVisibility = Notification.VISIBILITY_PRIVATE
             notificationManager.createNotificationChannel(this)

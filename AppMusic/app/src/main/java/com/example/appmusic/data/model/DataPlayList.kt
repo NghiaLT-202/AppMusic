@@ -5,13 +5,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class DataPlayList {
-    @PrimaryKey(autoGenerate = true)
-     var idPlayList = 0
-    @ColumnInfo
-     var namePlayList: String =""
-    @ColumnInfo
-     var pathPlayList: String=""
-    @ColumnInfo
-     var totalSong = 0
-}
+data class DataPlayList(
+        @PrimaryKey(autoGenerate = true)
+        var idPlayList: Long = 0,
+        @ColumnInfo
+        var namePlayList: String = "",
+        @ColumnInfo
+        var pathPlayList: String = "",
+        @ColumnInfo
+        var totalSong: Int = 0
+)
