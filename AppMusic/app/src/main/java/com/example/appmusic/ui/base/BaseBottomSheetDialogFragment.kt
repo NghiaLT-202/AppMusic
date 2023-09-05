@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
 import com.example.appmusic.R
+import com.example.appmusic.ui.main.MainActivity
 import com.example.appmusic.ui.main.MainViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -74,5 +75,10 @@ abstract class BaseBottomSheetDialogFragment<B : ViewDataBinding, T : BaseViewMo
             dialogInterface.behavior.isDraggable = false
         }
         return dialog
+    }
+    fun navigateFragment(id:Int){
+        (requireActivity() as MainActivity).navController.navigate(
+                id
+        )
     }
 }

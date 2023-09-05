@@ -20,7 +20,6 @@ class BottomSheetOptionsFragment :
         get() = R.layout.bottom_sheet_list_funtion
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        initData()
         initListener()
     }
 
@@ -34,5 +33,4 @@ class BottomSheetOptionsFragment :
         }
     }
 
-    private fun initData() {}
 }

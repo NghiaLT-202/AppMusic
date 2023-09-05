@@ -8,7 +8,10 @@ import com.example.appmusic.ui.adapter.AlbumAdapter
 import com.example.appmusic.ui.base.BaseBindingFragment
 
 class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding, AlbumViewModel>() {
-    private val albumAdapter: AlbumAdapter by lazy { AlbumAdapter() }
+    private val albumAdapter: AlbumAdapter by lazy { AlbumAdapter().apply {
+        binding.rcAlbum.adapter = this
+
+    } }
 
 
     override fun getViewModel(): Class<AlbumViewModel> {
@@ -19,16 +22,10 @@ class AlbumFragment : BaseBindingFragment<FragmentAlbumBinding, AlbumViewModel>(
         get() = R.layout.fragment_album
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        initAdapter()
         initData()
     }
 
-    private fun initAdapter() {
-        AlbumAdapter().apply {
-            binding.rcAlbum.adapter = this
-        }
 
-    }
 
     private fun initData() {
 

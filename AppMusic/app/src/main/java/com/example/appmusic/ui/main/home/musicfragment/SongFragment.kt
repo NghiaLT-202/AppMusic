@@ -25,8 +25,16 @@ import org.greenrobot.eventbus.ThreadMode
 import java.util.Random
 
 class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
-    private val musicAdapter: MusicAdapter by lazy { MusicAdapter() }
+    private val musicAdapter: MusicAdapter by lazy {
+        MusicAdapter().apply {
+            binding.rcMusic.adapter = this
+
+        }
+    }
     private val songList: MutableList<DataMusic> = mutableListOf()
+    private val bottomSheetSortFragment: BottomSheetSortFragment by lazy { BottomSheetSortFragment() }
+    private val bottomSheetFragment: BottomSheetOptionsFragment by lazy { BottomSheetOptionsFragment() }
+
 
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -73,7 +81,6 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
 
     private fun initListener() {
         binding.imSortSong.setOnClickListener { v ->
-            val bottomSheetSortFragment = BottomSheetSortFragment()
             bottomSheetSortFragment.dataMusicList = (songList)
             bottomSheetSortFragment.show(childFragmentManager, null)
             musicAdapter.submitList(songList)
@@ -85,7 +92,7 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             App.instance.musicCurrent = (songList[1])
             Bundle().apply {
                 putBoolean(Constant.RUN_NEW_MUSIC, true)
-                navigateFragmentAndBundle(R.id.fragment_detail_music,this)
+                navigateFragmentAndBundle(R.id.fragment_detail_music, this)
 
             }
         }
@@ -101,21 +108,14 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
     }
 
     private fun initAdapter() {
-        binding.rcMusic.adapter = musicAdapter
         musicAdapter.clickItem = { _, dataMusic ->
             App.instance.musicCurrent = (dataMusic)
             Bundle().apply {
                 putBoolean(Constant.RUN_NEW_MUSIC, true)
-                (requireActivity() as MainActivity).navController.navigate(
-                        R.id.fragment_detail_music,
-                        this
-                )
+                navigateFragmentAndBundle(R.id.fragment_detail_music, this)
             }
         }
         musicAdapter.clickMenu = { position, _ ->
-
-            val bottomSheetFragment = BottomSheetOptionsFragment()
-
             bottomSheetFragment.dataMusic = (songList[position])
             bottomSheetFragment.show(childFragmentManager, null)
         }

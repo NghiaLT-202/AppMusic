@@ -40,10 +40,10 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
             rcPlayList.adapter = playlistAdapter
             playlistAdapter?.setIClickMenu(object : PlaylistAdapter.IclickMenu {
                 override fun clickMenu(
-                    location: IntArray,
-                    view: View,
-                    dataPlayList: DataPlayList,
-                    position: Int
+                        location: IntArray,
+                        view: View,
+                        dataPlayList: DataPlayList,
+                        position: Int
                 ) {
                     val optionPlayListDialog = OptionPlayListDialog()
 
@@ -63,21 +63,21 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
                     }
 
                     optionPlayListDialog.showDialog(
-                        location[0].toFloat(),
-                        location[1].toFloat(), childFragmentManager
+                            location[0].toFloat(),
+                            location[1].toFloat(), childFragmentManager
                     )
                 }
 
                 override fun clickItem(position: Int) {
-                    val bundle = Bundle()
-                    bundle.putString(
-                        Constant.NAME_PLAYLIST,
-                        listDataPlayList[position].namePlayList
-                    )
-                    (requireActivity() as MainActivity).navController.navigate(
-                            R.id.fragment_detail_playlist,
-                            bundle
-                    )
+                    Bundle().apply {
+                        putString(
+                                Constant.NAME_PLAYLIST,
+                                listDataPlayList[position].namePlayList
+                        )
+                        navigateFragmentAndBundle(R.id.fragment_detail_playlist,
+                                this)
+                    }
+
                 }
             })
         }
@@ -139,8 +139,8 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
                 if (!TextUtils.isEmpty(inputName)) {
                     if (!checkNamePlayList(inputName)) {
                         viewModel.updateNamePlayList(
-                            inputName,
-                            listDataPlayList[position].idPlayList
+                                inputName,
+                                listDataPlayList[position].idPlayList
                         )
                         listDataPlayList[position].namePlayList = (inputName)
                         if (listDataPlayList.size > 0) {

@@ -19,6 +19,8 @@ import com.example.appmusic.ui.main.home.musicfragment.dialogfragment.BottomShee
 class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, RecentMyMusicVM>() {
     private val recentlyAdapter: RecentlyAdapter by lazy { RecentlyAdapter() }
     private val recentList: MutableList<DataItemRecent> = mutableListOf()
+    private val bottomSheetFragment :  BottomSheetOptionsFragment by lazy {  BottomSheetOptionsFragment() }
+
     override fun getViewModel(): Class<RecentMyMusicVM> {
         return RecentMyMusicVM::class.java
     }
@@ -67,10 +69,9 @@ class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recen
                 }
                 Bundle().apply {
                     putBoolean(Constant.RUN_NEW_MUSIC, true)
-                    (requireActivity() as MainActivity).navController.navigate(
-                            R.id.fragment_detail_music,
-                            this
-                    )
+                    navigateFragmentAndBundle( R.id.fragment_detail_music,
+                            this)
+
                 }
             }
 
@@ -81,7 +82,6 @@ class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recen
     }
 
     fun showBottomSheetDialog() {
-        val bottomSheetFragment = BottomSheetOptionsFragment()
         bottomSheetFragment.show(childFragmentManager, null)
     }
 

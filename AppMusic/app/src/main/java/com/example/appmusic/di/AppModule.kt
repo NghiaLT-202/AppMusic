@@ -28,10 +28,7 @@ class AppModule {
             context.applicationContext,
             Database::class.java,
             Database.DATABASE_NAME
-        )
-//            .addMigrations(Database.Companion.MIGRATION_1)
-            .allowMainThreadQueries()
-            .build()
+        )            .build()
     }
 
     @Provides

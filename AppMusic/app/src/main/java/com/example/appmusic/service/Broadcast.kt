@@ -42,12 +42,8 @@ class Broadcast : BroadcastReceiver() {
 
 
     private fun getPosCurrentMusic(dataMusic: DataMusic): Int {
-        val musicFile=dataMusic.musicFile
-        for (i in App.instance.listDataMusic.indices) {
-            if (App.instance.listDataMusic[i].musicFile == musicFile) {
-                return i
-            }
-        }
-        return -1
+        val musicFile = dataMusic.musicFile
+        val index = App.instance.listDataMusic.indexOfFirst { it.musicFile == musicFile }
+        return if (index != -1) index else -1
     }
 }

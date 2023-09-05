@@ -12,17 +12,14 @@ import com.example.appmusic.ui.base.BaseBindingFragment
 import com.example.appmusic.ui.main.MainActivity
 
 class DetailPlayListFragment :
-    BaseBindingFragment<FragmentDetailPlayListBinding, DetailPlayListViewModel>() {
+        BaseBindingFragment<FragmentDetailPlayListBinding, DetailPlayListViewModel>() {
     private val musicAdapter: MusicAdapter by lazy {
         MusicAdapter().apply {
             clickItem = { _, item ->
                 App.instance.musicCurrent = item
                 Bundle().apply {
                     putBoolean(Constant.RUN_NEW_MUSIC, true)
-                    (requireActivity() as MainActivity).navController.navigate(
-                        R.id.fragment_detail_music,
-                        this
-                    )
+                    navigateFragmentAndBundle(R.id.fragment_detail_music, this)
                 }
             }
             binding.rcListPlayList.adapter = this

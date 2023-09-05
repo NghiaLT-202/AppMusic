@@ -13,7 +13,11 @@ import com.example.appmusic.ui.main.MainActivity
 import timber.log.Timber
 
 class BottomSheetAddPlayListFrag : BaseBottomSheetDialogFragment<BottomSheetAddPlaylistBinding, BottomSheetAddPlayListVM>() {
-    private val listPlayListAdapter: ListPlayListAdapter by lazy { ListPlayListAdapter() }
+    private val listPlayListAdapter: ListPlayListAdapter by lazy {
+        ListPlayListAdapter().apply {
+            binding.rcListCollection.adapter = this
+        }
+    }
     private val listDataPlayList: MutableList<DataPlayList> = mutableListOf()
     private var positionPlayList = 0
     var dataMusicCurrent: DataMusic? = null
@@ -31,7 +35,6 @@ class BottomSheetAddPlayListFrag : BaseBottomSheetDialogFragment<BottomSheetAddP
     }
 
     private fun initAdapter() {
-        binding.rcListCollection.adapter = listPlayListAdapter
         listPlayListAdapter.clickItemView = { position ->
             positionPlayList = position
             viewModel.getAllMusicPlayList(listDataPlayList[position].namePlayList)
@@ -44,7 +47,7 @@ class BottomSheetAddPlayListFrag : BaseBottomSheetDialogFragment<BottomSheetAddP
 
         binding.framelayout.setOnClickListener { dismiss() }
         binding.tvConllectionNew.setOnClickListener {
-            (requireActivity() as MainActivity).navController.navigate(R.id.fragment_list_music)
+            navigateFragment(R.id.fragment_list_music)
         }
     }
 
