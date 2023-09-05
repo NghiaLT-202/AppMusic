@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class DataPlayList(
         @PrimaryKey(autoGenerate = true)
-        var idPlayList: Long = 0,
+        var idPlayList: Int = 0,
         @ColumnInfo
         var namePlayList: String = "",
         @ColumnInfo

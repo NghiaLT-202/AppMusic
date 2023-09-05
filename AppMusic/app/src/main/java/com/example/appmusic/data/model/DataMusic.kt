@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class DataMusic(
         @PrimaryKey(autoGenerate = true)
-        var id: Long = 0,
+        var id: Int = 0,
         @ColumnInfo
         var musicFile: String = "",
         @ColumnInfo
