@@ -85,10 +85,8 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
             App.instance.musicCurrent = (songList[1])
             Bundle().apply {
                 putBoolean(Constant.RUN_NEW_MUSIC, true)
-                (requireActivity() as MainActivity).navController.navigate(
-                        R.id.fragment_detail_music,
-                        this
-                )
+                navigateFragmentAndBundle(R.id.fragment_detail_music,this)
+
             }
         }
     }

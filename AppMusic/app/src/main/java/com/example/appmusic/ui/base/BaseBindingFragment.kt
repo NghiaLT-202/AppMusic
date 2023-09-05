@@ -55,4 +55,9 @@ abstract class BaseBindingFragment<B : ViewDataBinding, T : BaseViewModel> : Bas
                 id
         )
     }
+    fun navigateFragmentAndBundle(id:Int,bundle: Bundle){
+        (requireActivity() as MainActivity).navController.navigate(
+                id,bundle
+        )
+    }
 }
