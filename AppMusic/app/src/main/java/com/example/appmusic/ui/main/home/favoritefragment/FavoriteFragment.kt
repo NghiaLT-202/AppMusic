@@ -34,9 +34,9 @@ class FavoriteFragment : BaseBindingFragment<FragmentFavoriteBinding, FavoriteVi
 
     private fun initListener() {
         binding.imBack.setOnClickListener {
-            (requireActivity() as MainActivity).navController.navigate(
-                    R.id.fragment_home
+            navigateFragment(R.id.fragment_home
             )
+
         }
     }
 

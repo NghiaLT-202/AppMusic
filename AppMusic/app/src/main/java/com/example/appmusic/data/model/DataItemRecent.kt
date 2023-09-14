@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 data class DataItemRecent(
         @PrimaryKey(autoGenerate = true)
         var id: Int = 0,
-        var musicFile: String = "",
+        var uriMusic: String = "",
         var musicName: String = "",
         var nameSinger: String = "",
         var nameAlbum: String = "",

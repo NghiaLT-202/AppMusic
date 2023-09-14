@@ -56,7 +56,7 @@ class MusicAdapter : ListAdapter<DataMusic, MusicAdapter.MusicHolder>(TaskDiffCa
 
         override fun areContentsTheSame(oldItem: DataMusic, newItem: DataMusic): Boolean {
             return oldItem.checkFavorite == newItem.checkFavorite
-                    && oldItem.musicFile == newItem.musicFile
+                    && oldItem.uriMusic == newItem.uriMusic
                     && oldItem.musicName == newItem.musicName
                     && oldItem.nameSinger == newItem.nameAlbum
                     && oldItem.namePlayList == newItem.namePlayList

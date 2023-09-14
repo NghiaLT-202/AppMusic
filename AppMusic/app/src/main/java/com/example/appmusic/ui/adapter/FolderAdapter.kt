@@ -1,7 +1,6 @@
 package com.example.appmusic.ui.adapter
 
 import android.annotation.SuppressLint
-import androidx.recyclerview.widget.DiffUtil
 import com.example.appmusic.App
 import com.example.appmusic.R
 import com.example.appmusic.data.model.DataMusic
@@ -23,7 +22,7 @@ class FolderAdapter : BaseBindingAdapter<ItemFolderBinding>() {
     ) {
          listFolder[position].apply {
              with(holder.binding){
-                 tvNamefolder.text = musicFile
+                 tvNamefolder.text = uriMusic
                  tvTotalSong.text = App.context.getString(R.string._5)
              }
 

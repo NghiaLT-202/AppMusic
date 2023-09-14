@@ -11,7 +11,7 @@ data class DataMusic(
         @PrimaryKey(autoGenerate = true)
         var id: Int = 0,
         @ColumnInfo
-        var musicFile: String = "",
+        var uriMusic: String = "",
         @ColumnInfo
         var musicName: String = "",
         @ColumnInfo

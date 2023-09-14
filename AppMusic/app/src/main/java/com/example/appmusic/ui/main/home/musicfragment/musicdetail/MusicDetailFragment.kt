@@ -105,7 +105,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             with(App.instance.musicCurrent) {
                 tvNameSong.text = musicName
                 tvNameSinger.text = nameSinger
-                setImageSong(musicFile)
+                setImageSong(uriMusic)
             }
 
             savedInstanceState?.let {
@@ -128,7 +128,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                 listRecent.addAll(reccentlies)
                 val dataMusicCurrent: DataMusic = App.instance.musicCurrent
                 insertRecent(dataMusicCurrent, DataItemRecent().apply {
-                    musicFile = dataMusicCurrent.musicFile
+                    uriMusic = dataMusicCurrent.uriMusic
                     musicName = dataMusicCurrent.musicName
                     nameSinger = dataMusicCurrent.nameSinger
                     nameAlbum = dataMusicCurrent.nameAlbum
@@ -153,7 +153,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
     }
 
     private fun getPosCurrentMusic(music: DataMusic): Int {
-        return App.instance.listDataMusic.indexOfFirst { it.musicFile == music.musicFile }
+        return App.instance.listDataMusic.indexOfFirst { it.uriMusic == music.uriMusic }
     }
 
     private fun initListener() {
@@ -161,8 +161,8 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_24_red)
             if (!checked) {
                 checked = true
-                val musicFile = App.instance.musicCurrent.musicFile
-                val checkFavourite = listFavourite.any { it.musicFile == musicFile }
+                val musicFile = App.instance.musicCurrent.uriMusic
+                val checkFavourite = listFavourite.any { it.uriMusic == musicFile }
 
                 if (!checkFavourite) {
                     App.instance.musicCurrent.checkFavorite = true
@@ -172,7 +172,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                 checked = false
                 binding.imFavorite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
                 App.instance.musicCurrent.checkFavorite = checked
-                viewModel.deleteFavourite(App.instance.musicCurrent.musicFile)
+                viewModel.deleteFavourite(App.instance.musicCurrent.uriMusic)
             }
             startService(Constant.FAVOURITE)
         }
@@ -190,7 +190,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
             }
             App.instance.musicCurrent = (App.instance.listDataMusic[currentPos])
             binding.sbTimeSong.progress = 0
-            setImageSong(App.instance.musicCurrent.musicFile)
+            setImageSong(App.instance.musicCurrent.uriMusic)
             startService(Constant.CHANGE_MUSIC_SERVICE)
         }
         binding.imPlaySong.setOnClickListener { startService(Constant.STOP_MEDIA_SERVICE) }
@@ -204,7 +204,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                 startService(Constant.STOP_MEDIA_SERVICE)
                 App.instance.musicCurrent = (App.instance.listDataMusic[currentPos])
                 binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
-                setImageSong(this.musicFile)
+                setImageSong(this.uriMusic)
             }
 
             startService(Constant.START_MEDIA_SERVICE)
@@ -255,7 +255,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                 with(binding) {
                     tvNameSong.text = (App.instance.musicCurrent.musicName)
                     tvNameSinger.text = (App.instance.musicCurrent.nameSinger)
-                    App.instance.musicCurrent.musicFile.let { setImageSong(it) }
+                    App.instance.musicCurrent.uriMusic.let { setImageSong(it) }
                     binding.tvEndTime.text =
                         (TimeUtils.getTimeDurationMusic(messageEvent.intValue1))
                     sbTimeSong.max = messageEvent.intValue1
@@ -296,7 +296,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
                 checkFavourite()
 
                 if (messageEvent.isBooleanValue) {
-                    App.instance.musicCurrent.musicFile.let { setImageSong(it) }
+                    App.instance.musicCurrent.uriMusic.let { setImageSong(it) }
                     binding.imPlaySong.setImageResource(R.drawable.ic_baseline_pause_circle_filled_60)
                 } else {
                     binding.imPlaySong.setImageResource(R.drawable.ic_baseline_play_circle_filled_60)
@@ -332,7 +332,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
     }
 
     private fun checkFavourite() {
-        val isExit = listFavourite.any { it.musicFile == App.instance.musicCurrent.musicFile }
+        val isExit = listFavourite.any { it.uriMusic == App.instance.musicCurrent.uriMusic }
         val imageResource = if (isExit) {
             R.drawable.ic_baseline_favorite_24_red
         } else {
@@ -343,7 +343,7 @@ class MusicDetailFragment : BaseBindingFragment<FragmentDetailSongBinding, Music
 
     private fun insertRecent(dataMusic: DataMusic, dataItemRecent: DataItemRecent) {
 
-        val checkExistedRecent = listRecent.any { it.musicFile == dataMusic.musicFile }
+        val checkExistedRecent = listRecent.any { it.uriMusic == dataMusic.uriMusic }
 
         if (!checkExistedRecent) {
             mainViewModel.insertRecentMusic(dataItemRecent)

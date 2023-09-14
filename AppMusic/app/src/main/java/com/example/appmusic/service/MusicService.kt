@@ -68,7 +68,7 @@ open class MusicService : Service() {
             mediaPlayer.release()
         }
         mediaPlayer =
-            MediaPlayer.create(applicationContext, Uri.parse(App.instance.musicCurrent.musicFile))
+            MediaPlayer.create(applicationContext, Uri.parse(App.instance.musicCurrent.uriMusic))
         EventBus.getDefault().post(
             MessageEvent(
                 CHANGE_MUSIC_CURRENT,

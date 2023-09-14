@@ -3,7 +3,6 @@ package com.example.appmusic.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import com.example.appmusic.App
 import com.example.appmusic.R
 import com.example.appmusic.common.Constant
@@ -11,7 +10,6 @@ import com.example.appmusic.common.MessageEvent
 import com.example.appmusic.common.startService
 import com.example.appmusic.data.model.DataMusic
 import org.greenrobot.eventbus.EventBus
-import java.security.cert.Extension
 
 class Broadcast : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -42,8 +40,8 @@ class Broadcast : BroadcastReceiver() {
 
 
     private fun getPosCurrentMusic(dataMusic: DataMusic): Int {
-        val musicFile = dataMusic.musicFile
-        val index = App.instance.listDataMusic.indexOfFirst { it.musicFile == musicFile }
+        val musicFile = dataMusic.uriMusic
+        val index = App.instance.listDataMusic.indexOfFirst { it.uriMusic == musicFile }
         return if (index != -1) index else -1
     }
 }

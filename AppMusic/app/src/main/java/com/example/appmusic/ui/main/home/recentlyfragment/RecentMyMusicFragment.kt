@@ -57,7 +57,7 @@ class RecentMyMusicFragment : BaseBindingFragment<FragmentRecentlyBinding, Recen
             override fun clickItem(position: Int) {
                 val itemRecent = recentList[position]
                 DataMusic().apply {
-                    musicFile = itemRecent.musicFile
+                    uriMusic = itemRecent.uriMusic
                     musicName = itemRecent.musicName
                     nameSinger = itemRecent.nameSinger
                     nameAlbum = itemRecent.nameAlbum

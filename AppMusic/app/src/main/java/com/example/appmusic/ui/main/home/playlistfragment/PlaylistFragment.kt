@@ -136,17 +136,14 @@ class PlaylistFragment : BaseBindingFragment<FragmentPlayListMusicBinding, Playl
 
 
             override fun ok(inputName: String) {
-                if (!TextUtils.isEmpty(inputName)) {
+                if (inputName.isNotEmpty()) {
                     if (!checkNamePlayList(inputName)) {
-                        viewModel.updateNamePlayList(
-                                inputName,
-                                listDataPlayList[position].idPlayList
-                        )
-                        listDataPlayList[position].namePlayList = (inputName)
-                        if (listDataPlayList.size > 0) {
+                        viewModel.updateNamePlayList(inputName, listDataPlayList[position].idPlayList)
+                        listDataPlayList[position].namePlayList = inputName
+                        if (listDataPlayList.isNotEmpty()) {
                             binding.tvAddPlayList.visibility = View.INVISIBLE
                         }
-                        playlistAdapter?.listDataPlayList = (listDataPlayList)
+                        playlistAdapter?.listDataPlayList = listDataPlayList
                         dialogAddPlayListFragment?.dismiss()
                     } else {
                         toast(getString(R.string.listNameAlreadyExists))

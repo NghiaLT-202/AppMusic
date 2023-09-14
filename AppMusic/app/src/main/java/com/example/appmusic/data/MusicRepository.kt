@@ -49,7 +49,7 @@ class MusicRepository @Inject constructor(var musicDao: MusicDao) {
                     try {
                         mmr.setDataSource(cursor.getString(columnData))
                         val dataMusic = DataMusic().apply {
-                            musicFile = cursor.getString(columnData)
+                            uriMusic = cursor.getString(columnData)
                             musicName = cursor.getString(columnTitle)
                             nameSinger = cursor.getString(columnArtist)
                             nameAlbum = cursor.getString(columnAlbum)

@@ -28,7 +28,20 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
     private val musicAdapter: MusicAdapter by lazy {
         MusicAdapter().apply {
             binding.rcMusic.adapter = this
-
+            clickItem = { _, dataMusic ->
+                App.instance.musicCurrent = (dataMusic)
+                Bundle().apply {
+                    putBoolean(Constant.RUN_NEW_MUSIC, true)
+                    (requireActivity() as MainActivity).navController.navigate(
+                            R.id.fragment_detail_music,
+                            this
+                    )
+                }
+            }
+            clickMenu = { position, _ ->
+                bottomSheetFragment.dataMusic = (songList[position])
+                bottomSheetFragment.show(childFragmentManager, null)
+            }
         }
     }
     private val songList: MutableList<DataMusic> = mutableListOf()
@@ -61,7 +74,6 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
         } else {
             requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
-        initAdapter()
         initListener()
         initData()
     }
@@ -107,19 +119,6 @@ class SongFragment : BaseBindingFragment<FragmentSongBinding, SongViewModel>() {
         return dataMusicList
     }
 
-    private fun initAdapter() {
-        musicAdapter.clickItem = { _, dataMusic ->
-            App.instance.musicCurrent = (dataMusic)
-            Bundle().apply {
-                putBoolean(Constant.RUN_NEW_MUSIC, true)
-                navigateFragmentAndBundle(R.id.fragment_detail_music, this)
-            }
-        }
-        musicAdapter.clickMenu = { position, _ ->
-            bottomSheetFragment.dataMusic = (songList[position])
-            bottomSheetFragment.show(childFragmentManager, null)
-        }
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(messageEvent: MessageEvent) {

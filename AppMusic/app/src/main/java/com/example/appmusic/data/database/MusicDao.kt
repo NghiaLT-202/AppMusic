@@ -62,7 +62,7 @@ interface MusicDao {
     fun getAllRecentMusic(): MutableList<DataItemRecent>
 
     //Favourite
-    @Query("DELETE FROM dataMusic where musicFile=:path")
+    @Query("DELETE FROM dataMusic where uriMusic=:path")
     fun deleteFavourite(path: String)
     @Query("SELECT * FROM dataMusic where checkFavorite=:check")
     fun getAllFavouriteMusic(check: Boolean): MutableList<DataMusic>

@@ -60,14 +60,12 @@ class BottomSheetAddPlayListFrag : BaseBottomSheetDialogFragment<BottomSheetAddP
         }
         viewModel.listDataMusicPlaylist.observe(viewLifecycleOwner) { dataMusics: MutableList<DataMusic> ->
             val dataMusicCurrentName = dataMusicCurrent?.musicName
-            val isMusicInPlaylist = dataMusics.any { it.musicName == dataMusicCurrentName }
 
-            if (!isMusicInPlaylist) {
+            if (!dataMusics.any { it.musicName == dataMusicCurrentName }) {
                 dataMusicCurrent?.namePlayList = listDataPlayList[positionPlayList].namePlayList
                 viewModel.insertMusicOfPlayList(dataMusicCurrent!!)
                 Toast.makeText(context, getString(R.string.success), Toast.LENGTH_SHORT).show()
             } else {
-
                 Toast.makeText(context, getString(R.string.no_add), Toast.LENGTH_SHORT).show()
             }
 
